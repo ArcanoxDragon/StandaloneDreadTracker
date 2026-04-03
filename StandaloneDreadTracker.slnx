@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="DreadRemoteConnector/DreadRemoteConnector.csproj" />
+  <Project Path="TestApp/TestApp.csproj" Id="1f9e8c78-6594-48c2-a0bc-fdc4b0193429" />
 </Solution>

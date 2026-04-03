@@ -1,9 +1,12 @@
 ﻿using System.Net.Sockets;
+using System.Text;
 
 namespace DreadRemoteConnector;
 
-internal class ReceiveContext(Socket socket, byte[] buffer)
+internal class ReceiveContext(Socket socket, byte[] buffer, Encoding encoding)
 {
+	public Encoding Encoding { get; } = encoding;
+
     public async Task<BinaryReader> ReadChunkAsync(int length, CancellationToken cancellationToken)
     {
         var chunkData = buffer.AsMemory(0, length);
@@ -14,6 +17,6 @@ internal class ReceiveContext(Socket socket, byte[] buffer)
 
         var chunkStream = new MemoryStream(buffer, 0, bytesReceived, false);
 
-        return new BinaryReader(chunkStream);
+        return new BinaryReader(chunkStream, Encoding);
     }
 }
