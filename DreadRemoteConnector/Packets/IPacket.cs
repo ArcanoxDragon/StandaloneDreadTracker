@@ -1,16 +1,18 @@
 ﻿namespace DreadRemoteConnector.Packets;
 
-public interface IPacket
+internal interface IPacket
 {
-	static abstract PacketType PacketType { get; }
+    static abstract PacketType PacketType { get; }
 }
 
-public interface ISendPacket : IPacket
+internal interface ISendPacket : IPacket
 {
-	void WriteTo(BinaryWriter writer);
+    void WriteTo(BinaryWriter writer);
 }
 
-public interface IReceivePacket : IPacket
+internal interface IReceivePacket : IPacket
 {
-	void ReadFrom(BinaryReader reader);
+    static abstract bool VerifyRequestNumber { get; }
+
+    ValueTask ReceiveAsync(ReceiveContext context, CancellationToken cancellationToken);
 }
