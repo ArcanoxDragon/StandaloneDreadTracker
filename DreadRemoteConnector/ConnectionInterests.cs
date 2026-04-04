@@ -4,6 +4,6 @@
 public enum ConnectionInterests : byte
 {
 	None,
-	Multiworld = 1 << 0,
-	Logging    = 1 << 1,
+	Logging    = 1 << 0,
+	Multiworld = 1 << 1,
 }
