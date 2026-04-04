@@ -1,16 +1,22 @@
-﻿using DreadRemoteConnector.Packets.Receiving;
+﻿using System.Diagnostics.CodeAnalysis;
+using DreadRemoteConnector.Packets.Receiving;
 
 namespace DreadRemoteConnector.Packets;
 
 internal static class PacketFactory
 {
-	public static IReceivePacket CreateReceivePacket(PacketType packetType)
-		=> packetType switch {
-			PacketType.Handshake        => new HandshakeReceivePacket(),
-			PacketType.LogMessage       => new LogMessageReceivePacket(),
-			PacketType.ExecuteRemoteLua => new ExecuteLuaReceivePacket(),
-			PacketType.MalformedPacket  => new MalformedPacketReceivePacket(),
+	public static bool TryCreateReceivePacket(PacketType packetType, [NotNullWhen(true)] out IReceivePacket? packet)
+	{
+		packet = packetType switch {
+			PacketType.Handshake          => new HandshakeReceivePacket(),
+			PacketType.LogMessage         => new LogMessageReceivePacket(),
+			PacketType.ExecuteRemoteLua   => new ExecuteLuaReceivePacket(),
+			PacketType.NewInventory       => new NewInventoryReceivePacket(),
+			PacketType.CollectedLocations => new CollectedLocationsReceivePacket(),
+			PacketType.MalformedPacket    => new MalformedPacketReceivePacket(),
 
-			_ => throw new UnknownPacketTypeException($"Packet type \"{packetType}\" is not supported", packetType),
+			_ => null,
 		};
+		return packet != null;
+	}
 }

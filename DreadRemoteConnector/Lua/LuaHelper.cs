@@ -55,7 +55,7 @@ public static partial class LuaHelper
 		};
 
 	public static string FormatLuaArray(IEnumerable items)
-		=> string.Join(", ", items.Cast<object>().Select(FormatLuaValue));
+		=> "{" + string.Join(",", items.Cast<object>().Select(FormatLuaValue)) + "}";
 
 	public static string FormatLuaTable(IDictionary entries)
 	{

@@ -3,7 +3,7 @@ using DreadRemoteConnector.Extensions;
 
 namespace DreadRemoteConnector.Packets.Receiving;
 
-internal class LogMessageReceivePacket : LengthPrefixedReceivePacket
+public sealed class LogMessageReceivePacket : LengthPrefixedReceivePacket, IPublicReceivePacket
 {
 	public string Message { get; private set; } = string.Empty;
 

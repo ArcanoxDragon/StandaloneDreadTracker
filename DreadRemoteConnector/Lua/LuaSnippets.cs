@@ -7,9 +7,10 @@ internal static class LuaSnippets
 {
 	public static class SnippetNames
 	{
-		public const string GetGameDetails  = "get_game_details";
-		public const string BootstrapStage0 = "bootstrap_0";
-		public const string BootstrapStage1 = "bootstrap_1";
+		public const string GetGameDetails        = "get_game_details";
+		public const string BootstrapStage0       = "bootstrap_0";
+		public const string BootstrapStage1       = "bootstrap_1";
+		public const string UpdateInterestedItems = "update_interested_items";
 	}
 
 	private static readonly ConcurrentDictionary<string, string> SnippetCache        = [];

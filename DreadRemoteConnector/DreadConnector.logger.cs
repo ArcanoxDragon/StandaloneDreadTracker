@@ -29,5 +29,8 @@ public partial class DreadConnector
 
 		[LoggerMessage(LogLevel.Warning, "An packet was received with unknown type \"{PacketType}\"")]
 		public partial void UnknownPacketTypeReceived(PacketType packetType);
+
+		[LoggerMessage(LogLevel.Warning, "Invalid inventory update received! Expected {ExpectedItemCount} but got {ActualItemCount} instead.")]
+		public partial void InvalidInventoryUpdateReceived(int expectedItemCount, int actualItemCount);
 	}
 }

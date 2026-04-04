@@ -1,5 +1,5 @@
 RT = RT or {}
-RT.InterestedItems = {}
+RT.InterestedItems = RT.InterestedItems or {}
 
 function RT.SendCurrentInventory()
 	local player = Game.GetPlayerName()

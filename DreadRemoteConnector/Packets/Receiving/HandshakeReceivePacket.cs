@@ -1,9 +1,7 @@
 ﻿namespace DreadRemoteConnector.Packets.Receiving;
 
-internal class HandshakeReceivePacket : IReceivePacketWithType
+internal class HandshakeReceivePacket : IReceivePacket
 {
-	public static PacketType PacketType => PacketType.Handshake;
-
 	public bool VerifyRequestNumber => true;
 
 	public ValueTask ReceiveAsync(ReceiveContext context, CancellationToken cancellationToken)

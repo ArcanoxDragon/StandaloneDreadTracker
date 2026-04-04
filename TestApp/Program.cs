@@ -10,6 +10,19 @@ await using var connector = new DreadConnector(IPAddress.Loopback);
 connector.Logger = logger;
 connector.ConnectionInterests = ConnectionInterests.Logging | ConnectionInterests.Multiworld;
 connector.SleepTimeBeforeReconnect = TimeSpan.FromSeconds(2);
+connector.CurrentInventory.PropertyChanged += (sender, eventArgs) => {
+	if (eventArgs.PropertyName is null)
+		return;
+
+	var property = sender?.GetType().GetProperty(eventArgs.PropertyName);
+
+	if (property is null)
+		return;
+
+	var value = property.GetValue(sender);
+
+	logger.LogInformation("Inventory updated! {PropertyName} = {Value}", eventArgs.PropertyName, value);
+};
 
 await connector.StartAsync();
 

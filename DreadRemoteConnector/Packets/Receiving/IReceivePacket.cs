@@ -1,10 +1,10 @@
 ﻿namespace DreadRemoteConnector.Packets.Receiving;
 
-internal interface IReceivePacket
+public interface IReceivePacket
 {
 	bool VerifyRequestNumber => false;
 
-	ValueTask ReceiveAsync(ReceiveContext context, CancellationToken cancellationToken);
+	internal ValueTask ReceiveAsync(ReceiveContext context, CancellationToken cancellationToken);
 }
 
-internal interface IReceivePacketWithType : IReceivePacket, IHasPacketType;
+internal interface IPublicReceivePacket; // Marker interface for raising public events

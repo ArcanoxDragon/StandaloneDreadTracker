@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using DreadRemoteConnector.Events;
 using DreadRemoteConnector.Lua;
 using DreadRemoteConnector.Packets;
 using DreadRemoteConnector.Packets.Receiving;
@@ -48,6 +49,8 @@ public sealed partial class DreadSocket : IDisposable
 		: this(IPAddress.Parse(ipAddress), port) { }
 
 	public event EventHandler? ConnectionLost;
+
+	public event EventHandler<PacketReceivedEventArgs>? PacketReceived;
 
 	public TimeSpan SendTimeout
 	{
@@ -129,7 +132,7 @@ public sealed partial class DreadSocket : IDisposable
 
 			// Send handshake with interests, and wait for response
 			await SendPacketAsync(new HandshakeSendPacket(ConnectionInterests), combinedCancelToken).ConfigureAwait(false);
-			await ReceivePacketAsync<HandshakeReceivePacket>(combinedCancelToken).ConfigureAwait(false);
+			await WaitForPacketAsync<HandshakeReceivePacket>(combinedCancelToken).ConfigureAwait(false);
 
 			// Get game details
 			var gameDetailsCode = LuaSnippets.GetSnippet(LuaSnippets.SnippetNames.GetGameDetails);
@@ -186,7 +189,10 @@ public sealed partial class DreadSocket : IDisposable
 		}
 	}
 
-	public async Task<string> ExecuteLuaAsync(string luaCode, CancellationToken cancellationToken = default)
+	public Task<string> ExecuteLuaAsync(string luaCode, CancellationToken cancellationToken = default)
+		=> ExecuteLuaAsync(luaCode, waitForResponse: true, cancellationToken)!;
+
+	public async Task<string?> ExecuteLuaAsync(string luaCode, bool waitForResponse, CancellationToken cancellationToken = default)
 	{
 		CheckConnected();
 
@@ -199,7 +205,10 @@ public sealed partial class DreadSocket : IDisposable
 
 		await SendPacketAsync(new ExecuteLuaSendPacket(luaCode), cancellationToken).ConfigureAwait(false);
 
-		var responsePacket = await ReceivePacketAsync<ExecuteLuaReceivePacket>(cancellationToken).ConfigureAwait(false);
+		if (!waitForResponse)
+			return null;
+
+		var responsePacket = await WaitForPacketAsync<ExecuteLuaReceivePacket>(cancellationToken).ConfigureAwait(false);
 
 		if (!responsePacket.Success)
 			throw new DreadLuaException($"Lua script error: {responsePacket.Response}");
@@ -222,6 +231,9 @@ public sealed partial class DreadSocket : IDisposable
 		var stage1Code = LuaSnippets.GetSnippet(LuaSnippets.SnippetNames.BootstrapStage1);
 
 		await ExecuteLuaAsync(stage1Code, cancellationToken).ConfigureAwait(false);
+
+		// Queue an initial update
+		await ExecuteLuaAsync("""Game.AddSF(2.0, RL.UpdateRDVClient, "")""", cancellationToken).ConfigureAwait(false);
 	}
 
 	internal async Task SendPacketAsync<TPacket>(TPacket packet, CancellationToken cancellationToken)
@@ -259,8 +271,8 @@ public sealed partial class DreadSocket : IDisposable
 		}
 	}
 
-	internal async Task<TPacket> ReceivePacketAsync<TPacket>(CancellationToken cancellationToken)
-	where TPacket : IReceivePacketWithType, new()
+	internal async Task<TPacket> WaitForPacketAsync<TPacket>(CancellationToken cancellationToken)
+	where TPacket : IReceivePacket
 	{
 		CheckConnected();
 
@@ -270,29 +282,15 @@ public sealed partial class DreadSocket : IDisposable
 			using var combinedCancelSource = CancellationTokenSource.CreateLinkedTokenSource(timeoutCancelSource.Token, cancellationToken);
 			var combinedToken = combinedCancelSource.Token;
 
-			// First, try and receive the single packet type byte
-			var receiveContext = new ReceiveContext(this.socket, this.buffer, TextEncoding);
-			PacketType packetType;
+			while (true)
+			{
+				combinedToken.ThrowIfCancellationRequested();
 
-			using (var reader = await receiveContext.ReadChunkAsync(1, combinedToken).ConfigureAwait(false))
-				packetType = (PacketType) reader.ReadByte();
+				var packet = await WaitForAnyPacketAsync(combinedToken).ConfigureAwait(false);
 
-			if (packetType == PacketType.MalformedPacket)
-				await HandleMalformedPacketAsync(receiveContext, combinedToken).ConfigureAwait(false);
-			else if (packetType != TPacket.PacketType)
-				// TODO: This needs to be changed so that it still attempts to read the received packet, even if it's the wrong type
-				//  (otherwise the game's socket gets into an unrecoverable state)
-				throw new IOException($"Expected packet type \"{TPacket.PacketType}\" ({(char) TPacket.PacketType}) " +
-									  $"but got \"{packetType}\" ({(char) packetType}) instead");
-
-			var packet = new TPacket();
-
-			if (packet.VerifyRequestNumber)
-				await CheckRequestNumberAsync(combinedToken).ConfigureAwait(false);
-
-			await packet.ReceiveAsync(receiveContext, combinedToken).ConfigureAwait(false);
-
-			return packet;
+				if (packet is TPacket desiredPacket)
+					return desiredPacket;
+			}
 		}
 		catch (Exception ex) when (ex is OperationCanceledException or SocketException or IOException)
 		{
@@ -301,7 +299,7 @@ public sealed partial class DreadSocket : IDisposable
 		}
 	}
 
-	internal async Task<IReceivePacket> WaitAndReceiveAnyPacketAsync(CancellationToken cancellationToken)
+	internal async Task<IReceivePacket> WaitForAnyPacketAsync(CancellationToken cancellationToken)
 	{
 		CheckConnected();
 
@@ -318,23 +316,25 @@ public sealed partial class DreadSocket : IDisposable
 			if (packetType == PacketType.MalformedPacket)
 				await HandleMalformedPacketAsync(receiveContext, cancellationToken).ConfigureAwait(false);
 
-			var packet = PacketFactory.CreateReceivePacket(packetType);
+			if (!PacketFactory.TryCreateReceivePacket(packetType, out var packet))
+			{
+				// Assume that any unrecognized packet has a length prefix and data, so that we can hopefully
+				// consume it "blindly" and recover the socket into a usable state again.
+				var dummyPacket = new DummyReceivePacket();
+
+				await dummyPacket.ReceiveAsync(receiveContext, cancellationToken).ConfigureAwait(false);
+				throw new UnknownPacketTypeException($"Packet type \"{packetType}\" is not supported", packetType);
+			}
 
 			if (packet.VerifyRequestNumber)
 				await CheckRequestNumberAsync(cancellationToken).ConfigureAwait(false);
 
 			await packet.ReceiveAsync(receiveContext, cancellationToken).ConfigureAwait(false);
 
-			return packet;
-		}
-		catch (UnknownPacketTypeException)
-		{
-			// Assume that any unrecognized packet has a length prefix and data, so that we can hopefully
-			// consume it "blindly" and recover the socket into a usable state again.
-			var dummyPacket = new DummyReceivePacket();
+			if (packet is IPublicReceivePacket)
+				PacketReceived?.Invoke(this, new PacketReceivedEventArgs(packet));
 
-			await dummyPacket.ReceiveAsync(receiveContext, cancellationToken).ConfigureAwait(false);
-			throw;
+			return packet;
 		}
 		catch (Exception ex) when (ex is SocketException or IOException)
 		{

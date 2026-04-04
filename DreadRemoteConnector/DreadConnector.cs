@@ -1,4 +1,7 @@
 ﻿using System.Net;
+using DreadRemoteConnector.Events;
+using DreadRemoteConnector.Inventory;
+using DreadRemoteConnector.Lua;
 using DreadRemoteConnector.Packets.Receiving;
 using DreadRemoteConnector.Packets.Sending;
 using JetBrains.Annotations;
@@ -11,6 +14,7 @@ namespace DreadRemoteConnector;
 public sealed partial class DreadConnector : IDisposable, IAsyncDisposable
 {
 	private LoopContext? currentLoop;
+	private bool         updateInterestedItems;
 
 	public DreadConnector(IPAddress ipAddress, int port = DreadSocket.DefaultPort)
 	{
@@ -21,7 +25,8 @@ public sealed partial class DreadConnector : IDisposable, IAsyncDisposable
 	public DreadConnector(string ipAddress, int port = DreadSocket.DefaultPort)
 		: this(IPAddress.Parse(ipAddress), port) { }
 
-	public event EventHandler? ConnectionStateChanged;
+	public event EventHandler?                            ConnectionStateChanged;
+	public event EventHandler<InventoryUpdatedEventArgs>? InventoryUpdated;
 
 	public DreadSocket Socket { get; }
 
@@ -30,6 +35,20 @@ public sealed partial class DreadConnector : IDisposable, IAsyncDisposable
 		get => Socket.ConnectionInterests;
 		set => Socket.ConnectionInterests = value;
 	}
+
+	public string[] InventoryItemsOfInterest
+	{
+		get;
+		set
+		{
+			ArgumentNullException.ThrowIfNull(value);
+			field = value;
+			this.updateInterestedItems = true;
+			this.currentLoop?.CancelAuxToken(); // Force the keep-alive loop to immediately update the interested items
+		}
+	} = DreadInventory.DefaultItemsOfInterest.ToArray();
+
+	public DreadInventory CurrentInventory { get; } = new();
 
 	public TimeSpan KeepAliveInterval
 	{
@@ -88,7 +107,7 @@ public sealed partial class DreadConnector : IDisposable, IAsyncDisposable
 
 		// Create a combined cancellation token for connecting. The connection attempt will be canceled
 		// if the passed-in token is canceled OR if "StopAsync" is called while we are still connecting.
-		using var combinedCancelSource = CancellationTokenSource.CreateLinkedTokenSource(newLoop.CancellationToken, cancellationToken);
+		using var combinedCancelSource = CancellationTokenSource.CreateLinkedTokenSource(newLoop.MainCancellationToken, cancellationToken);
 		var combinedToken = combinedCancelSource.Token;
 
 		try
@@ -101,9 +120,12 @@ public sealed partial class DreadConnector : IDisposable, IAsyncDisposable
 			// Ignored - loops will start anyways and continually try to re-connect
 		}
 
+		// We should update the "interested items" list immediately upon connecting
+		this.updateInterestedItems = true;
+
 		// Start the loops
-		var keepAliveTask = RunKeepAliveLoopAsync(newLoop.CancellationToken);
-		var receiveTask = RunReceiveLoopAsync(newLoop.CancellationToken);
+		var keepAliveTask = RunKeepAliveLoopAsync(newLoop.MainCancellationToken);
+		var receiveTask = RunReceiveLoopAsync(newLoop.MainCancellationToken);
 
 		newLoop.LoopTask = Task.WhenAll(keepAliveTask, receiveTask);
 	}
@@ -130,10 +152,59 @@ public sealed partial class DreadConnector : IDisposable, IAsyncDisposable
 
 	private async Task RunKeepAliveLoopAsync(CancellationToken cancellationToken)
 	{
+		var thisLoop = this.currentLoop!;
+
 		while (!cancellationToken.IsCancellationRequested)
 		{
-			await Task.Delay(KeepAliveInterval, cancellationToken).ConfigureAwait(false);
-			await TrySendKeepAliveAsync(cancellationToken).ConfigureAwait(false);
+			// We use a special token for the Task.Delay that will be canceled when the "aux token" is canceled.
+			// This allows us to, for example, signal that the "interested items" list should be immediately updated
+			// without having to wait for the Task.Delay to expire.
+			using var combinedCancelSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, thisLoop.AuxCancellationToken);
+			var combinedToken = combinedCancelSource.Token;
+
+			try
+			{
+				await TryUpdateInterestedItemsAsync(cancellationToken).ConfigureAwait(false); // No-op if the update flag is not set
+				await Task.Delay(KeepAliveInterval, combinedToken).ConfigureAwait(false);
+				await TrySendKeepAliveAsync(cancellationToken).ConfigureAwait(false);
+			}
+			catch (OperationCanceledException ex) when (ex.CancellationToken == combinedToken)
+			{
+				// Ignore and loop again
+			}
+		}
+	}
+
+	private async ValueTask TryUpdateInterestedItemsAsync(CancellationToken cancellationToken)
+	{
+		if (!Interlocked.Exchange(ref this.updateInterestedItems, false))
+			return;
+
+		try
+		{
+			if (!IsConnected)
+			{
+				// Need to try again later
+				this.updateInterestedItems = true;
+				return;
+			}
+
+			var luaCode = LuaSnippets.GetSnippet(LuaSnippets.SnippetNames.UpdateInterestedItems, new Dictionary<string, object> {
+				{ "interestedItems", InventoryItemsOfInterest },
+			});
+
+			await Socket.ExecuteLuaAsync(luaCode, waitForResponse: false, cancellationToken).ConfigureAwait(false);
+		}
+		catch (OperationCanceledException ex) when (ex.CancellationToken == cancellationToken)
+		{
+			// If the send attempt was canceled because the passed-in token was canceled (and not because of a timeout),
+			// re-throw the exception so that the loop itself is also canceled.
+			throw;
+		}
+		catch
+		{
+			// Ignore other exceptions, but try again
+			this.updateInterestedItems = true;
 		}
 	}
 
@@ -184,7 +255,7 @@ public sealed partial class DreadConnector : IDisposable, IAsyncDisposable
 	{
 		try
 		{
-			var packet = await Socket.WaitAndReceiveAnyPacketAsync(cancellationToken).ConfigureAwait(false);
+			var packet = await Socket.WaitForAnyPacketAsync(cancellationToken).ConfigureAwait(false);
 
 			HandleReceivedPacket(packet);
 		}
@@ -212,7 +283,31 @@ public sealed partial class DreadConnector : IDisposable, IAsyncDisposable
 			case LogMessageReceivePacket logPacket:
 				Log.LogMessageReceived(logPacket.Message);
 				break;
+			case NewInventoryReceivePacket newInventoryPacket:
+				HandleNewInventoryPacket(newInventoryPacket);
+				break;
 		}
+	}
+
+	private void HandleNewInventoryPacket(NewInventoryReceivePacket packet)
+	{
+		var itemsOfInterest = InventoryItemsOfInterest;
+
+		if (packet.ItemQuantities.Length != itemsOfInterest.Length)
+		{
+			Log.InvalidInventoryUpdateReceived(itemsOfInterest.Length, packet.ItemQuantities.Length);
+			return;
+		}
+
+		for (var i = 0; i < itemsOfInterest.Length; i++)
+		{
+			var itemName = itemsOfInterest[i];
+			var quantity = packet.ItemQuantities[i];
+
+			CurrentInventory.UpdateItemQuantity(itemName, quantity);
+		}
+
+		InventoryUpdated?.Invoke(this, new InventoryUpdatedEventArgs(CurrentInventory));
 	}
 
 	private async Task<bool> AttemptReconnectAsync(CancellationToken cancellationToken)
@@ -274,21 +369,25 @@ public sealed partial class DreadConnector : IDisposable, IAsyncDisposable
 
 	private sealed class LoopContext : IDisposable
 	{
-		private readonly CancellationTokenSource cancelSource = new();
+		private readonly CancellationTokenSource mainCancelSource = new();
+
+		private CancellationTokenSource auxCancelSource = new();
 
 		public LoopContext()
 		{
-			CancellationToken = this.cancelSource.Token;
+			MainCancellationToken = this.mainCancelSource.Token;
+			AuxCancellationToken = this.auxCancelSource.Token;
 		}
 
-		public CancellationToken CancellationToken { get; }
-		public Task?             LoopTask          { get; set; }
+		public CancellationToken MainCancellationToken { get; }
+		public CancellationToken AuxCancellationToken  { get; private set; }
+		public Task?             LoopTask              { get; set; }
 
 		public async ValueTask ShutdownLoopAsync()
 		{
 			try
 			{
-				await this.cancelSource.CancelAsync().ConfigureAwait(false);
+				await this.mainCancelSource.CancelAsync().ConfigureAwait(false);
 
 				if (LoopTask != null)
 					await LoopTask;
@@ -299,6 +398,20 @@ public sealed partial class DreadConnector : IDisposable, IAsyncDisposable
 			}
 		}
 
-		public void Dispose() => this.cancelSource.Dispose();
+		public void CancelAuxToken()
+		{
+			var newAuxSource = new CancellationTokenSource();
+			var prevAuxSource = Interlocked.Exchange(ref this.auxCancelSource, newAuxSource);
+
+			AuxCancellationToken = newAuxSource.Token;
+			prevAuxSource.Cancel();
+			prevAuxSource.Dispose();
+		}
+
+		public void Dispose()
+		{
+			this.mainCancelSource.Dispose();
+			this.auxCancelSource.Dispose();
+		}
 	}
 }

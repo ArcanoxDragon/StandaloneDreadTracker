@@ -3,10 +3,8 @@ using System.Buffers.Binary;
 
 namespace DreadRemoteConnector.Packets.Receiving;
 
-internal class MalformedPacketReceivePacket : IReceivePacketWithType
+internal class MalformedPacketReceivePacket : IReceivePacket
 {
-	public static PacketType PacketType => PacketType.MalformedPacket;
-
 	public PacketType MalformedPacketType { get; private set; }
 	public int        ExpectedBytes       { get; private set; }
 	public int        ReceivedBytes       { get; private set; }

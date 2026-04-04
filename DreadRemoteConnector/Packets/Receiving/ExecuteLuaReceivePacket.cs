@@ -3,10 +3,8 @@ using DreadRemoteConnector.Extensions;
 
 namespace DreadRemoteConnector.Packets.Receiving;
 
-internal class ExecuteLuaReceivePacket : IReceivePacketWithType
+internal class ExecuteLuaReceivePacket : IReceivePacket
 {
-	public static PacketType PacketType => PacketType.ExecuteRemoteLua;
-
 	public bool VerifyRequestNumber => true;
 
 	public bool   Success  { get; private set; }

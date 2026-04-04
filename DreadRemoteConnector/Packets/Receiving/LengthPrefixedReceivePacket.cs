@@ -3,9 +3,14 @@ using System.Text;
 
 namespace DreadRemoteConnector.Packets.Receiving;
 
-internal abstract class LengthPrefixedReceivePacket : IReceivePacket
+public abstract class LengthPrefixedReceivePacket : IReceivePacket
 {
-	public async ValueTask ReceiveAsync(ReceiveContext context, CancellationToken cancellationToken)
+	private protected LengthPrefixedReceivePacket() { }
+
+	ValueTask IReceivePacket.ReceiveAsync(ReceiveContext context, CancellationToken cancellationToken)
+		=> ReceiveAsync(context, cancellationToken);
+
+	internal async ValueTask ReceiveAsync(ReceiveContext context, CancellationToken cancellationToken)
 	{
 		int dataLength;
 
