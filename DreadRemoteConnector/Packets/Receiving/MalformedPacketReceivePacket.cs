@@ -1,12 +1,11 @@
 ﻿using System.Buffers;
 using System.Buffers.Binary;
 
-namespace DreadRemoteConnector.Packets;
+namespace DreadRemoteConnector.Packets.Receiving;
 
-internal class MalformedPacketReceivePacket : IReceivePacket
+internal class MalformedPacketReceivePacket : IReceivePacketWithType
 {
-	public static PacketType PacketType          => PacketType.MalformedPacket;
-	public static bool       VerifyRequestNumber => false;
+	public static PacketType PacketType => PacketType.MalformedPacket;
 
 	public PacketType MalformedPacketType { get; private set; }
 	public int        ExpectedBytes       { get; private set; }

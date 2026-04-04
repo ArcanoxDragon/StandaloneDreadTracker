@@ -1,8 +1,8 @@
 ﻿using System.Buffers.Binary;
 
-namespace DreadRemoteConnector.Packets;
+namespace DreadRemoteConnector.Packets.Sending;
 
-internal class ExecuteLuaSendPacket(string luaCode) : ISendPacket
+internal class ExecuteLuaSendPacket(string luaCode) : ISendPacketWithType
 {
 	public static PacketType PacketType => PacketType.ExecuteRemoteLua;
 

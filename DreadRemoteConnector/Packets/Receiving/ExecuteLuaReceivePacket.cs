@@ -1,12 +1,13 @@
-﻿using System.Buffers;
-using System.Buffers.Binary;
+﻿using System.Buffers.Binary;
+using DreadRemoteConnector.Extensions;
 
-namespace DreadRemoteConnector.Packets;
+namespace DreadRemoteConnector.Packets.Receiving;
 
-internal class ExecuteLuaReceivePacket : IReceivePacket
+internal class ExecuteLuaReceivePacket : IReceivePacketWithType
 {
-	public static PacketType PacketType          => PacketType.ExecuteRemoteLua;
-	public static bool       VerifyRequestNumber => true;
+	public static PacketType PacketType => PacketType.ExecuteRemoteLua;
+
+	public bool VerifyRequestNumber => true;
 
 	public bool   Success  { get; private set; }
 	public string Response { get; private set; } = string.Empty;
@@ -31,19 +32,6 @@ internal class ExecuteLuaReceivePacket : IReceivePacket
 
 		// Read response itself
 		using (var reader = await context.ReadChunkAsync(responseLength, cancellationToken).ConfigureAwait(false))
-		{
-			var responseBuffer = ArrayPool<byte>.Shared.Rent(responseLength);
-			var responseData = responseBuffer.AsSpan(0, responseLength);
-
-			try
-			{
-				reader.ReadExactly(responseData);
-				Response = context.Encoding.GetString(responseData);
-			}
-			finally
-			{
-				ArrayPool<byte>.Shared.Return(responseBuffer);
-			}
-		}
+			Response = reader.ReadStringFast(responseLength, context.Encoding);
 	}
 }

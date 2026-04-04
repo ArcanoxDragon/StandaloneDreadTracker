@@ -1,6 +1,6 @@
-﻿namespace DreadRemoteConnector.Packets;
+﻿namespace DreadRemoteConnector.Packets.Sending;
 
-internal class HandshakeSendPacket(ConnectionInterests interests) : ISendPacket
+internal class HandshakeSendPacket(ConnectionInterests interests) : ISendPacketWithType
 {
 	public static PacketType PacketType => PacketType.Handshake;
 

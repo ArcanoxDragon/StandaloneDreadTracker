@@ -5,18 +5,22 @@ using System.Net.Sockets;
 using System.Text;
 using DreadRemoteConnector.Lua;
 using DreadRemoteConnector.Packets;
+using DreadRemoteConnector.Packets.Receiving;
+using DreadRemoteConnector.Packets.Sending;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace DreadRemoteConnector;
 
 [PublicAPI]
 public sealed partial class DreadSocket : IDisposable
 {
-	private const int DefaultPort           = 6969; // extra nice
-	private const int DefaultBufferSize     = 4096;
-	private const int SendTimeoutSeconds    = 30;
-	private const int ReceiveTimeoutSeconds = 15;
+	public const int DefaultPort = 6969; // extra nice
+
+	private const int DefaultBufferSize            = 4096;
+	private const int DefaultSendTimeoutSeconds    = 30;
+	private const int DefaultReceiveTimeoutSeconds = 15;
 
 	// Custom UTF8Encoding that does not write BOM
 	private static readonly UTF8Encoding TextEncoding = new(encoderShouldEmitUTF8Identifier: false);
@@ -24,8 +28,10 @@ public sealed partial class DreadSocket : IDisposable
 	private readonly IPAddress ipAddress;
 	private readonly int       port;
 
-	private byte[]  buffer;
-	private Socket? socket;
+	private bool                     connecting;
+	private byte[]                   buffer;
+	private Socket?                  socket;
+	private CancellationTokenSource? connectingCancelSource;
 
 	public DreadSocket(IPAddress ipAddress, int port = DefaultPort)
 	{
@@ -40,6 +46,20 @@ public sealed partial class DreadSocket : IDisposable
 
 	public DreadSocket(string ipAddress, int port = DefaultPort)
 		: this(IPAddress.Parse(ipAddress), port) { }
+
+	public event EventHandler? ConnectionLost;
+
+	public TimeSpan SendTimeout
+	{
+		get;
+		set
+		{
+			field = value;
+			this.socket?.SendTimeout = (int) value.TotalMilliseconds;
+		}
+	} = TimeSpan.FromSeconds(DefaultSendTimeoutSeconds);
+
+	public TimeSpan ReceiveTimeout { get; set; } = TimeSpan.FromSeconds(DefaultReceiveTimeoutSeconds);
 
 	public ConnectionInterests ConnectionInterests
 	{
@@ -61,7 +81,7 @@ public sealed partial class DreadSocket : IDisposable
 	public ILogger? Logger
 	{
 		get => Log.loggerInstance;
-		set => Log.loggerInstance = value;
+		set => Log.loggerInstance = value ?? NullLogger.Instance;
 	}
 
 	private int BufferSize
@@ -84,31 +104,45 @@ public sealed partial class DreadSocket : IDisposable
 		set => field = value % 256;
 	}
 
-	public async Task ConnectAsync(CancellationToken cancellationToken = default)
+	public async ValueTask ConnectAsync(CancellationToken cancellationToken = default)
 	{
 		if (IsConnected)
+			// Connection already established - don't connect again
 			return;
+
+		if (Interlocked.Exchange(ref this.connecting, true))
+			// Actively in the process of connecting - prevent concurrent attempts
+			return;
+
+		using var connectingCancelSource = new CancellationTokenSource();
+		using var combinedCancelSource = CancellationTokenSource.CreateLinkedTokenSource(connectingCancelSource.Token, cancellationToken);
+		var combinedCancelToken = combinedCancelSource.Token;
+
+		this.connectingCancelSource = connectingCancelSource;
 
 		try
 		{
 			Log.Connecting(this.ipAddress, this.port);
 			CreateSocket();
-			await this.socket.ConnectAsync(this.ipAddress, this.port, cancellationToken).ConfigureAwait(false);
+			await this.socket.ConnectAsync(this.ipAddress, this.port, combinedCancelToken).ConfigureAwait(false);
 			Log.ConnectionSucceeded(ConnectionInterests);
 
 			// Send handshake with interests, and wait for response
-			await SendPacketAsync(new HandshakeSendPacket(ConnectionInterests), cancellationToken).ConfigureAwait(false);
-			await ReceivePacketAsync<HandshakeReceivePacket>(cancellationToken).ConfigureAwait(false);
+			await SendPacketAsync(new HandshakeSendPacket(ConnectionInterests), combinedCancelToken).ConfigureAwait(false);
+			await ReceivePacketAsync<HandshakeReceivePacket>(combinedCancelToken).ConfigureAwait(false);
 
 			// Get game details
 			var gameDetailsCode = LuaSnippets.GetSnippet(LuaSnippets.SnippetNames.GetGameDetails);
-			var gameDetailsResponse = await ExecuteLuaAsync(gameDetailsCode, cancellationToken).ConfigureAwait(false);
+			var gameDetailsResponse = await ExecuteLuaAsync(gameDetailsCode, combinedCancelToken).ConfigureAwait(false);
 
 			GameDetails = GameDetails.Parse(gameDetailsResponse);
 			Log.GotGameDetails(GameDetails);
 
 			// Update our own buffer size to match the game's (if it differs)
 			BufferSize = GameDetails.BufferSize;
+
+			// Set up the client bootstrap code
+			await SetupBootstrapAsync(combinedCancelToken).ConfigureAwait(false);
 		}
 		catch (OperationCanceledException)
 		{
@@ -121,6 +155,34 @@ public sealed partial class DreadSocket : IDisposable
 			DestroySocket();
 			Log.ConnectionFailed(ex, this.ipAddress, this.port);
 			throw;
+		}
+		finally
+		{
+			this.connectingCancelSource = null;
+			this.connecting = false;
+		}
+	}
+
+	public async ValueTask DisconnectAsync()
+	{
+		if (this.connecting)
+			throw new InvalidOperationException("Cannot disconnect while a connection attempt is in progress");
+
+		try
+		{
+			if (this.connectingCancelSource != null)
+				await this.connectingCancelSource.CancelAsync().ConfigureAwait(false);
+
+			if (this.socket != null)
+				await this.socket.DisconnectAsync(false).ConfigureAwait(false);
+		}
+		catch (SocketException ex)
+		{
+			Log.ErrorDuringDisconnect(ex);
+		}
+		finally
+		{
+			DestroySocket();
 		}
 	}
 
@@ -140,13 +202,30 @@ public sealed partial class DreadSocket : IDisposable
 		var responsePacket = await ReceivePacketAsync<ExecuteLuaReceivePacket>(cancellationToken).ConfigureAwait(false);
 
 		if (!responsePacket.Success)
-			throw new DreadLuaException("The Lua script encountered an error", responsePacket.Response);
+			throw new DreadLuaException($"Lua script error: {responsePacket.Response}");
 
 		return responsePacket.Response;
 	}
 
-	private async Task SendPacketAsync<TPacket>(TPacket packet, CancellationToken cancellationToken)
-	where TPacket : ISendPacket
+	private async Task SetupBootstrapAsync(CancellationToken cancellationToken)
+	{
+		const string SuccessResult = "ok";
+
+		// Send stage 0, which will return a string indicating whether or not we can continue
+		var stage0Code = LuaSnippets.GetSnippet(LuaSnippets.SnippetNames.BootstrapStage0);
+		var stage0Result = await ExecuteLuaAsync(stage0Code, cancellationToken).ConfigureAwait(false);
+
+		if (stage0Result != SuccessResult)
+			throw new DreadLuaException($"Bootstrap failed: {stage0Result}");
+
+		// Send stage 1 (no need to check result)
+		var stage1Code = LuaSnippets.GetSnippet(LuaSnippets.SnippetNames.BootstrapStage1);
+
+		await ExecuteLuaAsync(stage1Code, cancellationToken).ConfigureAwait(false);
+	}
+
+	internal async Task SendPacketAsync<TPacket>(TPacket packet, CancellationToken cancellationToken)
+	where TPacket : ISendPacketWithType
 	{
 		CheckConnected();
 
@@ -165,43 +244,103 @@ public sealed partial class DreadSocket : IDisposable
 			packetLength = (int) bufferStream.Position;
 		}
 
-		// Send the packet
-		var packetData = this.buffer.AsMemory()[..packetLength];
-		var bytesSent = await this.socket.SendAsync(packetData, cancellationToken).ConfigureAwait(false);
+		try
+		{
+			// Send the packet
+			var packetData = this.buffer.AsMemory()[..packetLength];
+			var bytesSent = await this.socket.SendAsync(packetData, cancellationToken).ConfigureAwait(false);
 
-		Debug.Assert(bytesSent == packetLength);
+			Debug.Assert(bytesSent == packetLength);
+		}
+		catch (OperationCanceledException)
+		{
+			HandleDisconnect();
+			throw;
+		}
 	}
 
-	private Task<TPacket> ReceivePacketAsync<TPacket>(CancellationToken cancellationToken)
-	where TPacket : IReceivePacket, new()
-		=> ReceivePacketAsync<TPacket>(handleMalformed: true, cancellationToken);
-
-	private async Task<TPacket> ReceivePacketAsync<TPacket>(bool handleMalformed, CancellationToken cancellationToken)
-	where TPacket : IReceivePacket, new()
+	internal async Task<TPacket> ReceivePacketAsync<TPacket>(CancellationToken cancellationToken)
+	where TPacket : IReceivePacketWithType, new()
 	{
 		CheckConnected();
 
-		// First, try and receive the single packet type byte
+		try
+		{
+			using var timeoutCancelSource = new CancellationTokenSource(ReceiveTimeout);
+			using var combinedCancelSource = CancellationTokenSource.CreateLinkedTokenSource(timeoutCancelSource.Token, cancellationToken);
+			var combinedToken = combinedCancelSource.Token;
+
+			// First, try and receive the single packet type byte
+			var receiveContext = new ReceiveContext(this.socket, this.buffer, TextEncoding);
+			PacketType packetType;
+
+			using (var reader = await receiveContext.ReadChunkAsync(1, combinedToken).ConfigureAwait(false))
+				packetType = (PacketType) reader.ReadByte();
+
+			if (packetType == PacketType.MalformedPacket)
+				await HandleMalformedPacketAsync(receiveContext, combinedToken).ConfigureAwait(false);
+			else if (packetType != TPacket.PacketType)
+				// TODO: This needs to be changed so that it still attempts to read the received packet, even if it's the wrong type
+				//  (otherwise the game's socket gets into an unrecoverable state)
+				throw new IOException($"Expected packet type \"{TPacket.PacketType}\" ({(char) TPacket.PacketType}) " +
+									  $"but got \"{packetType}\" ({(char) packetType}) instead");
+
+			var packet = new TPacket();
+
+			if (packet.VerifyRequestNumber)
+				await CheckRequestNumberAsync(combinedToken).ConfigureAwait(false);
+
+			await packet.ReceiveAsync(receiveContext, combinedToken).ConfigureAwait(false);
+
+			return packet;
+		}
+		catch (Exception ex) when (ex is OperationCanceledException or SocketException or IOException)
+		{
+			HandleDisconnect();
+			throw;
+		}
+	}
+
+	internal async Task<IReceivePacket> WaitAndReceiveAnyPacketAsync(CancellationToken cancellationToken)
+	{
+		CheckConnected();
+
 		var receiveContext = new ReceiveContext(this.socket, this.buffer, TextEncoding);
-		PacketType packetType;
 
-		using (var reader = await receiveContext.ReadChunkAsync(1, cancellationToken).ConfigureAwait(false))
-			packetType = (PacketType) reader.ReadByte();
+		try
+		{
+			// First, wait for a single byte containing a packet type
+			PacketType packetType;
 
-		if (handleMalformed && packetType == PacketType.MalformedPacket)
-			await HandleMalformedPacketAsync(cancellationToken).ConfigureAwait(false);
-		else if (packetType != TPacket.PacketType)
-			throw new IOException($"Expected packet type \"{TPacket.PacketType}\" ({(char) TPacket.PacketType}) " +
-								  $"but got \"{packetType}\" ({(char) packetType}) instead");
+			using (var reader = await receiveContext.ReadChunkAsync(1, cancellationToken).ConfigureAwait(false))
+				packetType = (PacketType) reader.ReadByte();
 
-		var packet = new TPacket();
+			if (packetType == PacketType.MalformedPacket)
+				await HandleMalformedPacketAsync(receiveContext, cancellationToken).ConfigureAwait(false);
 
-		if (TPacket.VerifyRequestNumber)
-			await CheckRequestNumberAsync(cancellationToken).ConfigureAwait(false);
+			var packet = PacketFactory.CreateReceivePacket(packetType);
 
-		await packet.ReceiveAsync(receiveContext, cancellationToken).ConfigureAwait(false);
+			if (packet.VerifyRequestNumber)
+				await CheckRequestNumberAsync(cancellationToken).ConfigureAwait(false);
 
-		return packet;
+			await packet.ReceiveAsync(receiveContext, cancellationToken).ConfigureAwait(false);
+
+			return packet;
+		}
+		catch (UnknownPacketTypeException)
+		{
+			// Assume that any unrecognized packet has a length prefix and data, so that we can hopefully
+			// consume it "blindly" and recover the socket into a usable state again.
+			var dummyPacket = new DummyReceivePacket();
+
+			await dummyPacket.ReceiveAsync(receiveContext, cancellationToken).ConfigureAwait(false);
+			throw;
+		}
+		catch (Exception ex) when (ex is SocketException or IOException)
+		{
+			HandleDisconnect();
+			throw;
+		}
 	}
 
 	private async Task CheckRequestNumberAsync(CancellationToken cancellationToken)
@@ -221,13 +360,20 @@ public sealed partial class DreadSocket : IDisposable
 	}
 
 	[DoesNotReturn]
-	private async Task HandleMalformedPacketAsync(CancellationToken cancellationToken)
+	private async Task HandleMalformedPacketAsync(ReceiveContext receiveContext, CancellationToken cancellationToken)
 	{
-		var malformedPacketInfo = await ReceivePacketAsync<MalformedPacketReceivePacket>(handleMalformed: false, cancellationToken).ConfigureAwait(false);
+		var malformedPacketInfo = new MalformedPacketReceivePacket();
 
+		await malformedPacketInfo.ReceiveAsync(receiveContext, cancellationToken).ConfigureAwait(false);
 		Log.MalformedPacket(malformedPacketInfo);
 
 		throw new DreadLuaException("The game received a malformed packet! The protocol may have changed.");
+	}
+
+	private void HandleDisconnect()
+	{
+		ConnectionLost?.Invoke(this, EventArgs.Empty);
+		DestroySocket();
 	}
 
 	[MemberNotNull(nameof(socket))]
@@ -235,8 +381,11 @@ public sealed partial class DreadSocket : IDisposable
 	{
 		this.socket?.Dispose();
 		this.socket = new Socket(SocketType.Stream, ProtocolType.Tcp) {
-			SendTimeout = SendTimeoutSeconds * 1000,
-			ReceiveTimeout = ReceiveTimeoutSeconds * 1000,
+			SendTimeout = (int) SendTimeout.TotalMilliseconds,
+
+			// The socket itself will have an infinite receive timeout to allow the event loop to wait indefinitely for new packets.
+			// Receive operations with a timeout will use a timed cancellation token instead.
+			ReceiveTimeout = Timeout.Infinite,
 		};
 
 		RequestNumber = 0;

@@ -5,10 +5,30 @@ using Microsoft.Extensions.Logging;
 
 var services = InitServices();
 var logger = services.GetRequiredService<ILogger<DreadSocket>>();
-using var socket = new DreadSocket(IPAddress.Loopback);
+await using var connector = new DreadConnector(IPAddress.Loopback);
 
-socket.Logger = logger;
-await socket.ConnectAsync();
+connector.Logger = logger;
+connector.ConnectionInterests = ConnectionInterests.Logging | ConnectionInterests.Multiworld;
+connector.SleepTimeBeforeReconnect = TimeSpan.FromSeconds(2);
+
+await connector.StartAsync();
+
+var shutdownSemaphore = new SemaphoreSlim(0, 1);
+var shutdownRequested = false;
+
+Console.CancelKeyPress += (_, e) => {
+	if (e.SpecialKey != ConsoleSpecialKey.ControlC)
+		return;
+
+	e.Cancel = true;
+
+	if (!Interlocked.Exchange(ref shutdownRequested, true))
+		shutdownSemaphore.Release();
+};
+
+shutdownSemaphore.Wait();
+logger.LogInformation("Shutting down...");
+await connector.StopAsync();
 
 static IServiceProvider InitServices()
 {

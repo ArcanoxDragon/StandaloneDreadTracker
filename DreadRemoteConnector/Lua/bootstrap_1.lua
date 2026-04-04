@@ -1,16 +1,16 @@
-function RT.SendCurrentInventory(interestedItems)
-	if type(interestedItems) ~= "table" then
-		error("Invalid value for interestedItems")
-	end
+RT = RT or {}
+RT.InterestedItems = {}
 
+function RT.SendCurrentInventory()
 	local player = Game.GetPlayerName()
 	local amounts = {}
 
-	for i, item in ipairs(interestedItems) do
+	for i, item in ipairs(RT.InterestedItems) do
 		amounts[i] = Game.GetItemAmount(player, item)
 	end
 
 	local json = string.format("[%s]", table.concat(amounts, ","))
 
+	Game.LogWarn(0, "Sending inventory: " .. tostring(#RT.InterestedItems) .. " items")
 	RL.SendInventory(json)
 end

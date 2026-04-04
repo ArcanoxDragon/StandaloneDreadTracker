@@ -1,6 +1,8 @@
 ﻿using System.Net;
 using DreadRemoteConnector.Packets;
+using DreadRemoteConnector.Packets.Receiving;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace DreadRemoteConnector;
 
@@ -10,7 +12,7 @@ public partial class DreadSocket
 
 	private sealed partial class LogImpl
 	{
-		public ILogger? loggerInstance;
+		public ILogger loggerInstance = NullLogger.Instance;
 
 		[LoggerMessage(LogLevel.Debug, "Attempting connection to Dread game at {Address}:{Port}...")]
 		public partial void Connecting(IPAddress address, int port);
@@ -20,6 +22,9 @@ public partial class DreadSocket
 
 		[LoggerMessage(LogLevel.Debug, "Connection succeeded. Sending handshake with interests: {Interests}")]
 		public partial void ConnectionSucceeded(ConnectionInterests interests);
+
+		[LoggerMessage(LogLevel.Error, "An error occurred while disconnecting")]
+		public partial void ErrorDuringDisconnect(Exception ex);
 
 		[LoggerMessage(LogLevel.Debug, "Requesting game details")]
 		public partial void RequestingGameDetails();
