@@ -1,10 +1,9 @@
 ﻿using System.Collections.Concurrent;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace DreadRemoteConnector.Lua;
 
-internal static partial class LuaSnippets
+internal static class LuaSnippets
 {
 	public static class SnippetNames
 	{
@@ -18,53 +17,10 @@ internal static partial class LuaSnippets
 	{
 		var snippetText = GetSnippetText(name);
 
-		if (replacements is null)
-			return snippetText;
-
-		var builder = new StringBuilder();
-		var previousEnd = Index.Start;
-
-		foreach (var match in TemplateReplacementRegex.EnumerateMatches(snippetText))
-		{
-			// Append everything from the end of the last match to the start of this one
-			var thisStart = Index.FromStart(match.Index);
-			var thisEnd = Index.FromStart(match.Index + match.Length);
-			var beforeThisMatch = snippetText[previousEnd..thisStart];
-
-			builder.Append(beforeThisMatch);
-
-			// Append replacement text for this match
-			var thisMatch = snippetText[thisStart..thisEnd];
-			var thisMatchKey = thisMatch[3..^3]; // Strip off "T__" and "__T"
-
-			if (!replacements.TryGetValue(thisMatchKey, out var replacementValue))
-				throw new FormatException($"Template replacement \"{thisMatchKey}\" was not provided");
-
-			var replacementText = FormatLuaValue(replacementValue);
-
-			builder.Append(replacementText);
-
-			// Advance end marker
-			previousEnd = thisEnd;
-		}
-
-		// Append everything after the end of the final match
-		var remaining = snippetText[previousEnd..Index.End];
-
-		builder.Append(remaining);
-
-		return builder.ToString();
+		return replacements == null
+			? snippetText
+			: LuaHelper.ExpandTemplate(snippetText, replacements);
 	}
-
-	public static string FormatLuaValue(object? value)
-		=> value switch {
-			null     => "nil",
-			string s => $"\"{EscapeString(s)}\"",
-			_        => value.ToString() ?? "nil",
-		};
-
-	private static string EscapeString(string str)
-		=> str.Replace("\"", "\\\"");
 
 	private static string GetSnippetText(string name)
 		=> SnippetCache.GetOrAdd(name, LoadSnippetFunction);
@@ -81,13 +37,4 @@ internal static partial class LuaSnippets
 
 		return reader.ReadToEnd();
 	}
-
-	#region Regular Expressions
-
-	private static readonly Regex TemplateReplacementRegex = GetTemplateReplacementRegex();
-
-	[GeneratedRegex(@"T__(\w+)__T")]
-	private static partial Regex GetTemplateReplacementRegex();
-
-	#endregion
 }

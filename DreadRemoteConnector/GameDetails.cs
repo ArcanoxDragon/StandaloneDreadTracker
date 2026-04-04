@@ -6,7 +6,6 @@ public sealed class GameDetails : IParsable<GameDetails>
 {
 	public int    ApiVersion        { get; private set; } = -1;
 	public int    BufferSize        { get; private set; } = -1;
-	public bool   BootstrapComplete { get; private set; }
 	public Guid   WorldGuid         { get; private set; }
 	public string GameVersion       { get; private set; } = "Unknown";
 
@@ -50,16 +49,15 @@ public sealed class GameDetails : IParsable<GameDetails>
 	{
 		var parts = details.Split(',');
 
-		if (parts.Length != 5)
-			throw new FormatException($"Could not parse game details. Expected 5 components, but got {parts.Length}.");
+		if (parts.Length != 4)
+			throw new FormatException($"Could not parse game details. Expected 4 components, but got {parts.Length}.");
 
 		try
 		{
 			ApiVersion = int.Parse(parts[0]);
 			BufferSize = int.Parse(parts[1]);
-			BootstrapComplete = parts[2] == "true";
-			WorldGuid = Guid.Parse(parts[3]);
-			GameVersion = parts[4];
+			WorldGuid = Guid.Parse(parts[2]);
+			GameVersion = parts[3];
 		}
 		catch (Exception ex)
 		{

@@ -1,7 +1,6 @@
 return string.format(
-	"%d,%d,%s,%s,%s",
+	"%d,%d,%s,%s",
 	RL.Version,
 	RL.BufferSize,
-	tostring(RL.Bootstrap),
 	Init.sLayoutUUID,
 	GameVersion)

@@ -14,17 +14,17 @@ namespace DreadRemoteConnector;
 public sealed partial class DreadSocket : IDisposable
 {
 	private const int DefaultPort           = 6969; // extra nice
-	private const int BufferSize            = 4096;
+	private const int DefaultBufferSize     = 4096;
 	private const int SendTimeoutSeconds    = 30;
 	private const int ReceiveTimeoutSeconds = 15;
 
 	// Custom UTF8Encoding that does not write BOM
 	private static readonly UTF8Encoding TextEncoding = new(encoderShouldEmitUTF8Identifier: false);
 
-	private readonly byte[]    buffer;
 	private readonly IPAddress ipAddress;
 	private readonly int       port;
 
+	private byte[]  buffer;
 	private Socket? socket;
 
 	public DreadSocket(IPAddress ipAddress, int port = DefaultPort)
@@ -32,9 +32,10 @@ public sealed partial class DreadSocket : IDisposable
 		if (ipAddress.AddressFamily != AddressFamily.InterNetwork)
 			throw new ArgumentException("Only IPv4 addresses are supported", nameof(ipAddress));
 
-		this.buffer = new byte[BufferSize];
 		this.ipAddress = ipAddress;
 		this.port = port;
+
+		BufferSize = DefaultBufferSize;
 	}
 
 	public DreadSocket(string ipAddress, int port = DefaultPort)
@@ -61,6 +62,20 @@ public sealed partial class DreadSocket : IDisposable
 	{
 		get => Log.loggerInstance;
 		set => Log.loggerInstance = value;
+	}
+
+	private int BufferSize
+	{
+		get;
+		[MemberNotNull(nameof(buffer))]
+		set
+		{
+			if (field == value && this.buffer != null)
+				return;
+
+			field = value;
+			this.buffer = new byte[value];
+		}
 	}
 
 	private int RequestNumber
@@ -91,6 +106,9 @@ public sealed partial class DreadSocket : IDisposable
 
 			GameDetails = GameDetails.Parse(gameDetailsResponse);
 			Log.GotGameDetails(GameDetails);
+
+			// Update our own buffer size to match the game's (if it differs)
+			BufferSize = GameDetails.BufferSize;
 		}
 		catch (OperationCanceledException)
 		{
@@ -109,6 +127,13 @@ public sealed partial class DreadSocket : IDisposable
 	public async Task<string> ExecuteLuaAsync(string luaCode, CancellationToken cancellationToken = default)
 	{
 		CheckConnected();
+
+		const int LengthPrefixBytes = 4;
+		var maxCodeByteLength = BufferSize - LengthPrefixBytes;
+		var codeByteLength = TextEncoding.GetByteCount(luaCode);
+
+		if (codeByteLength > maxCodeByteLength)
+			throw new ArgumentException($"Code is too long! Size of code may not be larger than {maxCodeByteLength} bytes.", nameof(luaCode));
 
 		await SendPacketAsync(new ExecuteLuaSendPacket(luaCode), cancellationToken).ConfigureAwait(false);
 

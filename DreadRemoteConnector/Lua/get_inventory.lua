@@ -1,0 +1,1 @@
+RT.SendCurrentInventory(T__interestedItems__T)

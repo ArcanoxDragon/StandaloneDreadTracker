@@ -25,12 +25,12 @@ public partial class DreadSocket
 		public partial void RequestingGameDetails();
 
 		public void GotGameDetails(GameDetails gameDetails)
-			=> GotGameDetails(gameDetails.ApiVersion, gameDetails.GameVersion, gameDetails.BufferSize, gameDetails.BootstrapComplete, gameDetails.WorldGuid);
+			=> GotGameDetails(gameDetails.ApiVersion, gameDetails.GameVersion, gameDetails.BufferSize, gameDetails.WorldGuid);
 
 		[LoggerMessage(LogLevel.Debug,
 					   "Got game details. API version: {ApiVersion}. Game version: {GameVersion}. " +
-					   "Buffer size: {BufferSize}. Bootstrap complete: {BootstrapComplete}. World GUID: {WorldGuid:B}.")]
-		private partial void GotGameDetails(int apiVersion, string gameVersion, int bufferSize, bool bootstrapComplete, Guid worldGuid);
+					   "Buffer size: {BufferSize}. World GUID: {WorldGuid:B}.")]
+		private partial void GotGameDetails(int apiVersion, string gameVersion, int bufferSize, Guid worldGuid);
 
 		public void MalformedPacket(MalformedPacketReceivePacket info)
 			=> MalformedPacket(info.MalformedPacketType, info.ExpectedBytes, info.ReceivedBytes);
