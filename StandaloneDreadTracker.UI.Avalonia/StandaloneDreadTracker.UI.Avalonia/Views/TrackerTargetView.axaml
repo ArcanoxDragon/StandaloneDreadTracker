@@ -1,0 +1,89 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:viewModels="clr-namespace:StandaloneDreadTracker.App.ViewModels;assembly=StandaloneDreadTracker.App"
+			 xmlns:converters="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Converters"
+			 mc:Ignorable="d" d:DesignWidth="400"
+			 x:Class="StandaloneDreadTracker.UI.Avalonia.Views.TrackerTargetView"
+			 x:DataType="viewModels:TrackerTargetViewModel">
+	<Design.DataContext>
+		<viewModels:TrackerTargetViewModel Name="My Switch"
+										   TargetType="Remote"
+										   TargetAddress="192.168.0.42"/>
+	</Design.DataContext>
+
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.ThemeDictionaries>
+				<ResourceDictionary x:Key="Light">
+					<SvgSource x:Key="SwitchIcon"
+							   Path="/Assets/SwitchConsole.svg"
+							   Css="path { fill: #000000; }" />
+					<SvgSource x:Key="EmulatorIcon"
+							   Path="/Assets/Emulator.svg"
+							   Css=".text { fill: #181818; }" />
+				</ResourceDictionary>
+				<ResourceDictionary x:Key="Dark">
+					<SvgSource x:Key="SwitchIcon"
+							   Path="/Assets/SwitchConsole.svg"
+							   Css="path { fill: #ffffff; }" />
+					<SvgSource x:Key="EmulatorIcon"
+							   Path="/Assets/Emulator.svg"
+							   Css=".text { fill: #ffffff; }" />
+				</ResourceDictionary>
+			</ResourceDictionary.ThemeDictionaries>
+
+			<converters:ChooseConverter x:Key="IconConverter"
+										ValueWhenFalse="{DynamicResource EmulatorIcon}"
+										ValueWhenTrue="{DynamicResource SwitchIcon}" />
+		</ResourceDictionary>
+	</UserControl.Resources>
+
+	<UserControl.Styles>
+		<Style Selector="Border.OuterFrame">
+			<Setter Property="Padding" Value="8" />
+			<Setter Property="BorderBrush" Value="{DynamicResource TextControlBorderBrush}" />
+			<Setter Property="BorderThickness" Value="2" />
+			<Setter Property="CornerRadius" Value="6" />
+			<Setter Property="HorizontalAlignment" Value="Stretch" />
+		</Style>
+	</UserControl.Styles>
+
+	<Border Classes="OuterFrame">
+		<Grid Name="OuterGrid"
+			  RowDefinitions="*,*"
+			  RowSpacing="8"
+			  ColumnSpacing="8">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="{Binding #OuterGrid.Bounds.Height, Converter={StaticResource DimensionToGridLengthConverter}}" />
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
+
+			<Canvas Name="IconCanvas"
+					Grid.Row="0"
+					Grid.RowSpan="2"
+					Grid.Column="0">
+				<Image Canvas.Left="0" Canvas.Top="0"
+					   Width="{Binding #IconCanvas.Bounds.Width}"
+					   Stretch="Uniform">
+					<Image.Source>
+						<SvgImage Source="{Binding IsRemoteTarget, Converter={StaticResource IconConverter}}" />
+					</Image.Source>
+				</Image>
+			</Canvas>
+
+			<TextBlock Grid.Row="0"
+					   Grid.Column="1"
+					   Text="{Binding Name}"
+					   FontWeight="Bold"
+					   FontSize="18"
+					   VerticalAlignment="Center" />
+
+			<TextBlock Grid.Row="1"
+					   Grid.Column="1"
+					   Text="{Binding Description}"
+					   VerticalAlignment="Center" />
+		</Grid>
+	</Border>
+</UserControl>

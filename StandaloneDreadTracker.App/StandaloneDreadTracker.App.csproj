@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="StandaloneDreadTracker.UI.Avalonia" />
+		<InternalsVisibleTo Include="StandaloneDreadTracker.UI.Avalonia.Android" />
+		<InternalsVisibleTo Include="StandaloneDreadTracker.UI.Avalonia.Desktop" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="ReactiveUI" Version="23.1.8" />
+		<PackageReference Include="ReactiveUI.SourceGenerators" Version="2.6.1">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\DreadRemoteConnector\DreadRemoteConnector.csproj" />
+	</ItemGroup>
+
+</Project>
