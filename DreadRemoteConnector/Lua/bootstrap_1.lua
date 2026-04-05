@@ -1,5 +1,17 @@
-RT = RT or {}
-RT.InterestedItems = RT.InterestedItems or {}
+function RT.SendCurrentGameState()
+	local mode = Game.GetCurrentGameModeID()
+	local scenario
+
+	if mode == "INGAME" then
+		scenario = Game.GetScenarioID()
+	else
+		scenario = "none"
+	end
+
+	local json = string.format('{"mode":%q,"scenario":%q}', mode, scenario)
+
+	RL.SendNewGameState(json)
+end
 
 function RT.SendCurrentInventory()
 	local player = Game.GetPlayerName()

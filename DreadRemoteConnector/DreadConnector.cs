@@ -2,6 +2,7 @@
 using DreadRemoteConnector.Events;
 using DreadRemoteConnector.Inventory;
 using DreadRemoteConnector.Lua;
+using DreadRemoteConnector.Observability;
 using DreadRemoteConnector.Packets.Receiving;
 using DreadRemoteConnector.Packets.Sending;
 using JetBrains.Annotations;
@@ -11,7 +12,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace DreadRemoteConnector;
 
 [PublicAPI]
-public sealed partial class DreadConnector : IDisposable, IAsyncDisposable
+public sealed partial class DreadConnector : NotifyPropertyChangedObject, IDisposable, IAsyncDisposable
 {
 	private LoopContext? currentLoop;
 	private bool         updateInterestedItems;
@@ -25,7 +26,6 @@ public sealed partial class DreadConnector : IDisposable, IAsyncDisposable
 	public DreadConnector(string ipAddress, int port = DreadSocket.DefaultPort)
 		: this(IPAddress.Parse(ipAddress), port) { }
 
-	public event EventHandler?                            ConnectionStateChanged;
 	public event EventHandler<InventoryUpdatedEventArgs>? InventoryUpdated;
 
 	public DreadSocket Socket { get; }
@@ -49,6 +49,18 @@ public sealed partial class DreadConnector : IDisposable, IAsyncDisposable
 	} = DreadInventory.DefaultItemsOfInterest.ToArray();
 
 	public DreadInventory CurrentInventory { get; } = new();
+
+	public GameState CurrentGameState
+	{
+		get;
+		set => SetField(ref field, value);
+	}
+
+	public string CurrentScenarioName
+	{
+		get;
+		set => SetField(ref field, value);
+	} = "Unknown";
 
 	public TimeSpan KeepAliveInterval
 	{
@@ -74,14 +86,7 @@ public sealed partial class DreadConnector : IDisposable, IAsyncDisposable
 	public bool IsConnected
 	{
 		get;
-		private set
-		{
-			if (value == field)
-				return;
-
-			field = value;
-			ConnectionStateChanged?.Invoke(this, EventArgs.Empty);
-		}
+		private set => SetField(ref field, value);
 	}
 
 	public ILogger? Logger
@@ -124,8 +129,8 @@ public sealed partial class DreadConnector : IDisposable, IAsyncDisposable
 		this.updateInterestedItems = true;
 
 		// Start the loops
-		var keepAliveTask = RunKeepAliveLoopAsync(newLoop.MainCancellationToken);
-		var receiveTask = RunReceiveLoopAsync(newLoop.MainCancellationToken);
+		var keepAliveTask = RunKeepAliveLoopAsync(newLoop);
+		var receiveTask = RunReceiveLoopAsync(newLoop);
 
 		newLoop.LoopTask = Task.WhenAll(keepAliveTask, receiveTask);
 	}
@@ -150,23 +155,21 @@ public sealed partial class DreadConnector : IDisposable, IAsyncDisposable
 
 	#region Keep-Alive Loop
 
-	private async Task RunKeepAliveLoopAsync(CancellationToken cancellationToken)
+	private async Task RunKeepAliveLoopAsync(LoopContext loop)
 	{
-		var thisLoop = this.currentLoop!;
-
-		while (!cancellationToken.IsCancellationRequested)
+		while (!loop.MainCancellationToken.IsCancellationRequested)
 		{
 			// We use a special token for the Task.Delay that will be canceled when the "aux token" is canceled.
 			// This allows us to, for example, signal that the "interested items" list should be immediately updated
 			// without having to wait for the Task.Delay to expire.
-			using var combinedCancelSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, thisLoop.AuxCancellationToken);
+			using var combinedCancelSource = CancellationTokenSource.CreateLinkedTokenSource(loop.MainCancellationToken, loop.AuxCancellationToken);
 			var combinedToken = combinedCancelSource.Token;
 
 			try
 			{
-				await TryUpdateInterestedItemsAsync(cancellationToken).ConfigureAwait(false); // No-op if the update flag is not set
+				await TryUpdateInterestedItemsAsync(loop.MainCancellationToken).ConfigureAwait(false); // No-op if the update flag is not set
 				await Task.Delay(KeepAliveInterval, combinedToken).ConfigureAwait(false);
-				await TrySendKeepAliveAsync(cancellationToken).ConfigureAwait(false);
+				await TrySendKeepAliveAsync(loop.MainCancellationToken).ConfigureAwait(false);
 			}
 			catch (OperationCanceledException ex) when (ex.CancellationToken == combinedToken)
 			{
@@ -233,21 +236,21 @@ public sealed partial class DreadConnector : IDisposable, IAsyncDisposable
 
 	#region Receive Loop
 
-	private async Task RunReceiveLoopAsync(CancellationToken cancellationToken)
+	private async Task RunReceiveLoopAsync(LoopContext loop)
 	{
-		while (!cancellationToken.IsCancellationRequested)
+		while (!loop.MainCancellationToken.IsCancellationRequested)
 		{
 			if (!IsConnected)
 			{
-				await Task.Delay(SleepTimeBeforeReconnect, cancellationToken).ConfigureAwait(false);
+				await Task.Delay(SleepTimeBeforeReconnect, loop.MainCancellationToken).ConfigureAwait(false);
 
-				var reconnected = await AttemptReconnectAsync(cancellationToken).ConfigureAwait(false);
+				var reconnected = await AttemptReconnectAsync(loop.MainCancellationToken).ConfigureAwait(false);
 
 				if (!reconnected)
 					continue;
 			}
 
-			await TryWaitForPacketAsync(cancellationToken).ConfigureAwait(false);
+			await TryWaitForPacketAsync(loop.MainCancellationToken).ConfigureAwait(false);
 		}
 	}
 
@@ -286,6 +289,9 @@ public sealed partial class DreadConnector : IDisposable, IAsyncDisposable
 			case NewInventoryReceivePacket newInventoryPacket:
 				HandleNewInventoryPacket(newInventoryPacket);
 				break;
+			case GameStateReceivePacket gameStatePacket:
+				HandleGameStatePacket(gameStatePacket);
+				break;
 		}
 	}
 
@@ -308,6 +314,12 @@ public sealed partial class DreadConnector : IDisposable, IAsyncDisposable
 		}
 
 		InventoryUpdated?.Invoke(this, new InventoryUpdatedEventArgs(CurrentInventory));
+	}
+
+	private void HandleGameStatePacket(GameStateReceivePacket packet)
+	{
+		CurrentGameState = packet.GameState;
+		CurrentScenarioName = packet.ScenarioName;
 	}
 
 	private async Task<bool> AttemptReconnectAsync(CancellationToken cancellationToken)

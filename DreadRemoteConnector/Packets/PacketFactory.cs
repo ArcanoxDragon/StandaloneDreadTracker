@@ -13,6 +13,7 @@ internal static class PacketFactory
 			PacketType.ExecuteRemoteLua   => new ExecuteLuaReceivePacket(),
 			PacketType.NewInventory       => new NewInventoryReceivePacket(),
 			PacketType.CollectedLocations => new CollectedLocationsReceivePacket(),
+			PacketType.GameState          => new GameStateReceivePacket(),
 			PacketType.MalformedPacket    => new MalformedPacketReceivePacket(),
 
 			_ => null,
