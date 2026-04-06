@@ -9,12 +9,12 @@ namespace DreadRemoteConnector.Packets.Receiving;
 [PublicAPI]
 public sealed class GameStateReceivePacket : LengthPrefixedReceivePacket, IPublicReceivePacket
 {
-	private const string GameStateMenu    = "MENU";
+	private const string GameStateMenu    = "MAINMENU";
 	private const string GameStateLoading = "LOADING";
 	private const string GameStateInGame  = "INGAME";
 
 	public GameState GameState    { get; private set; }
-	public string    ScenarioName { get; private set; } = "Unknown";
+	public string    ScenarioName { get; private set; } = "Not Connected";
 
 	protected override void ReadData(BinaryReader reader, int dataLength, Encoding encoding)
 	{
