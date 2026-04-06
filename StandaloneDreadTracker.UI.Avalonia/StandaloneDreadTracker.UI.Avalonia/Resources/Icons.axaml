@@ -1,0 +1,60 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<Design.PreviewWith>
+		<Grid Margin="4"
+			  RowDefinitions="*,*,*,*"
+			  ColumnDefinitions="40,Auto"
+			  RowSpacing="4"
+			  ColumnSpacing="4">
+			<Grid.Styles>
+				<Style Selector=":is(Control)">
+					<Setter Property="VerticalAlignment" Value="Center" />
+				</Style>
+			</Grid.Styles>
+
+			<PathIcon Grid.Row="0" Grid.Column="0"
+					  Data="{DynamicResource FolderOpenIcon}" />
+
+			<TextBlock Grid.Row="0" Grid.Column="1"
+					   Text="folder-open" />
+
+			<PathIcon Grid.Row="1" Grid.Column="0"
+					  Data="{DynamicResource EllipsisIcon}" />
+
+			<TextBlock Grid.Row="1" Grid.Column="1"
+					   Text="ellipsis" />
+
+			<PathIcon Grid.Row="2" Grid.Column="0"
+					  Data="{DynamicResource PenIcon}" />
+
+			<TextBlock Grid.Row="2" Grid.Column="1"
+					   Text="pen" />
+
+			<PathIcon Grid.Row="3" Grid.Column="0"
+					  Data="{DynamicResource TrashIcon}" />
+
+			<TextBlock Grid.Row="3" Grid.Column="1"
+					   Text="trash" />
+		</Grid>
+	</Design.PreviewWith>
+
+	<!-- FontAwesome "folder-open" -->
+	<StreamGeometry x:Key="FolderOpenIcon">
+		M88 289.6L64.4 360.2L64.4 160C64.4 124.7 93.1 96 128.4 96L267.1 96C280.9 96 294.4 100.5 305.5 108.8L343.9 137.6C349.4 141.8 356.2 144 363.1 144L480.4 144C515.7 144 544.4 172.7 544.4 208L544.4 224L179 224C137.7 224 101 250.4 87.9 289.6zM509.8 512L131 512C98.2 512 75.1 479.9 85.5 448.8L133.5 304.8C140 285.2 158.4 272 179 272L557.8 272C590.6 272 613.7 304.1 603.3 335.2L555.3 479.2C548.8 498.8 530.4 512 509.8 512z
+	</StreamGeometry>
+
+	<!-- FontAwesome "ellipsis" -->
+	<StreamGeometry x:Key="EllipsisIcon">
+		M96 320C96 289.1 121.1 264 152 264C182.9 264 208 289.1 208 320C208 350.9 182.9 376 152 376C121.1 376 96 350.9 96 320zM264 320C264 289.1 289.1 264 320 264C350.9 264 376 289.1 376 320C376 350.9 350.9 376 320 376C289.1 376 264 350.9 264 320zM488 264C518.9 264 544 289.1 544 320C544 350.9 518.9 376 488 376C457.1 376 432 350.9 432 320C432 289.1 457.1 264 488 264z
+	</StreamGeometry>
+
+	<!-- FontAwesome "pen" -->
+	<StreamGeometry x:Key="PenIcon">
+		M416.9 85.2L372 130.1L509.9 268L554.8 223.1C568.4 209.6 576 191.2 576 172C576 152.8 568.4 134.4 554.8 120.9L519.1 85.2C505.6 71.6 487.2 64 468 64C448.8 64 430.4 71.6 416.9 85.2zM338.1 164L122.9 379.1C112.2 389.8 104.4 403.2 100.3 417.8L64.9 545.6C62.6 553.9 64.9 562.9 71.1 569C77.3 575.1 86.2 577.5 94.5 575.2L222.3 539.7C236.9 535.6 250.2 527.9 261 517.1L476 301.9L338.1 164z
+	</StreamGeometry>
+
+	<!-- FontAwesome "trash" -->
+	<StreamGeometry x:Key="TrashIcon">
+		M232.7 69.9L224 96L128 96C110.3 96 96 110.3 96 128C96 145.7 110.3 160 128 160L512 160C529.7 160 544 145.7 544 128C544 110.3 529.7 96 512 96L416 96L407.3 69.9C402.9 56.8 390.7 48 376.9 48L263.1 48C249.3 48 237.1 56.8 232.7 69.9zM512 208L128 208L149.1 531.1C150.7 556.4 171.7 576 197 576L443 576C468.3 576 489.3 556.4 490.9 531.1L512 208z
+	</StreamGeometry>
+</ResourceDictionary>

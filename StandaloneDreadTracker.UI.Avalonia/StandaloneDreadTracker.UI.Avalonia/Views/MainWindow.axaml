@@ -5,7 +5,21 @@
 		xmlns:views="using:StandaloneDreadTracker.UI.Avalonia.Views"
 		mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 		x:Class="StandaloneDreadTracker.UI.Avalonia.Views.MainWindow"
+		Name="Self"
 		Icon="/Assets/avalonia-logo.ico"
-		Title="Dread Randomizer Tracker">
-	<views:MainView />
+		Title="Dread Randomizer Tracker"
+		TransparencyLevelHint="Mica"
+		Background="Transparent"
+		ExtendClientAreaToDecorationsHint="True">
+	<Grid RowDefinitions="40,*">
+		<Border Padding="4"
+				IsVisible="{Binding #Self.IsExtendedIntoWindowDecorations}"
+				IsHitTestVisible="False">
+			<TextBlock Text="{Binding #Self.Title}"
+					   TextAlignment="Center"
+					   VerticalAlignment="Center" />
+		</Border>
+
+		<views:MainView Grid.Row="1" />
+	</Grid>
 </Window>

@@ -7,7 +7,7 @@
 							  xmlns:converters="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Converters"
 							  xmlns:system="clr-namespace:System;assembly=System.Runtime"
 							  xmlns:avalonia="http://reactiveui.net"
-							  mc:Ignorable="d" d:DesignWidth="400"
+							  mc:Ignorable="d" d:DesignWidth="600"
 							  x:Class="StandaloneDreadTracker.UI.Avalonia.Views.TrackerTargetView"
 							  x:DataType="viewModels:TrackerTargetViewModel">
 	<Design.DataContext>
@@ -23,11 +23,21 @@
 					<system:String x:Key="IconCss">
 						.theme-aware-fill { fill: #181818; }
 					</system:String>
+					<SolidColorBrush x:Key="PanelBackground"
+									 Color="#18000000" />
+					<SolidColorBrush x:Key="PanelBackgroundHover"
+									 Color="#20000000" />
 				</ResourceDictionary>
 				<ResourceDictionary x:Key="Dark">
+					<!-- ReSharper disable Xaml.RedundantResource -->
 					<system:String x:Key="IconCss">
 						.theme-aware-fill { fill: #ffffff; }
 					</system:String>
+					<SolidColorBrush x:Key="PanelBackground"
+									 Color="#18ffffff" />
+					<SolidColorBrush x:Key="PanelBackgroundHover"
+									 Color="#20ffffff" />
+					<!-- ReSharper disable Xaml.RedundantResource -->
 				</ResourceDictionary>
 			</ResourceDictionary.ThemeDictionaries>
 
@@ -39,22 +49,36 @@
 
 	<UserControl.Styles>
 		<Style Selector="Border.OuterFrame">
-			<Setter Property="Padding" Value="8" />
+			<Setter Property="Padding" Value="16" />
+			<Setter Property="Background" Value="{DynamicResource PanelBackground}" />
 			<Setter Property="BorderBrush" Value="{DynamicResource TextControlBorderBrush}" />
-			<Setter Property="BorderThickness" Value="2" />
+			<Setter Property="BorderThickness" Value="1" />
 			<Setter Property="CornerRadius" Value="6" />
 			<Setter Property="HorizontalAlignment" Value="Stretch" />
+			<Setter Property="Transitions">
+				<Transitions>
+					<BrushTransition Property="Background"
+									 Duration="0:0:0.25"
+									 Easing="CubicEaseOut" />
+				</Transitions>
+			</Setter>
+
+			<Style Selector="^:pointerover">
+				<Setter Property="Background" Value="{DynamicResource PanelBackgroundHover}" />
+			</Style>
 		</Style>
 	</UserControl.Styles>
 
 	<Border Classes="OuterFrame">
 		<Grid Name="OuterGrid"
-			  RowDefinitions="*,*,*"
-			  RowSpacing="8"
-			  ColumnSpacing="8">
+			  RowDefinitions="Auto,*,*"
+			  RowSpacing="4"
+			  ColumnSpacing="16">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="{Binding #OuterGrid.Bounds.Height, Converter={StaticResource DimensionToGridLengthConverter}}" />
 				<ColumnDefinition />
+				<ColumnDefinition Width="{Binding #OuterGrid.Bounds.Height, Converter={StaticResource DimensionToGridLengthConverter}}" />
+				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 
 			<Canvas Name="IconCanvas"
@@ -65,7 +89,7 @@
 					 Width="{Binding #IconCanvas.Bounds.Width}"
 					 Stretch="Uniform"
 					 Path="{Binding IsRemoteTarget, Converter={StaticResource IconPathConverter}}"
-					 Css="{DynamicResource IconCss}" />
+					 Svg.Css="{DynamicResource IconCss}" />
 			</Canvas>
 
 			<TextBlock Grid.Row="0"
@@ -84,6 +108,44 @@
 					   Grid.Column="1"
 					   Text="{Binding State}"
 					   VerticalAlignment="Center" />
+
+			<Button Grid.Row="0"
+					Grid.RowSpan="3"
+					Grid.Column="2"
+					Classes="FlatButton"
+					ToolTip.Tip="Open tracker window"
+					HorizontalAlignment="Stretch"
+					HorizontalContentAlignment="Center"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Center">
+				<PathIcon Width="32" Height="32" Data="{StaticResource FolderOpenIcon}" />
+			</Button>
+
+			<Button Grid.Row="0"
+					Grid.RowSpan="3"
+					Grid.Column="3"
+					Classes="FlatButton"
+					Width="40"
+					Height="40">
+				<Button.Flyout>
+					<MenuFlyout>
+						<MenuItem Header="Edit">
+							<MenuItem.Icon>
+								<PathIcon Data="{StaticResource PenIcon}" />
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem Header="Delete"
+								  Foreground="{StaticResource ErrorBrush}">
+							<MenuItem.Icon>
+								<PathIcon Data="{StaticResource TrashIcon}"
+										  Foreground="{StaticResource ErrorBrush}" />
+							</MenuItem.Icon>
+						</MenuItem>
+					</MenuFlyout>
+				</Button.Flyout>
+
+				<PathIcon Data="{StaticResource EllipsisIcon}" />
+			</Button>
 		</Grid>
 	</Border>
 </avalonia:ReactiveUserControl>

@@ -39,14 +39,17 @@ public partial class MainViewModel : ViewModelBase
 		connector.ConnectionInterests = ConnectionInterests.Logging | ConnectionInterests.Multiworld;
 		connector.SleepTimeBeforeReconnect = TimeSpan.FromSeconds(5);
 
-		var target = new TrackerTargetViewModel {
+		targets.Add(new TrackerTargetViewModel {
 			Connector = connector,
 			Name = "My Switch",
 			TargetType = TrackerTargetType.Remote,
 			TargetAddress = "192.168.86.230",
-		};
+		});
+		targets.Add(new TrackerTargetViewModel {
+			Name = "Ryujinx",
+			TargetType = TrackerTargetType.LocalEmulator,
+		});
 
-		targets.Add(target);
 		TrackerTargets = targets;
 
 		await connector.StartAsync();

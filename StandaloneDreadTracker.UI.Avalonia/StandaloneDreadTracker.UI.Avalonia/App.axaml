@@ -4,17 +4,25 @@
 			 xmlns:converters="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Converters"
 			 x:Class="StandaloneDreadTracker.UI.Avalonia.App"
 			 RequestedThemeVariant="Default">
-	<!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
-
 	<Application.DataTemplates>
 		<dataTemplates:ViewLocator />
 	</Application.DataTemplates>
 
 	<Application.Resources>
-		<converters:DimensionToGridLengthConverter x:Key="DimensionToGridLengthConverter" />
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<MergeResourceInclude Source="/Resources/Icons.axaml" />
+			</ResourceDictionary.MergedDictionaries>
+
+			<SolidColorBrush x:Key="ErrorBrush"
+							 Color="#dd4422" />
+
+			<converters:DimensionToGridLengthConverter x:Key="DimensionToGridLengthConverter" />
+		</ResourceDictionary>
 	</Application.Resources>
 
 	<Application.Styles>
 		<FluentTheme />
+		<StyleInclude Source="/Resources/Styles.axaml" />
 	</Application.Styles>
 </Application>
