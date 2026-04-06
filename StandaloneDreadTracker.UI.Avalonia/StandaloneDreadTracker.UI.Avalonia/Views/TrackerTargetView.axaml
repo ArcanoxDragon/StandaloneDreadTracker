@@ -1,42 +1,39 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:viewModels="clr-namespace:StandaloneDreadTracker.App.ViewModels;assembly=StandaloneDreadTracker.App"
-			 xmlns:converters="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Converters"
-			 mc:Ignorable="d" d:DesignWidth="400"
-			 x:Class="StandaloneDreadTracker.UI.Avalonia.Views.TrackerTargetView"
-			 x:DataType="viewModels:TrackerTargetViewModel">
+<avalonia:ReactiveUserControl x:TypeArguments="viewModels:TrackerTargetViewModel"
+							  xmlns="https://github.com/avaloniaui"
+							  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+							  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+							  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+							  xmlns:viewModels="clr-namespace:StandaloneDreadTracker.App.ViewModels;assembly=StandaloneDreadTracker.App"
+							  xmlns:converters="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Converters"
+							  xmlns:system="clr-namespace:System;assembly=System.Runtime"
+							  xmlns:avalonia="http://reactiveui.net"
+							  mc:Ignorable="d" d:DesignWidth="400"
+							  x:Class="StandaloneDreadTracker.UI.Avalonia.Views.TrackerTargetView"
+							  x:DataType="viewModels:TrackerTargetViewModel">
 	<Design.DataContext>
 		<viewModels:TrackerTargetViewModel Name="My Switch"
 										   TargetType="Remote"
-										   TargetAddress="192.168.0.42"/>
+										   TargetAddress="192.168.0.42" />
 	</Design.DataContext>
 
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.ThemeDictionaries>
 				<ResourceDictionary x:Key="Light">
-					<SvgSource x:Key="SwitchIcon"
-							   Path="/Assets/SwitchConsole.svg"
-							   Css="path { fill: #000000; }" />
-					<SvgSource x:Key="EmulatorIcon"
-							   Path="/Assets/Emulator.svg"
-							   Css=".text { fill: #181818; }" />
+					<system:String x:Key="IconCss">
+						.theme-aware-fill { fill: #181818; }
+					</system:String>
 				</ResourceDictionary>
 				<ResourceDictionary x:Key="Dark">
-					<SvgSource x:Key="SwitchIcon"
-							   Path="/Assets/SwitchConsole.svg"
-							   Css="path { fill: #ffffff; }" />
-					<SvgSource x:Key="EmulatorIcon"
-							   Path="/Assets/Emulator.svg"
-							   Css=".text { fill: #ffffff; }" />
+					<system:String x:Key="IconCss">
+						.theme-aware-fill { fill: #ffffff; }
+					</system:String>
 				</ResourceDictionary>
 			</ResourceDictionary.ThemeDictionaries>
 
-			<converters:ChooseConverter x:Key="IconConverter"
-										ValueWhenFalse="{DynamicResource EmulatorIcon}"
-										ValueWhenTrue="{DynamicResource SwitchIcon}" />
+			<converters:ChooseConverter x:Key="IconPathConverter"
+										ValueWhenFalse="/Assets/Emulator.svg"
+										ValueWhenTrue="/Assets/SwitchConsole.svg" />
 		</ResourceDictionary>
 	</UserControl.Resources>
 
@@ -52,7 +49,7 @@
 
 	<Border Classes="OuterFrame">
 		<Grid Name="OuterGrid"
-			  RowDefinitions="*,*"
+			  RowDefinitions="*,*,*"
 			  RowSpacing="8"
 			  ColumnSpacing="8">
 			<Grid.ColumnDefinitions>
@@ -64,13 +61,11 @@
 					Grid.Row="0"
 					Grid.RowSpan="2"
 					Grid.Column="0">
-				<Image Canvas.Left="0" Canvas.Top="0"
-					   Width="{Binding #IconCanvas.Bounds.Width}"
-					   Stretch="Uniform">
-					<Image.Source>
-						<SvgImage Source="{Binding IsRemoteTarget, Converter={StaticResource IconConverter}}" />
-					</Image.Source>
-				</Image>
+				<Svg Canvas.Left="0" Canvas.Top="0"
+					 Width="{Binding #IconCanvas.Bounds.Width}"
+					 Stretch="Uniform"
+					 Path="{Binding IsRemoteTarget, Converter={StaticResource IconPathConverter}}"
+					 Css="{DynamicResource IconCss}" />
 			</Canvas>
 
 			<TextBlock Grid.Row="0"
@@ -84,6 +79,11 @@
 					   Grid.Column="1"
 					   Text="{Binding Description}"
 					   VerticalAlignment="Center" />
+
+			<TextBlock Grid.Row="2"
+					   Grid.Column="1"
+					   Text="{Binding State}"
+					   VerticalAlignment="Center" />
 		</Grid>
 	</Border>
-</UserControl>
+</avalonia:ReactiveUserControl>
