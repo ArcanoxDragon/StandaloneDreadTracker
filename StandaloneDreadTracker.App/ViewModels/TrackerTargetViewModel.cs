@@ -15,7 +15,7 @@ public partial class TrackerTargetViewModel : ViewModelBase
 	{
 		this.WhenActivated(disposables => {
 			this.WhenAnyValue(m => m.Connector)
-				.Subscribe()
+				.Subscribe(SubscribeConnector)
 				.DisposeWith(disposables);
 
 			// Clean up current subscription when de-activating
@@ -45,7 +45,7 @@ public partial class TrackerTargetViewModel : ViewModelBase
 			? "Local Emulator"
 			: $"Console: {TargetAddress}";
 
-	[ObservableAsProperty(ReadOnly = false)]
+	[ObservableAsProperty(ReadOnly = false, InitialValue = "\"Not Connected\"")]
 	public partial string? State { get; }
 
 	private void SubscribeConnector(DreadConnector? connector)
@@ -84,7 +84,7 @@ public partial class TrackerTargetViewModel : ViewModelBase
 			GameState.InGame      => $"In Game: {scenarioName}",
 			GameState.Loading     => "Loading...",
 			GameState.TitleScreen => "Title Screen",
-			_                     => "Unknown",
+			_                     => "Not Connected",
 		};
 	}
 }
