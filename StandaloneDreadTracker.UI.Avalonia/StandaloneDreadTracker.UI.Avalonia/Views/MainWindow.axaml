@@ -8,16 +8,10 @@
 		Name="Self"
 		Icon="/Assets/avalonia-logo.ico"
 		Title="Dread Randomizer Tracker"
-		TransparencyLevelHint="Mica"
-		Background="Transparent"
-		ExtendClientAreaToDecorationsHint="True">
-	<Grid RowDefinitions="40,*">
-		<Border Padding="4"
-				IsVisible="{Binding #Self.IsExtendedIntoWindowDecorations}"
-				IsHitTestVisible="False">
-			<TextBlock Text="{Binding #Self.Title}"
-					   TextAlignment="Center"
-					   VerticalAlignment="Center" />
+		Classes="MicaWindow">
+	<Grid RowDefinitions="Auto,*">
+		<Border Classes="TitleBar">
+			<TextBlock />
 		</Border>
 
 		<views:MainView Grid.Row="1" />
