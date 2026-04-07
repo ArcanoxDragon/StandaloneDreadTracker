@@ -1,0 +1,24 @@
+<avalonia:ReactiveWindow x:TypeArguments="viewModels:TrackerViewModel"
+						 xmlns="https://github.com/avaloniaui"
+						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+						 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+						 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+						 xmlns:avalonia="http://reactiveui.net"
+						 xmlns:viewModels="clr-namespace:StandaloneDreadTracker.App.ViewModels;assembly=StandaloneDreadTracker.App"
+						 xmlns:converters="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Converters"
+						 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+						 x:Class="StandaloneDreadTracker.UI.Avalonia.Views.TrackerWindow"
+						 x:DataType="viewModels:TrackerViewModel"
+						 Title="{Binding Name, StringFormat='{}{0} - Randomizer Tracker'}">
+	<Window.Resources>
+		<converters:ChooseConverter x:Key="HasItemConverter"
+									ValueWhenFalse="No"
+									ValueWhenTrue="Yes" />
+	</Window.Resources>
+
+	<Panel DataContext="{Binding Connector.CurrentInventory}">
+		<WrapPanel>
+
+		</WrapPanel>
+	</Panel>
+</avalonia:ReactiveWindow>

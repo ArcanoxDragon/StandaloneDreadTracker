@@ -116,6 +116,8 @@
 					Grid.Column="2"
 					Classes="FlatButton"
 					ToolTip.Tip="Open tracker window"
+					Command="{Binding #Self.OpenCommand}"
+					CommandParameter="{Binding #Self.ViewModel}"
 					HorizontalAlignment="Stretch"
 					HorizontalContentAlignment="Center"
 					VerticalAlignment="Stretch"
