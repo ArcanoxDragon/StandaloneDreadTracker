@@ -7,18 +7,30 @@
 		<Style Selector="^[(utilities|WindowHelpers.IsUsingMica)=True]">
 			<Setter Property="Background" Value="Transparent" />
 			<Setter Property="ExtendClientAreaToDecorationsHint" Value="True" />
-		</Style>
 
-		<Style Selector="^ Border.TitleBar">
-			<Setter Property="MinHeight" Value="40" />
-			<Setter Property="Padding" Value="4" />
-			<Setter Property="IsVisible" Value="{Binding $parent[Window].IsExtendedIntoWindowDecorations}" />
-			<Setter Property="IsHitTestVisible" Value="False" />
+			<Style Selector="^ Border.TitleBar">
+				<Setter Property="MinHeight" Value="40" />
+				<Setter Property="Padding" Value="8" />
+				<Setter Property="IsVisible" Value="{Binding $parent[Window].IsExtendedIntoWindowDecorations}" />
+				<Setter Property="IsHitTestVisible" Value="False" />
 
-			<Style Selector="^ TextBlock">
-				<Setter Property="Text" Value="{Binding $parent[Window].Title}" />
-				<Setter Property="TextAlignment" Value="Center" />
-				<Setter Property="VerticalAlignment" Value="Center" />
+				<Style Selector="^ TextBlock">
+					<Setter Property="Text" Value="{Binding $parent[Window].Title}" />
+					<Setter Property="TextAlignment" Value="Center" />
+					<Setter Property="VerticalAlignment" Value="Center" />
+				</Style>
+			</Style>
+
+			<Style Selector="^[WindowState=Maximized]">
+				<Setter Property="Padding" Value="8" />
+
+				<Style Selector="^ Border.TitleBar">
+					<Setter Property="Padding" Value="0" />
+				</Style>
+
+				<Style Selector="^ Menu > MenuItem">
+					<Setter Property="Padding" Value="10,0,10,0" />
+				</Style>
 			</Style>
 		</Style>
 	</Style>

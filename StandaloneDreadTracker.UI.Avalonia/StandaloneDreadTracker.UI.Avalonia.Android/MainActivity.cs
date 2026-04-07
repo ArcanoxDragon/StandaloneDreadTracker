@@ -5,7 +5,9 @@ using Avalonia;
 using Avalonia.Android;
 using Avalonia.Controls;
 using Avalonia.Svg.Skia;
+using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI.Avalonia;
+using StandaloneDreadTracker.UI.Avalonia.Extensions;
 
 namespace StandaloneDreadTracker.UI.Avalonia.Android;
 
@@ -15,8 +17,25 @@ namespace StandaloneDreadTracker.UI.Avalonia.Android;
 	Icon = "@drawable/icon",
 	MainLauncher = true,
 	ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize | ConfigChanges.UiMode)]
-public class MainActivity : AvaloniaMainActivity<App>
+public class MainActivity : AvaloniaMainActivity
 {
+	private readonly IServiceProvider serviceProvider;
+
+	public MainActivity()
+	{
+		var services = new ServiceCollection();
+
+		ConfigureServices(services);
+
+		this.serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions {
+			ValidateOnBuild = true,
+			ValidateScopes = true,
+		});
+	}
+
+	protected override AppBuilder CreateAppBuilder()
+		=> AppBuilder.Configure(() => this.serviceProvider.GetRequiredService<App>()).UseAndroid();
+
 	protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
 	{
 		if (Design.IsDesignMode)
@@ -28,5 +47,10 @@ public class MainActivity : AvaloniaMainActivity<App>
 		return base.CustomizeAppBuilder(builder)
 			.WithInterFont()
 			.UseReactiveUI(_ => { });
+	}
+
+	private static void ConfigureServices(IServiceCollection services)
+	{
+		services.AddAvaloniaServices();
 	}
 }

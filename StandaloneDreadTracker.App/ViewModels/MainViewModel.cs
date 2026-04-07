@@ -1,12 +1,10 @@
-﻿using System.Reactive;
+﻿using System.Collections.ObjectModel;
+using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
-using System.Reactive.Linq;
-using DreadRemoteConnector;
-using Microsoft.Extensions.Logging;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
-using StandaloneDreadTracker.App.Extensions;
+using StandaloneDreadTracker.App.Services;
 using StandaloneDreadTracker.App.Utility;
 
 namespace StandaloneDreadTracker.App.ViewModels;
@@ -15,43 +13,51 @@ public partial class MainViewModel : ViewModelBase
 {
 	public MainViewModel() : this(null) { }
 
-	public MainViewModel(ILogger<MainViewModel>? logger)
+	public MainViewModel(TrackerManager? trackerManager, IDialogs? dialogs = null)
 	{
-		CreateTrackersCommand.HandleExceptionsWith(ex => {
-			logger?.LogError(ex, "Could not create trackers!");
-			return Observable.Empty<Unit>();
-		});
+		TrackerManager = trackerManager;
+		Dialogs = dialogs;
 
 		this.WhenActivated(disposables => {
-			CreateTrackersCommand.Execute(disposables);
+			if (trackerManager != null)
+			{
+				TaskPoolScheduler.ScheduleAsync(async (_, cancellationToken) => {
+					await trackerManager.InitializeAsync(cancellationToken);
+
+					TrackerTargets = trackerManager.AllTrackers;
+				}).DisposeWith(disposables);
+			}
+
+			Disposable.Create(() => {
+				TrackerTargets = [];
+			}).DisposeWith(disposables);
 		});
 	}
 
+	private TrackerManager? TrackerManager { get; }
+	private IDialogs?       Dialogs        { get; }
+
 	[Reactive]
-	public partial List<TrackerTargetViewModel> TrackerTargets { get; set; } = [];
+	public partial ObservableCollection<TrackerViewModel> TrackerTargets { get; set; } = [];
 
 	[ReactiveCommand]
-	private async Task CreateTrackersAsync(CompositeDisposable disposables)
+	private async Task DeleteTrackerAsync(TrackerViewModel tracker)
 	{
-		var targets = new List<TrackerTargetViewModel>();
-		var connector = new DreadConnector("192.168.86.230").DisposeWith(disposables);
+		if (TrackerManager is null)
+			return;
 
-		connector.ConnectionInterests = ConnectionInterests.Logging | ConnectionInterests.Multiworld;
-		connector.SleepTimeBeforeReconnect = TimeSpan.FromSeconds(5);
+		if (Dialogs != null)
+		{
+			var confirmed = await Dialogs.ConfirmAsync(
+				"Delete Tracker",
+				$"Are you sure you want to delete the tracker named \"{tracker.Name}\"?",
+				"Yes",
+				"No");
 
-		targets.Add(new TrackerTargetViewModel {
-			Connector = connector,
-			Name = "My Switch",
-			TargetType = TrackerTargetType.Remote,
-			TargetAddress = "192.168.86.230",
-		});
-		targets.Add(new TrackerTargetViewModel {
-			Name = "Ryujinx",
-			TargetType = TrackerTargetType.LocalEmulator,
-		});
+			if (!confirmed)
+				return;
+		}
 
-		TrackerTargets = targets;
-
-		await connector.StartAsync();
+		await TrackerManager.RemoveTrackerAsync(tracker);
 	}
 }

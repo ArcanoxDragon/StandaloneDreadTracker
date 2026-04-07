@@ -1,4 +1,4 @@
-<avalonia:ReactiveUserControl x:TypeArguments="viewModels:TrackerTargetViewModel"
+<avalonia:ReactiveUserControl x:TypeArguments="viewModels:TrackerViewModel"
 							  xmlns="https://github.com/avaloniaui"
 							  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 							  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,13 +7,15 @@
 							  xmlns:converters="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Converters"
 							  xmlns:system="clr-namespace:System;assembly=System.Runtime"
 							  xmlns:avalonia="http://reactiveui.net"
+							  xmlns:views="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views"
 							  mc:Ignorable="d" d:DesignWidth="600"
 							  x:Class="StandaloneDreadTracker.UI.Avalonia.Views.TrackerTargetView"
-							  x:DataType="viewModels:TrackerTargetViewModel">
+							  x:DataType="viewModels:TrackerViewModel"
+							  Name="Self">
 	<Design.DataContext>
-		<viewModels:TrackerTargetViewModel Name="My Switch"
-										   TargetType="Remote"
-										   TargetAddress="192.168.0.42" />
+		<viewModels:TrackerViewModel Name="My Switch"
+									 TargetType="Remote"
+									 TargetAddress="192.168.0.42" />
 	</Design.DataContext>
 
 	<UserControl.Resources>
@@ -129,12 +131,17 @@
 					Height="40">
 				<Button.Flyout>
 					<MenuFlyout>
-						<MenuItem Header="Edit">
+						<MenuItem Header="Edit"
+								  Command="{Binding #Self.EditCommand}"
+								  CommandParameter="{Binding #Self.ViewModel}">
 							<MenuItem.Icon>
 								<PathIcon Data="{StaticResource PenIcon}" />
 							</MenuItem.Icon>
 						</MenuItem>
+
 						<MenuItem Header="Delete"
+								  Command="{Binding #Self.DeleteCommand}"
+								  CommandParameter="{Binding #Self.ViewModel}"
 								  Foreground="{StaticResource ErrorBrush}">
 							<MenuItem.Icon>
 								<PathIcon Data="{StaticResource TrashIcon}"

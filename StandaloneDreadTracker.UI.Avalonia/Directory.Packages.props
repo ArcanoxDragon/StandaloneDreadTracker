@@ -14,8 +14,13 @@
 		<PackageVersion Include="Avalonia.iOS" Version="11.3.11" />
 		<PackageVersion Include="Avalonia.Browser" Version="11.3.11" />
 		<PackageVersion Include="Avalonia.Android" Version="11.3.13" />
+		<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
+		<PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.2" />
+		<PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="10.0.2" />
 		<PackageVersion Include="ReactiveUI.Avalonia" Version="11.4.12" />
-		<PackageVersion Include="Xamarin.AndroidX.Core.SplashScreen" Version="1.2.0.2" />
+		<PackageVersion Include="Serilog.Extensions.Logging" Version="10.0.0" />
+		<PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
 		<PackageVersion Include="Svg.Controls.Skia.Avalonia" Version="11.3.9.5" />
+		<PackageVersion Include="Xamarin.AndroidX.Core.SplashScreen" Version="1.2.0.2" />
 	</ItemGroup>
 </Project>

@@ -5,9 +5,11 @@
 					   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 					   xmlns:viewModels="clr-namespace:StandaloneDreadTracker.App.ViewModels;assembly=StandaloneDreadTracker.App"
 					   xmlns:r="http://reactiveui.net"
+					   xmlns:views="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views"
 					   mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="350"
 					   x:Class="StandaloneDreadTracker.UI.Avalonia.Views.MainView"
-					   x:DataType="viewModels:MainViewModel">
+					   x:DataType="viewModels:MainViewModel"
+					   Name="Self">
 	<Design.DataContext>
 		<viewModels:MainViewModel />
 	</Design.DataContext>
@@ -19,5 +21,11 @@
 				<StackPanel Spacing="8" />
 			</ItemsPanelTemplate>
 		</ItemsControl.ItemsPanel>
+
+		<ItemsControl.ItemTemplate>
+			<DataTemplate>
+				<views:TrackerTargetView DeleteCommand="{Binding #Self.ViewModel.DeleteTrackerCommand}" />
+			</DataTemplate>
+		</ItemsControl.ItemTemplate>
 	</ItemsControl>
 </r:ReactiveUserControl>

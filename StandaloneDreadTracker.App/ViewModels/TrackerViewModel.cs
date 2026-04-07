@@ -7,11 +7,11 @@ using StandaloneDreadTracker.App.Utility;
 
 namespace StandaloneDreadTracker.App.ViewModels;
 
-public partial class TrackerTargetViewModel : ViewModelBase
+public partial class TrackerViewModel : ViewModelBase
 {
 	private CompositeDisposable? connectorDisposable;
 
-	public TrackerTargetViewModel()
+	public TrackerViewModel()
 	{
 		this.WhenActivated(disposables => {
 			this.WhenAnyValue(m => m.Connector)

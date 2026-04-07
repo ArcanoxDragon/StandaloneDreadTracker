@@ -1,0 +1,25 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+	<Style Selector="Window.Dialog">
+		<Setter Property="ShowInTaskbar" Value="False" />
+	</Style>
+
+	<Style Selector="Window.Dialog StackPanel.ButtonContainer">
+		<Setter Property="Margin" Value="10,20,10,10" />
+		<Setter Property="Spacing" Value="10" />
+		<Setter Property="HorizontalAlignment" Value="Center" />
+		<Setter Property="Orientation" Value="Horizontal" />
+	</Style>
+
+	<Style Selector="Window.Dialog StackPanel.ButtonContainer Button">
+		<Setter Property="MinWidth" Value="150" />
+		<Setter Property="HorizontalContentAlignment" Value="Center" />
+	</Style>
+
+	<Style
+		Selector="Window.Dialog.NoControlButtons CaptionButtons Button#PART_MinimizeButton, 
+					 Window.Dialog.NoControlButtons CaptionButtons Button#PART_RestoreButton">
+		<Setter Property="IsVisible" Value="False" />
+	</Style>
+</Styles>
