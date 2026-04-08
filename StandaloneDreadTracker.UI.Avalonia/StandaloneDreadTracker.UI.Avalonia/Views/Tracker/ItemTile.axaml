@@ -8,9 +8,12 @@
 			 Name="Self">
 	<Design.DesignStyle>
 		<Style Selector="tracker|ItemTile">
+			<Setter Property="IsCollected" Value="True" />
 			<Setter Property="GroupBackground" Value="Red" />
 			<Setter Property="IsFirstInGroup" Value="True" />
 			<Setter Property="IsLastInGroup" Value="True" />
+			<Setter Property="IconPath" Value="/Assets/Placeholders/item-icons/beam-wide.png" />
+			<Setter Property="AuxText" Value="1.5s" />
 		</Style>
 	</Design.DesignStyle>
 
@@ -20,21 +23,27 @@
 		</Style>
 
 		<Style Selector="Grid.LayoutGrid">
-			<Setter Property="Margin" Value="8,8,12,8" />
+			<Setter Property="Margin" Value="4,4,8,4" />
 		</Style>
 
-		<Style Selector="Border.LocationHintBorder">
+		<Style Selector="Border.BadgeBorder">
 			<Setter Property="BorderBrush" Value="{DynamicResource SystemRegionBrush}" />
 			<Setter Property="BorderThickness" Value="1" />
 			<Setter Property="Background" Value="{DynamicResource TextControlForeground}" />
 			<Setter Property="CornerRadius" Value="20" />
 		</Style>
 
-		<Style Selector="TextBlock.LocationHintText">
+		<Style Selector="TextBlock.BadgeText">
 			<Setter Property="FontSize" Value="16" />
 			<Setter Property="Foreground" Value="{DynamicResource SystemRegionBrush}" />
 			<Setter Property="HorizontalAlignment" Value="Center" />
 			<Setter Property="VerticalAlignment" Value="Center" />
+		</Style>
+
+		<Style Selector="tracker|ItemTile[IsCollected=False]">
+			<Style Selector="^ Image.Icon">
+				<Setter Property="Opacity" Value="0.3" />
+			</Style>
 		</Style>
 
 		<Style Selector="tracker|ItemTile[IsFirstInGroup=True]">
@@ -53,7 +62,7 @@
 			</Style>
 
 			<Style Selector="^ Grid.LayoutGrid">
-				<Setter Property="Margin" Value="8" />
+				<Setter Property="Margin" Value="4" />
 			</Style>
 		</Style>
 
@@ -70,19 +79,37 @@
 				Opacity="0.5" />
 
 		<Grid Classes="LayoutGrid"
-			  RowDefinitions="24,*"
-			  ColumnDefinitions="24,*">
-			<!-- TODO: Placeholder -->
-			<Border Grid.Row="0" Grid.RowSpan="2"
-					Grid.Column="0" Grid.ColumnSpan="2"
+			  RowDefinitions="24,*,24"
+			  ColumnDefinitions="24,*,24">
+			<!-- Image -->
+			<Border Grid.Row="0" Grid.RowSpan="3"
+					Grid.Column="0" Grid.ColumnSpan="3"
 					Background="Black"
 					CornerRadius="28"
-					Width="56" Height="56" />
+					Width="56" Height="56">
+				<Image Source="{Binding IconPath}"
+					   Classes="Icon" />
+			</Border>
 
+			<!-- Location Hint -->
 			<Border Grid.Row="0" Grid.Column="0"
-					Classes="LocationHintBorder">
-				<TextBlock Classes="LocationHintText"
+					Classes="BadgeBorder">
+				<TextBlock Classes="BadgeText"
 						   Text="{Binding LocationHint}" />
+			</Border>
+
+			<!-- Aux Text -->
+			<Border Grid.Row="2"
+					Grid.Column="1"
+					Grid.ColumnSpan="2"
+					IsVisible="{Binding AuxText, Converter={x:Static ObjectConverters.IsNotNull}}"
+					HorizontalAlignment="Right"
+					MinWidth="24"
+					Classes="BadgeBorder">
+				<TextBlock Classes="BadgeText"
+						   FontSize="12"
+						   Margin="4,0"
+						   Text="{Binding AuxText}" />
 			</Border>
 		</Grid>
 	</Panel>

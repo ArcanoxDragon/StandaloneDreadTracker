@@ -5,7 +5,6 @@
 						 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 						 xmlns:avalonia="http://reactiveui.net"
 						 xmlns:viewModels="clr-namespace:StandaloneDreadTracker.App.ViewModels;assembly=StandaloneDreadTracker.App"
-						 xmlns:converters="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Converters"
 						 xmlns:views="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views"
 						 xmlns:tracker="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views.Tracker"
 						 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -13,16 +12,43 @@
 						 x:DataType="viewModels:TrackerViewModel"
 						 Title="{Binding Name, StringFormat='{}{0} - Randomizer Tracker'}"
 						 Icon="/Assets/avalonia-logo.ico">
-	<Window.Resources>
-		<converters:ChooseConverter x:Key="HasItemConverter"
-									ValueWhenFalse="No"
-									ValueWhenTrue="Yes" />
-	</Window.Resources>
-
 	<Window.Styles>
 		<Style Selector="StackPanel.InventoryAuxPanel">
 			<Style Selector="^ :is(Control)">
 				<Setter Property="HorizontalAlignment" Value="Center" />
+			</Style>
+		</Style>
+
+		<Style Selector="tracker|ItemTile">
+			<Style Selector="^.First">
+				<Setter Property="IsFirstInGroup" Value="True" />
+			</Style>
+			<Style Selector="^.Last">
+				<Setter Property="IsLastInGroup" Value="True" />
+			</Style>
+			<Style Selector="^.BeamGroup">
+				<Setter Property="GroupBackground" Value="DarkMagenta" />
+			</Style>
+			<Style Selector="^.ChargeBeamGroup">
+				<Setter Property="GroupBackground" Value="Brown" />
+			</Style>
+			<Style Selector="^.MorphBallGroup">
+				<Setter Property="GroupBackground" Value="SteelBlue" />
+			</Style>
+			<Style Selector="^.MissileGroup">
+				<Setter Property="GroupBackground" Value="YellowGreen" />
+			</Style>
+			<Style Selector="^.JumpGroup">
+				<Setter Property="GroupBackground" Value="Tomato" />
+			</Style>
+			<Style Selector="^.SuitGroup">
+				<Setter Property="GroupBackground" Value="SandyBrown" />
+			</Style>
+			<Style Selector="^.MiscGroup">
+				<Setter Property="GroupBackground" Value="MediumSeaGreen" />
+			</Style>
+			<Style Selector="^.AeionGroup">
+				<Setter Property="GroupBackground" Value="HotPink" />
 			</Style>
 		</Style>
 	</Window.Styles>
@@ -33,24 +59,84 @@
 				  ColumnDefinitions="*,Auto"
 				  ColumnSpacing="10">
 				<WrapPanel>
-					<tracker:ItemTile GroupBackground="Red" IsFirstInGroup="True" />
-					<tracker:ItemTile GroupBackground="Red" />
-					<tracker:ItemTile GroupBackground="Red" IsLastInGroup="True" />
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/beam-wide.png"
+									  Classes="BeamGroup First"
+									  IsCollected="{Binding WideBeam}" />
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/beam-plasma.png"
+									  Classes="BeamGroup"
+									  IsCollected="{Binding PlasmaBeam}" />
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/beam-wave.png"
+									  Classes="BeamGroup Last"
+									  IsCollected="{Binding WaveBeam}" />
 
-					<tracker:ItemTile GroupBackground="Blue" IsFirstInGroup="True" />
-					<tracker:ItemTile GroupBackground="Blue" IsLastInGroup="True" />
-					
-					<tracker:ItemTile GroupBackground="Green" IsFirstInGroup="True" />
-					<tracker:ItemTile GroupBackground="Green" />
-					<tracker:ItemTile GroupBackground="Green" />
-					<tracker:ItemTile GroupBackground="Green" />
-					<tracker:ItemTile GroupBackground="Green" />
-					<tracker:ItemTile GroupBackground="Green" IsLastInGroup="True" />
-					
-					<tracker:ItemTile GroupBackground="Magenta" IsFirstInGroup="True" />
-					<tracker:ItemTile GroupBackground="Magenta" />
-					<tracker:ItemTile GroupBackground="Magenta" />
-					<tracker:ItemTile GroupBackground="Magenta" IsLastInGroup="True" />
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/beam-charge.png"
+									  Classes="ChargeBeamGroup First"
+									  IsCollected="{Binding ChargeBeam}" />
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/beam-diffusion.png"
+									  Classes="ChargeBeamGroup Last"
+									  IsCollected="{Binding DiffusionBeam}" />
+
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/movement-morphball.png"
+									  Classes="MorphBallGroup First"
+									  IsCollected="{Binding MorphBall}" />
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/bomb-morph.png"
+									  Classes="MorphBallGroup"
+									  IsCollected="{Binding Bomb}" />
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/bomb-cross.png"
+									  Classes="MorphBallGroup"
+									  IsCollected="{Binding CrossBomb}" />
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/bomb-power.png"
+									  Classes="MorphBallGroup Last"
+									  IsCollected="{Binding PowerBomb}" />
+
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/missile-super.png"
+									  Classes="MissileGroup First"
+									  IsCollected="{Binding SuperMissile}" />
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/missile-ice.png"
+									  Classes="MissileGroup"
+									  IsCollected="{Binding IceMissile}" />
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/missile-storm.png"
+									  Classes="MissileGroup Last"
+									  IsCollected="{Binding StormMissile}" />
+
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/spin-spinboost.png"
+									  Classes="JumpGroup First"
+									  IsCollected="{Binding SpinBoost}" />
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/spin-spacejump.png"
+									  Classes="JumpGroup Last"
+									  IsCollected="{Binding SpaceJump}" />
+
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/suit-varia.png"
+									  Classes="SuitGroup First"
+									  IsCollected="{Binding VariaSuit}" />
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/suit-gravity.png"
+									  Classes="SuitGroup Last"
+									  IsCollected="{Binding GravitySuit}" />
+
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/movement-spidermagnet.png"
+									  Classes="MiscGroup First"
+									  IsCollected="{Binding SpiderMagnet}" />
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/movement-grapplebeam.png"
+									  Classes="MiscGroup"
+									  IsCollected="{Binding GrappleBeam}" />
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/movement-speedbooster.png"
+									  Classes="MiscGroup"
+									  IsCollected="{Binding SpeedBooster}"
+									  AuxText="{Binding SpeedBoosterChargeTime, StringFormat='{}{0}s'}" />
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/movement-screwattack.png"
+									  Classes="MiscGroup Last"
+									  IsCollected="{Binding ScrewAttack}" />
+
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/aeion-phantomcloak.png"
+									  Classes="AeionGroup First"
+									  IsCollected="{Binding PhantomCloak}" />
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/aeion-flashshift.png"
+									  Classes="AeionGroup"
+									  IsCollected="{Binding FlashShift}"
+									  AuxText="{Binding FlashShiftChainCount}" />
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/aeion-pulseradar.png"
+									  Classes="AeionGroup Last"
+									  IsCollected="{Binding PulseRadar}" />
 				</WrapPanel>
 
 				<StackPanel Grid.Column="1"

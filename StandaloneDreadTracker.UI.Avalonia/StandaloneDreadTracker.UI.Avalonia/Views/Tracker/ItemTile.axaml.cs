@@ -15,6 +15,8 @@ public partial class ItemTile : UserControl, IActivatableView
 	public static readonly StyledProperty<bool>    IsFirstInGroupProperty  = AvaloniaProperty.Register<ItemTile, bool>(nameof(IsFirstInGroup));
 	public static readonly StyledProperty<bool>    IsLastInGroupProperty   = AvaloniaProperty.Register<ItemTile, bool>(nameof(IsLastInGroup));
 	public static readonly StyledProperty<IBrush?> GroupBackgroundProperty = AvaloniaProperty.Register<ItemTile, IBrush?>(nameof(GroupBackground), Brushes.Transparent);
+	public static readonly StyledProperty<IImage?> IconPathProperty        = AvaloniaProperty.Register<ItemTile, IImage?>(nameof(IconPath));
+	public static readonly StyledProperty<string?> AuxTextProperty         = AvaloniaProperty.Register<ItemTile, string?>(nameof(AuxText));
 
 	public static readonly StyledProperty<char> LocationHintProperty = AvaloniaProperty.Register<ItemTile, char>(
 		nameof(LocationHint),
@@ -65,6 +67,18 @@ public partial class ItemTile : UserControl, IActivatableView
 	{
 		get => GetValue(GroupBackgroundProperty);
 		set => SetValue(GroupBackgroundProperty, value);
+	}
+
+	public IImage? IconPath
+	{
+		get => GetValue(IconPathProperty);
+		set => SetValue(IconPathProperty, value);
+	}
+
+	public string? AuxText
+	{
+		get => GetValue(AuxTextProperty);
+		set => SetValue(AuxTextProperty, value);
 	}
 
 	protected void OnGlobalKeyDown(object? sender, KeyEventArgs e)
