@@ -5,13 +5,13 @@ using StandaloneDreadTracker.App.ViewModels;
 
 namespace StandaloneDreadTracker.UI.Avalonia.Views;
 
-public partial class TrackerTargetView : ReactiveUserControl<TrackerViewModel>
+public partial class TrackerSummaryView : ReactiveUserControl<TrackerViewModel>
 {
-	public static readonly StyledProperty<ICommand?> OpenCommandProperty   = AvaloniaProperty.Register<TrackerTargetView, ICommand?>(nameof(OpenCommand));
-	public static readonly StyledProperty<ICommand?> EditCommandProperty   = AvaloniaProperty.Register<TrackerTargetView, ICommand?>(nameof(EditCommand));
-	public static readonly StyledProperty<ICommand?> DeleteCommandProperty = AvaloniaProperty.Register<TrackerTargetView, ICommand?>(nameof(DeleteCommand));
+	public static readonly StyledProperty<ICommand?> OpenCommandProperty   = AvaloniaProperty.Register<TrackerSummaryView, ICommand?>(nameof(OpenCommand));
+	public static readonly StyledProperty<ICommand?> EditCommandProperty   = AvaloniaProperty.Register<TrackerSummaryView, ICommand?>(nameof(EditCommand));
+	public static readonly StyledProperty<ICommand?> DeleteCommandProperty = AvaloniaProperty.Register<TrackerSummaryView, ICommand?>(nameof(DeleteCommand));
 
-	public TrackerTargetView()
+	public TrackerSummaryView()
 	{
 		InitializeComponent();
 	}

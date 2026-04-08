@@ -7,9 +7,8 @@
 							  xmlns:converters="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Converters"
 							  xmlns:system="clr-namespace:System;assembly=System.Runtime"
 							  xmlns:avalonia="http://reactiveui.net"
-							  xmlns:views="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views"
 							  mc:Ignorable="d" d:DesignWidth="600"
-							  x:Class="StandaloneDreadTracker.UI.Avalonia.Views.TrackerTargetView"
+							  x:Class="StandaloneDreadTracker.UI.Avalonia.Views.TrackerSummaryView"
 							  x:DataType="viewModels:TrackerViewModel"
 							  Name="Self">
 	<Design.DataContext>

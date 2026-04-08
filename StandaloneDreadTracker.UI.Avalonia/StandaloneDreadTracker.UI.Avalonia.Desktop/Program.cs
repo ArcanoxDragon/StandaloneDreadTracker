@@ -19,7 +19,7 @@ internal sealed class Program
 	public static void Main(string[] args)
 	{
 		BuildAvaloniaApp()
-			.StartWithClassicDesktopLifetime(args);
+			.StartWithClassicDesktopLifetime(args, ShutdownMode.OnMainWindowClose);
 	}
 
 	// Avalonia configuration, don't remove; also used by visual designer.

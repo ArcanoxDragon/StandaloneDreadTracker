@@ -1,0 +1,38 @@
+<ContentControl xmlns="https://github.com/avaloniaui"
+				xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+				xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+				mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="200"
+				x:Class="StandaloneDreadTracker.UI.Avalonia.Views.GroupBox">
+
+	<ContentControl.Styles>
+		<Style Selector="Border.ContentBorder">
+			<Setter Property="BorderBrush" Value="{DynamicResource TextControlForeground}" />
+			<Setter Property="BorderThickness" Value="{DynamicResource TextControlBorderThemeThickness}" />
+			<Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+			<Setter Property="Padding" Value="8,12,8,8" />
+		</Style>
+
+		<Style Selector="ContentPresenter.Header">
+			<Setter Property="Background" Value="{DynamicResource SystemRegionBrush}" />
+			<Setter Property="Margin" Value="12,0,0,0" />
+			<Setter Property="Padding" Value="5,0,5,0" />
+			<Setter Property="HorizontalAlignment" Value="Left" />
+		</Style>
+	</ContentControl.Styles>
+
+	<ContentControl.Template>
+		<ControlTemplate>
+			<Grid RowDefinitions="Auto,Auto,*">
+				<Border Grid.Row="1" Grid.RowSpan="2"
+						Classes="ContentBorder">
+					<ContentPresenter Content="{TemplateBinding Content}" />
+				</Border>
+
+				<ContentPresenter Grid.Row="0" Grid.RowSpan="2"
+								  Classes="Header"
+								  Content="{TemplateBinding Header}" />
+			</Grid>
+		</ControlTemplate>
+	</ContentControl.Template>
+</ContentControl>

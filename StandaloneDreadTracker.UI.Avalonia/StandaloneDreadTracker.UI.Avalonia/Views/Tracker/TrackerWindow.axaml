@@ -1,0 +1,73 @@
+<avalonia:ReactiveWindow x:TypeArguments="viewModels:TrackerViewModel"
+						 xmlns="https://github.com/avaloniaui"
+						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+						 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+						 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+						 xmlns:avalonia="http://reactiveui.net"
+						 xmlns:viewModels="clr-namespace:StandaloneDreadTracker.App.ViewModels;assembly=StandaloneDreadTracker.App"
+						 xmlns:converters="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Converters"
+						 xmlns:views="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views"
+						 xmlns:tracker="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views.Tracker"
+						 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+						 x:Class="StandaloneDreadTracker.UI.Avalonia.Views.Tracker.TrackerWindow"
+						 x:DataType="viewModels:TrackerViewModel"
+						 Title="{Binding Name, StringFormat='{}{0} - Randomizer Tracker'}"
+						 Icon="/Assets/avalonia-logo.ico">
+	<Window.Resources>
+		<converters:ChooseConverter x:Key="HasItemConverter"
+									ValueWhenFalse="No"
+									ValueWhenTrue="Yes" />
+	</Window.Resources>
+
+	<Window.Styles>
+		<Style Selector="StackPanel.InventoryAuxPanel">
+			<Style Selector="^ :is(Control)">
+				<Setter Property="HorizontalAlignment" Value="Center" />
+			</Style>
+		</Style>
+	</Window.Styles>
+
+	<views:GroupBox Margin="10" Header="Inventory">
+		<Border Padding="10">
+			<Grid DataContext="{Binding Connector.CurrentInventory}"
+				  ColumnDefinitions="*,Auto"
+				  ColumnSpacing="10">
+				<WrapPanel>
+					<tracker:ItemTile GroupBackground="Red" IsFirstInGroup="True" />
+					<tracker:ItemTile GroupBackground="Red" />
+					<tracker:ItemTile GroupBackground="Red" IsLastInGroup="True" />
+
+					<tracker:ItemTile GroupBackground="Blue" IsFirstInGroup="True" />
+					<tracker:ItemTile GroupBackground="Blue" IsLastInGroup="True" />
+					
+					<tracker:ItemTile GroupBackground="Green" IsFirstInGroup="True" />
+					<tracker:ItemTile GroupBackground="Green" />
+					<tracker:ItemTile GroupBackground="Green" />
+					<tracker:ItemTile GroupBackground="Green" />
+					<tracker:ItemTile GroupBackground="Green" />
+					<tracker:ItemTile GroupBackground="Green" IsLastInGroup="True" />
+					
+					<tracker:ItemTile GroupBackground="Magenta" IsFirstInGroup="True" />
+					<tracker:ItemTile GroupBackground="Magenta" />
+					<tracker:ItemTile GroupBackground="Magenta" />
+					<tracker:ItemTile GroupBackground="Magenta" IsLastInGroup="True" />
+				</WrapPanel>
+
+				<StackPanel Grid.Column="1"
+							Classes="InventoryAuxPanel">
+					<TextBlock FontSize="64">E</TextBlock>
+
+					<TextBlock Text="{Binding MaxEnergyCapacity, FallbackValue='1499'}" />
+
+					<TextBlock FontSize="64">M</TextBlock>
+
+					<TextBlock Text="{Binding MaxMissileCapacity, FallbackValue='250'}" />
+
+					<TextBlock FontSize="64">P</TextBlock>
+
+					<TextBlock Text="{Binding MaxPowerBombCapacity, FallbackValue='15'}" />
+				</StackPanel>
+			</Grid>
+		</Border>
+	</views:GroupBox>
+</avalonia:ReactiveWindow>

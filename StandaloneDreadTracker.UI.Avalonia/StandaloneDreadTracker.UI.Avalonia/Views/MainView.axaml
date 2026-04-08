@@ -24,7 +24,7 @@
 
 		<ItemsControl.ItemTemplate>
 			<DataTemplate>
-				<views:TrackerTargetView OpenCommand="{Binding #Self.OpenTrackerWindowCommand}"
+				<views:TrackerSummaryView OpenCommand="{Binding #Self.OpenTrackerWindowCommand}"
 										 DeleteCommand="{Binding #Self.ViewModel.DeleteTrackerCommand}" />
 			</DataTemplate>
 		</ItemsControl.ItemTemplate>

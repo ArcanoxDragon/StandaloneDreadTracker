@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
@@ -11,10 +12,11 @@ namespace StandaloneDreadTracker.App.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
-	public MainViewModel() : this(null) { }
+	public MainViewModel() : this(null, null) { }
 
-	public MainViewModel(TrackerManager? trackerManager, IDialogs? dialogs = null)
+	public MainViewModel(IServiceProvider? serviceProvider, TrackerManager? trackerManager, IDialogs? dialogs = null)
 	{
+		ServiceProvider = serviceProvider;
 		TrackerManager = trackerManager;
 		Dialogs = dialogs;
 
@@ -32,6 +34,13 @@ public partial class MainViewModel : ViewModelBase
 				TrackerTargets = [];
 			}).DisposeWith(disposables);
 		});
+	}
+
+	[AllowNull]
+	public IServiceProvider ServiceProvider
+	{
+		get => field ?? throw new InvalidOperationException("The view model was not initialized with a service provider");
+		private set;
 	}
 
 	private TrackerManager? TrackerManager { get; }

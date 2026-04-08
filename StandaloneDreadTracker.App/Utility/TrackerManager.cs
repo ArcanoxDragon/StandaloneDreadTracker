@@ -150,12 +150,7 @@ public sealed class TrackerManager(
 			}
 		}
 
-		tracker = new TrackerViewModel {
-			Name = trackerSettings.Name,
-			TargetType = trackerSettings.TargetType,
-			TargetAddress = trackerSettings.IpAddress,
-			Connector = new DreadConnector(ipAddress),
-		};
+		tracker = TrackerViewModel.Create(trackerSettings, new DreadConnector(ipAddress));
 		return true;
 	}
 }

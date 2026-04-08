@@ -1,14 +1,30 @@
-﻿using System.Reactive.Disposables;
+﻿using System.Drawing;
+using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using DreadRemoteConnector;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
+using StandaloneDreadTracker.App.Configuration;
 using StandaloneDreadTracker.App.Utility;
 
 namespace StandaloneDreadTracker.App.ViewModels;
 
 public partial class TrackerViewModel : ViewModelBase
 {
+	#region Static Factory
+
+	public static TrackerViewModel Create(TrackerSettings settings, DreadConnector? connector = null)
+		=> new() {
+			Name = settings.Name,
+			TargetType = settings.TargetType,
+			TargetAddress = settings.IpAddress,
+			LastWindowSize = settings.LastWindowSize,
+			LastWindowPosition = settings.LastWindowPosition,
+			Connector = connector,
+		};
+
+	#endregion
+
 	private CompositeDisposable? connectorDisposable;
 
 	public TrackerViewModel()
@@ -29,6 +45,8 @@ public partial class TrackerViewModel : ViewModelBase
 	[Reactive]
 	public partial DreadConnector? Connector { get; set; }
 
+	#region Settings
+
 	[Reactive]
 	public partial string? Name { get; set; }
 
@@ -37,6 +55,11 @@ public partial class TrackerViewModel : ViewModelBase
 
 	[Reactive(nameof(Description))]
 	public partial string? TargetAddress { get; set; }
+
+	public Size  LastWindowSize     { get; set; }
+	public Point LastWindowPosition { get; set; }
+
+	#endregion
 
 	public bool IsRemoteTarget => TargetType == TrackerTargetType.Remote;
 
