@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using ReactiveUI.Avalonia;
 using StandaloneDreadTracker.App.ViewModels;
@@ -24,6 +25,12 @@ public partial class AlertDialog : ReactiveWindow<ViewModelBase>
 	public AlertDialog()
 	{
 		InitializeComponent();
+
+		if (Design.IsDesignMode)
+		{
+			Message = "My dialog message";
+			ButtonText = "My Button";
+		}
 	}
 
 	/// <summary>

@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using ReactiveUI.Avalonia;
 using StandaloneDreadTracker.App.ViewModels;
@@ -33,6 +34,13 @@ public partial class ConfirmDialog : ReactiveWindow<ViewModelBase>
 	public ConfirmDialog()
 	{
 		InitializeComponent();
+
+		if (Design.IsDesignMode)
+		{
+			Message = "My dialog message";
+			PositiveText = "Positive Button";
+			NegativeText = "Negative Button";
+		}
 	}
 
 	/// <summary>
