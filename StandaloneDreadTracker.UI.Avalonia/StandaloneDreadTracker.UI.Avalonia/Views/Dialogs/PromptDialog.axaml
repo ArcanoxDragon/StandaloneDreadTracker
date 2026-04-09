@@ -5,6 +5,7 @@
 		mc:Ignorable="d"
 		x:Class="StandaloneDreadTracker.UI.Avalonia.Views.Dialogs.PromptDialog"
 		Name="Dialog"
+		Icon="/Assets/avalonia-logo.ico"
 		WindowStartupLocation="CenterOwner"
 		Classes="Dialog NoControlButtons MicaWindow"
 		SizeToContent="WidthAndHeight"
