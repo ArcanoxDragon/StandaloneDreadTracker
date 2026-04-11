@@ -71,6 +71,30 @@ public partial class TrackerViewModel : ViewModelBase
 	[ObservableAsProperty(ReadOnly = false, InitialValue = "\"Not Connected\"")]
 	public partial string? State { get; }
 
+	/// <summary>
+	/// Copies all tracker settings from this view model to the <paramref name="other"/> view model.
+	/// </summary>
+	public void CopySettingsTo(TrackerViewModel other)
+	{
+		other.Name = Name;
+		other.TargetType = TargetType;
+		other.TargetAddress = TargetAddress;
+		other.LastWindowSize = LastWindowSize;
+		other.LastWindowPosition = LastWindowPosition;
+	}
+
+	/// <summary>
+	/// Copies all tracker settings from this view model to the <paramref name="settings"/> object.
+	/// </summary>
+	public void CopySettingsTo(TrackerSettings settings)
+	{
+		settings.Name = Name;
+		settings.TargetType = TargetType;
+		settings.IpAddress = TargetAddress;
+		settings.LastWindowSize = LastWindowSize;
+		settings.LastWindowPosition = LastWindowPosition;
+	}
+
 	private void SubscribeConnector(DreadConnector? connector)
 	{
 		CompositeDisposable? previousDisposable;

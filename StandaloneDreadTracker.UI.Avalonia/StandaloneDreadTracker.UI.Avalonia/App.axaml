@@ -14,9 +14,7 @@
 				<ResourceInclude Source="/Resources/Icons.axaml" />
 			</ResourceDictionary.MergedDictionaries>
 
-			<SolidColorBrush x:Key="ErrorBrush"
-							 Color="#dd4422" />
-
+			<converters:BooleanToOpacityConverter x:Key="BooleanToOpacityConverter" />
 			<converters:DimensionToGridLengthConverter x:Key="DimensionToGridLengthConverter" />
 		</ResourceDictionary>
 	</Application.Resources>

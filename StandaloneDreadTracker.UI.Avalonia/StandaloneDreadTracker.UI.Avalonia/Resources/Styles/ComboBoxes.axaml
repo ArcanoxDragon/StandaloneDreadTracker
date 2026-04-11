@@ -1,0 +1,30 @@
+<Styles xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<Design.PreviewWith>
+		<StackPanel Width="300"
+					Margin="4"
+					Spacing="4">
+			<StackPanel.Styles>
+				<Style Selector="ComboBox">
+					<Setter Property="HorizontalAlignment" Value="Stretch" />
+				</Style>
+			</StackPanel.Styles>
+
+			<ComboBox SelectedItem="Normal Combo Box" />
+
+			<ComboBox SelectedItem="Disabled Combo Box"
+					  IsEnabled="False" />
+
+			<ComboBox SelectedItem="Invalid Combo Box"
+					  Classes="Invalid" />
+		</StackPanel>
+	</Design.PreviewWith>
+
+	<Style Selector="ComboBox.Invalid">
+		<Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}" />
+
+		<Style Selector="^:pointerover /template/ Border#Background">
+			<Setter Property="BorderBrush" Value="{DynamicResource ErrorLowBrush}" />
+		</Style>
+	</Style>
+</Styles>

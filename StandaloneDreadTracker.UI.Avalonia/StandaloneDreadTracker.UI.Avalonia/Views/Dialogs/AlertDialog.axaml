@@ -12,17 +12,11 @@
 		CanResize="False"
 		ExtendClientAreaTitleBarHeightHint="-1"
 		MinWidth="400">
-	<Grid RowDefinitions="Auto,*">
-		<Border Grid.Row="0" Classes="TitleBar">
-			<TextBlock />
-		</Border>
+	<Grid RowDefinitions="*,Auto" Margin="20,10" MaxWidth="600">
+		<TextBlock Grid.Row="0" Text="{Binding #Dialog.Message}" TextWrapping="Wrap" />
 
-		<Grid Grid.Row="1" RowDefinitions="*,Auto" Margin="20,10" MaxWidth="600">
-			<TextBlock Grid.Row="0" Text="{Binding #Dialog.Message}" TextWrapping="Wrap" />
-
-			<StackPanel Grid.Row="1" Orientation="Horizontal" Classes="ButtonContainer">
-				<Button Content="{Binding #Dialog.ButtonText}" IsDefault="True" Command="{Binding #Dialog.OnButtonClicked}" />
-			</StackPanel>
-		</Grid>
+		<StackPanel Grid.Row="1" Orientation="Horizontal" Classes="ButtonContainer">
+			<Button Content="{Binding #Dialog.ButtonText}" IsDefault="True" Command="{Binding #Dialog.OnButtonClicked}" />
+		</StackPanel>
 	</Grid>
 </Window>

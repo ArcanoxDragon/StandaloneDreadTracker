@@ -33,6 +33,7 @@
 		<ItemsControl.ItemTemplate>
 			<DataTemplate>
 				<views:TrackerSummaryView OpenCommand="{Binding #Self.OpenTrackerWindowCommand}"
+										  EditCommand="{Binding #Self.EditTrackerCommand}"
 										  DeleteCommand="{Binding #Self.ViewModel.DeleteTrackerCommand}" />
 			</DataTemplate>
 		</ItemsControl.ItemTemplate>

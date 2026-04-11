@@ -9,6 +9,8 @@
 	</Styles.Resources>
 
 	<StyleInclude Source="/Resources/Styles/Buttons.axaml" />
+	<StyleInclude Source="/Resources/Styles/ComboBoxes.axaml" />
 	<StyleInclude Source="/Resources/Styles/Dialogs.axaml" />
+	<StyleInclude Source="/Resources/Styles/TextBoxes.axaml" />
 	<StyleInclude Source="/Resources/Styles/Windows.axaml" />
 </Styles>
