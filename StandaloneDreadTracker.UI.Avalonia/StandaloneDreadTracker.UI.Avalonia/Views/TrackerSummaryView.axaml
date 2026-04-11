@@ -32,7 +32,7 @@
 				<ResourceDictionary x:Key="Dark">
 					<!-- ReSharper disable Xaml.RedundantResource -->
 					<system:String x:Key="IconCss">
-						.theme-aware-fill { fill: #ffffff; }
+						.theme-aware-fill { fill: #f8f8f8; }
 					</system:String>
 					<SolidColorBrush x:Key="PanelBackground"
 									 Color="#18ffffff" />
@@ -59,7 +59,7 @@
 			<Setter Property="Transitions">
 				<Transitions>
 					<BrushTransition Property="Background"
-									 Duration="0:0:0.25"
+									 Duration="0:0:0.125"
 									 Easing="CubicEaseOut" />
 				</Transitions>
 			</Setter>
@@ -113,7 +113,6 @@
 			<Button Grid.Row="0"
 					Grid.RowSpan="3"
 					Grid.Column="2"
-					Classes="FlatButton"
 					ToolTip.Tip="Open tracker window"
 					Command="{Binding #Self.OpenCommand}"
 					CommandParameter="{Binding #Self.ViewModel}"

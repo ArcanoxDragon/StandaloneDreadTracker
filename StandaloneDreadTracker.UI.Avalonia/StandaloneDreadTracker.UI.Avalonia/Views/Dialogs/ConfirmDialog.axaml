@@ -7,7 +7,7 @@
 		Name="Dialog"
 		Icon="/Assets/avalonia-logo.ico"
 		WindowStartupLocation="CenterOwner"
-		Classes="Dialog NoControlButtons MicaWindow"
+		Classes="Dialog NoControlButtons MicaWindow ImmersiveWindow"
 		SizeToContent="WidthAndHeight"
 		CanResize="False"
 		ExtendClientAreaTitleBarHeightHint="-1">

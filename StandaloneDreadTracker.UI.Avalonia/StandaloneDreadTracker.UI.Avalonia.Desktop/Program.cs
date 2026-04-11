@@ -44,6 +44,9 @@ internal sealed class Program
 			.UsePlatformDetect()
 			.WithInterFont()
 			.UseReactiveUI(_ => { })
+			.With(new Win32PlatformOptions {
+				WinUICompositionBackdropCornerRadius = 10,
+			})
 			.LogToTrace();
 	}
 

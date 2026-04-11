@@ -13,11 +13,6 @@
 		Title="Dread Randomizer Tracker"
 		Classes="MicaWindow"
 		Design.DataContext="{x:Static designTime:DesignTimeModels.MainViewModel}">
-	<Grid RowDefinitions="Auto,*">
-		<Border Classes="TitleBar">
-			<TextBlock />
-		</Border>
 
-		<views:MainView Grid.Row="1" />
-	</Grid>
+	<views:MainView />
 </Window>

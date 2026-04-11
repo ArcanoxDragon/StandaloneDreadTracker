@@ -1,21 +1,67 @@
 <Styles xmlns="https://github.com/avaloniaui"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:utilities="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Utilities">
-	<Style Selector="Window.MicaWindow">
-		<Setter Property="TransparencyLevelHint" Value="Mica" />
-
-		<Style Selector="^[(utilities|WindowHelpers.IsUsingMica)=True]">
-			<Setter Property="Background" Value="Transparent" />
+	<Styles.Resources>
+		<!-- ReSharper disable once Xaml.StaticResourceNotResolved -->
+		<ControlTheme x:Key="ImmersiveWindowTheme"
+					  TargetType="Window"
+					  BasedOn="{StaticResource {x:Type Window}}">
 			<Setter Property="ExtendClientAreaToDecorationsHint" Value="True" />
+			<Setter Property="CornerRadius" Value="10" />
+			<Setter Property="BorderBrush" Value="{DynamicResource ImmersiveWindowBorderBrush}" />
+			<Setter Property="BorderThickness" Value="1" />
+			<Setter Property="Template">
+				<ControlTemplate>
+					<Border CornerRadius="{TemplateBinding CornerRadius}"
+							ClipToBounds="True">
+						<Panel>
+							<Border Name="PART_TransparencyFallback" IsHitTestVisible="False" />
+							<Border BorderBrush="{TemplateBinding BorderBrush}"
+									BorderThickness="{TemplateBinding BorderThickness}"
+									CornerRadius="{TemplateBinding CornerRadius}"
+									Background="{TemplateBinding Background}" IsHitTestVisible="False" />
+							<Panel Background="Transparent" Margin="{TemplateBinding WindowDecorationMargin}" />
+							<VisualLayerManager Name="PART_VisualLayerManager">
+								<VisualLayerManager.ChromeOverlayLayer>
+									<TitleBar>
+										<TitleBar.Styles>
+											<Style
+												Selector="TitleBar /template/ CaptionButtons#PART_CaptionButtons /template/ Button#PART_FullScreenButton,
+													  TitleBar /template/ CaptionButtons#PART_CaptionButtons /template/ Button#PART_MinimizeButton,
+													  TitleBar /template/ CaptionButtons#PART_CaptionButtons /template/ Button#PART_RestoreButton">
+												<Setter Property="Button.Background" Value="{DynamicResource SystemBaseLowColor}" />
+												<Setter Property="Button.BorderBrush" Value="{DynamicResource SystemBaseMediumLowColor}" />
+											</Style>
+										</TitleBar.Styles>
+									</TitleBar>
+								</VisualLayerManager.ChromeOverlayLayer>
+								<Grid RowDefinitions="Auto,*">
+									<Border Grid.Row="0"
+											Name="PART_TitleBar"
+											IsVisible="{TemplateBinding IsExtendedIntoWindowDecorations}">
+										<TextBlock Text="{TemplateBinding Title}" />
+									</Border>
 
-			<Style Selector="^ Border.TitleBar">
+									<ContentPresenter Grid.Row="1"
+													  Name="PART_ContentPresenter"
+													  ContentTemplate="{TemplateBinding ContentTemplate}"
+													  Content="{TemplateBinding Content}"
+													  Margin="{TemplateBinding Padding}"
+													  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+													  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+								</Grid>
+							</VisualLayerManager>
+						</Panel>
+					</Border>
+				</ControlTemplate>
+			</Setter>
+
+			<Style Selector="^ /template/ Border#PART_TitleBar">
 				<Setter Property="MinHeight" Value="40" />
 				<Setter Property="Padding" Value="8" />
-				<Setter Property="IsVisible" Value="{Binding $parent[Window].IsExtendedIntoWindowDecorations}" />
 				<Setter Property="IsHitTestVisible" Value="False" />
 
 				<Style Selector="^ TextBlock">
-					<Setter Property="Text" Value="{Binding $parent[Window].Title}" />
 					<Setter Property="TextAlignment" Value="Center" />
 					<Setter Property="VerticalAlignment" Value="Center" />
 				</Style>
@@ -24,14 +70,27 @@
 			<Style Selector="^[WindowState=Maximized]">
 				<Setter Property="Padding" Value="8" />
 
-				<Style Selector="^ Border.TitleBar">
+				<Style Selector="^ /template/ Border#PART_TitleBar">
 					<Setter Property="Padding" Value="0" />
 				</Style>
-
-				<Style Selector="^ Menu > MenuItem">
-					<Setter Property="Padding" Value="10,0,10,0" />
-				</Style>
 			</Style>
+		</ControlTheme>
+	</Styles.Resources>
+
+	<Style Selector="Window">
+		<Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+	</Style>
+
+	<Style Selector="Window.ImmersiveWindow">
+		<Setter Property="Theme" Value="{StaticResource ImmersiveWindowTheme}" />
+	</Style>
+
+	<Style Selector="Window.MicaWindow">
+		<Setter Property="TransparencyLevelHint" Value="Mica" />
+
+		<Style Selector="^[(utilities|WindowHelpers.IsUsingMica)=True]">
+			<Setter Property="Theme" Value="{StaticResource ImmersiveWindowTheme}" />
+			<Setter Property="Background" Value="Transparent" />
 		</Style>
 	</Style>
 </Styles>
