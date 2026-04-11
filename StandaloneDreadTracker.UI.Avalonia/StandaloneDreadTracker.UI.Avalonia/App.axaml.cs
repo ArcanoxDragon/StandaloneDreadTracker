@@ -10,25 +10,39 @@ using StandaloneDreadTracker.UI.Avalonia.Views;
 
 namespace StandaloneDreadTracker.UI.Avalonia;
 
-public class App(IServiceProvider serviceProvider) : Application
+public class App(IServiceProvider? serviceProvider) : Application
 {
-	public IServiceProvider ServiceProvider { get; } = serviceProvider;
+	/// <summary>
+	/// Design-time constructor
+	/// </summary>
+	public App() : this(null) { }
+
+	public IServiceProvider ServiceProvider
+	{
+		get => field ?? throw new InvalidOperationException("The application was not initialized with a service provider");
+		set;
+	} = serviceProvider;
+
+	public bool CanResolveServices { get; } = serviceProvider != null;
 
 	public override void Initialize()
 	{
 		AvaloniaXamlLoader.Load(this);
 
-		// Load and save settings each time the app starts, which will create the config file if it doesn't exist
-		var settingsManager = ServiceProvider.GetRequiredService<ISettingsManager>();
+		if (CanResolveServices)
+		{
+			// Load and save settings each time the app starts, which will create the config file if it doesn't exist
+			var settingsManager = ServiceProvider.GetRequiredService<ISettingsManager>();
 
-		settingsManager.Modify(_ => { });
+			settingsManager.Modify(_ => { });
+		}
 	}
 
 	public override void OnFrameworkInitializationCompleted()
 	{
-		var mainWindowScope = ServiceProvider.CreateScope();
-		var mainWindowContext = mainWindowScope.ServiceProvider.GetRequiredService<WindowContext>();
-		var mainViewModel = mainWindowScope.ServiceProvider.GetRequiredService<MainViewModel>();
+		var mainWindowScope = CanResolveServices ? ServiceProvider.CreateScope() : null;
+		var mainWindowContext = mainWindowScope?.ServiceProvider.GetRequiredService<WindowContext>();
+		var mainViewModel = mainWindowScope?.ServiceProvider.GetRequiredService<MainViewModel>();
 
 		if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
 		{
@@ -36,7 +50,7 @@ public class App(IServiceProvider serviceProvider) : Application
 				DataContext = mainViewModel,
 			};
 
-			mainWindowContext.CurrentWindow = window;
+			mainWindowContext?.CurrentWindow = window;
 			desktop.MainWindow = window;
 		}
 		else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)

@@ -16,7 +16,7 @@ public partial class MainView : ReactiveUserControl<MainViewModel>
 	[ReactiveCommand]
 	private void OpenTrackerWindow(TrackerViewModel tracker)
 	{
-		if (ViewModel is null)
+		if (ViewModel is null or { CanResolveServices: false })
 			return;
 
 		var scope = ViewModel.ServiceProvider.CreateScope();

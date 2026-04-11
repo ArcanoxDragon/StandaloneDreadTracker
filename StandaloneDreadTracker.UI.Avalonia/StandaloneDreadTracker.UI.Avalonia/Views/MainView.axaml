@@ -11,7 +11,15 @@
 					   x:DataType="viewModels:MainViewModel"
 					   Name="Self">
 	<Design.DataContext>
-		<viewModels:MainViewModel />
+		<viewModels:MainViewModel>
+			<viewModels:MainViewModel.TrackerTargets>
+				<viewModels:TrackerViewModel Name="My Switch"
+											 TargetType="Remote"
+											 TargetAddress="192.168.0.42" />
+				<viewModels:TrackerViewModel Name="Ryujinx"
+											 TargetType="LocalEmulator" />
+			</viewModels:MainViewModel.TrackerTargets>
+		</viewModels:MainViewModel>
 	</Design.DataContext>
 
 	<ItemsControl Padding="8"
@@ -25,7 +33,7 @@
 		<ItemsControl.ItemTemplate>
 			<DataTemplate>
 				<views:TrackerSummaryView OpenCommand="{Binding #Self.OpenTrackerWindowCommand}"
-										 DeleteCommand="{Binding #Self.ViewModel.DeleteTrackerCommand}" />
+										  DeleteCommand="{Binding #Self.ViewModel.DeleteTrackerCommand}" />
 			</DataTemplate>
 		</ItemsControl.ItemTemplate>
 	</ItemsControl>

@@ -17,6 +17,7 @@ public partial class MainViewModel : ViewModelBase
 	public MainViewModel(IServiceProvider? serviceProvider, TrackerManager? trackerManager, IDialogs? dialogs = null)
 	{
 		ServiceProvider = serviceProvider;
+		CanResolveServices = serviceProvider != null;
 		TrackerManager = trackerManager;
 		Dialogs = dialogs;
 
@@ -42,6 +43,8 @@ public partial class MainViewModel : ViewModelBase
 		get => field ?? throw new InvalidOperationException("The view model was not initialized with a service provider");
 		private set;
 	}
+
+	public bool CanResolveServices { get; }
 
 	private TrackerManager? TrackerManager { get; }
 	private IDialogs?       Dialogs        { get; }

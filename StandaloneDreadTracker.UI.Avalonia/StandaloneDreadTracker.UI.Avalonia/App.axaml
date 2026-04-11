@@ -11,7 +11,7 @@
 	<Application.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
-				<MergeResourceInclude Source="/Resources/Icons.axaml" />
+				<ResourceInclude Source="/Resources/Icons.axaml" />
 			</ResourceDictionary.MergedDictionaries>
 
 			<SolidColorBrush x:Key="ErrorBrush"
