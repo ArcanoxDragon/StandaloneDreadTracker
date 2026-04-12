@@ -2,6 +2,7 @@
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using DreadRemoteConnector;
+using DreadRemoteConnector.Inventory;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using StandaloneDreadTracker.App.Configuration;
@@ -42,8 +43,16 @@ public partial class TrackerViewModel : ViewModelBase
 		});
 	}
 
-	[Reactive]
+	[Reactive(nameof(CurrentInventory))]
 	public partial DreadConnector? Connector { get; set; }
+
+	/// <summary>
+	/// For design/testing.
+	/// </summary>
+	[Reactive(nameof(CurrentInventory))]
+	internal partial DreadInventory? MockInventory { get; set; }
+
+	public DreadInventory? CurrentInventory => MockInventory ?? Connector?.CurrentInventory;
 
 	#region Settings
 
