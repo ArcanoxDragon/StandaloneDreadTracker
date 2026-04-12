@@ -52,6 +52,9 @@
 			<Style Selector="^.AeionGroup">
 				<Setter Property="GroupBackground" Value="HotPink" />
 			</Style>
+			<Style Selector="^.DnaGroup">
+				<Setter Property="GroupBackground" Value="CornflowerBlue" />
+			</Style>
 		</Style>
 	</Window.Styles>
 
@@ -162,6 +165,19 @@
 									  Classes="AeionGroup Last"
 									  IsCollected="{Binding PulseRadar}"
 									  ToolTip.Tip="Pulse Radar" />
+
+					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/dna.png"
+									  IsVisible="{Binding RequiredDnaCount, FallbackValue=False}"
+									  Classes="DnaGroup First Last"
+									  IsCollected="{Binding AllMetroidDnaCollected}"
+									  ToolTip.Tip="Metroid DNA">
+						<tracker:ItemTile.AuxText>
+							<MultiBinding StringFormat="{}{0} / {1}">
+								<Binding Path="CollectedDnaCount" FallbackValue="0" />
+								<Binding Path="RequiredDnaCount" FallbackValue="0" />
+							</MultiBinding>
+						</tracker:ItemTile.AuxText>
+					</tracker:ItemTile>
 				</WrapPanel>
 
 				<StackPanel Grid.Column="1"

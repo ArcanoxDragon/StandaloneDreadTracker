@@ -100,8 +100,8 @@
 
 			<!-- Aux Text -->
 			<Border Grid.Row="2"
-					Grid.Column="1"
-					Grid.ColumnSpan="2"
+					Grid.Column="0"
+					Grid.ColumnSpan="3"
 					IsVisible="{Binding AuxText, Converter={x:Static ObjectConverters.IsNotNull}}"
 					HorizontalAlignment="Right"
 					MinWidth="24"

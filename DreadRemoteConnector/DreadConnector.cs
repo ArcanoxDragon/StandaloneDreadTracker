@@ -118,7 +118,7 @@ public sealed partial class DreadConnector : NotifyPropertyChangedObject, IDispo
 		try
 		{
 			await Socket.ConnectAsync(combinedToken).ConfigureAwait(false);
-			IsConnected = true;
+			OnSocketConnected();
 		}
 		catch
 		{
@@ -327,7 +327,7 @@ public sealed partial class DreadConnector : NotifyPropertyChangedObject, IDispo
 		try
 		{
 			await Socket.ConnectAsync(cancellationToken).ConfigureAwait(false);
-			IsConnected = true;
+			OnSocketConnected();
 			Log.ConnectionRestored();
 			return true;
 		}
@@ -344,6 +344,12 @@ public sealed partial class DreadConnector : NotifyPropertyChangedObject, IDispo
 	}
 
 	#endregion
+
+	private void OnSocketConnected()
+	{
+		IsConnected = true;
+		CurrentInventory.RequiredDnaCount = Socket.GameDetails.RequiredDnaCount;
+	}
 
 	private void OnSocketConnectionLost(object? sender, EventArgs e)
 	{

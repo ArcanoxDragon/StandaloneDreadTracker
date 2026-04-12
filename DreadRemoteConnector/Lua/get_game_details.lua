@@ -1,6 +1,7 @@
 return string.format(
-	"%d,%d,%s,%s",
+	"%d,%d,%s,%s,%d",
 	RL.Version,
 	RL.BufferSize,
 	Init.sLayoutUUID,
-	GameVersion)
+	GameVersion,
+	Init.iNumRequiredArtifacts)

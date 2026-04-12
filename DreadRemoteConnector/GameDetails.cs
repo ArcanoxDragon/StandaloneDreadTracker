@@ -4,10 +4,11 @@ namespace DreadRemoteConnector;
 
 public sealed class GameDetails : IParsable<GameDetails>
 {
-	public int    ApiVersion        { get; private set; } = -1;
-	public int    BufferSize        { get; private set; } = -1;
-	public Guid   WorldGuid         { get; private set; }
-	public string GameVersion       { get; private set; } = "Unknown";
+	public int    ApiVersion       { get; private set; } = -1;
+	public int    BufferSize       { get; private set; } = -1;
+	public Guid   WorldGuid        { get; private set; }
+	public string GameVersion      { get; private set; } = "Unknown";
+	public int    RequiredDnaCount { get; private set; }
 
 	#region IParsable
 
@@ -49,7 +50,7 @@ public sealed class GameDetails : IParsable<GameDetails>
 	{
 		var parts = details.Split(',');
 
-		if (parts.Length != 4)
+		if (parts.Length != 5)
 			throw new FormatException($"Could not parse game details. Expected 4 components, but got {parts.Length}.");
 
 		try
@@ -58,6 +59,7 @@ public sealed class GameDetails : IParsable<GameDetails>
 			BufferSize = int.Parse(parts[1]);
 			WorldGuid = Guid.Parse(parts[2]);
 			GameVersion = parts[3];
+			RequiredDnaCount = int.Parse(parts[4]);
 		}
 		catch (Exception ex)
 		{

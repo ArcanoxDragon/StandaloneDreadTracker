@@ -242,76 +242,150 @@ public partial class DreadInventory : NotifyPropertyChangedObject
 
 	public IReadOnlyList<bool> AllMetroidDna => this.metroidDna;
 
+	public bool AllMetroidDnaCollected => AllMetroidDna.All(b => b);
+
+	/// <summary>
+	/// Gets the total number of DNA that has been collected out of the total number required.
+	/// If the number of required DNA is less than 12, this only considers the "earlier" DNA,
+	/// and ignores any of the DNA items beyond the number required (since the extras will always
+	/// be in the collected state).
+	/// </summary>
+	public int CollectedDnaCount => AllMetroidDna.Take(RequiredDnaCount).Count(b => b);
+
+	public int RequiredDnaCount
+	{
+		get;
+		set
+		{
+			SetField(ref field, value);
+			RaisePropertyChanged(nameof(CollectedDnaCount));
+		}
+	}
+
 	public bool MetroidDna1
 	{
 		get => this.metroidDna[0];
-		set => SetField(ref this.metroidDna[0], value);
+		set
+		{
+			if (SetField(ref this.metroidDna[0], value))
+				RaisePropertyChanged(nameof(AllMetroidDnaCollected));
+		}
 	}
 
 	public bool MetroidDna2
 	{
 		get => this.metroidDna[1];
-		set => SetField(ref this.metroidDna[1], value);
+		set
+		{
+			if (SetField(ref this.metroidDna[1], value))
+				NotifyWhenAnyDnaChanged();
+		}
 	}
 
 	public bool MetroidDna3
 	{
 		get => this.metroidDna[2];
-		set => SetField(ref this.metroidDna[2], value);
+		set
+		{
+			if (SetField(ref this.metroidDna[2], value))
+				NotifyWhenAnyDnaChanged();
+		}
 	}
 
 	public bool MetroidDna4
 	{
 		get => this.metroidDna[3];
-		set => SetField(ref this.metroidDna[3], value);
+		set
+		{
+			if (SetField(ref this.metroidDna[3], value))
+				NotifyWhenAnyDnaChanged();
+		}
 	}
 
 	public bool MetroidDna5
 	{
 		get => this.metroidDna[4];
-		set => SetField(ref this.metroidDna[4], value);
+		set
+		{
+			if (SetField(ref this.metroidDna[4], value))
+				NotifyWhenAnyDnaChanged();
+		}
 	}
 
 	public bool MetroidDna6
 	{
 		get => this.metroidDna[5];
-		set => SetField(ref this.metroidDna[5], value);
+		set
+		{
+			if (SetField(ref this.metroidDna[5], value))
+				NotifyWhenAnyDnaChanged();
+		}
 	}
 
 	public bool MetroidDna7
 	{
 		get => this.metroidDna[6];
-		set => SetField(ref this.metroidDna[6], value);
+		set
+		{
+			if (SetField(ref this.metroidDna[6], value))
+				NotifyWhenAnyDnaChanged();
+		}
 	}
 
 	public bool MetroidDna8
 	{
 		get => this.metroidDna[7];
-		set => SetField(ref this.metroidDna[7], value);
+		set
+		{
+			if (SetField(ref this.metroidDna[7], value))
+				NotifyWhenAnyDnaChanged();
+		}
 	}
 
 	public bool MetroidDna9
 	{
 		get => this.metroidDna[8];
-		set => SetField(ref this.metroidDna[8], value);
+		set
+		{
+			if (SetField(ref this.metroidDna[8], value))
+				NotifyWhenAnyDnaChanged();
+		}
 	}
 
 	public bool MetroidDna10
 	{
 		get => this.metroidDna[9];
-		set => SetField(ref this.metroidDna[9], value);
+		set
+		{
+			if (SetField(ref this.metroidDna[9], value))
+				NotifyWhenAnyDnaChanged();
+		}
 	}
 
 	public bool MetroidDna11
 	{
 		get => this.metroidDna[10];
-		set => SetField(ref this.metroidDna[10], value);
+		set
+		{
+			if (SetField(ref this.metroidDna[10], value))
+				NotifyWhenAnyDnaChanged();
+		}
 	}
 
 	public bool MetroidDna12
 	{
 		get => this.metroidDna[11];
-		set => SetField(ref this.metroidDna[11], value);
+		set
+		{
+			if (SetField(ref this.metroidDna[11], value))
+				NotifyWhenAnyDnaChanged();
+		}
+	}
+
+	private void NotifyWhenAnyDnaChanged()
+	{
+		RaisePropertyChanged(nameof(CollectedDnaCount));
+		RaisePropertyChanged(nameof(AllMetroidDnaCollected));
 	}
 
 	#endregion
@@ -475,6 +549,7 @@ public partial class DreadInventory : NotifyPropertyChangedObject
 				string propertyNamePrefix = nameof(MetroidDna1)[..^1];
 
 				RaisePropertyChanged($"{propertyNamePrefix}{dnaNumber}");
+				NotifyWhenAnyDnaChanged();
 			}
 		}
 

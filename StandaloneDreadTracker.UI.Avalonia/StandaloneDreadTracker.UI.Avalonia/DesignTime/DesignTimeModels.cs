@@ -13,6 +13,7 @@ internal static class DesignTimeModels
 			return;
 
 		Inventory = new DreadInventory {
+			RequiredDnaCount = 6,
 			MetroidDna1 = true,
 			MetroidDna5 = true,
 		};
