@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg width="64" height="64" viewBox="0 0 64 64" version="1.1" id="svg5" xml:space="preserve"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:svg="http://www.w3.org/2000/svg">
+  <defs id="defs2">
+    <linearGradient id="linearGradient13">
+      <stop style="stop-color:#b9681b;stop-opacity:1;" offset="0" id="stop13" />
+      <stop style="stop-color:#f77e1a;stop-opacity:1;" offset="0.5" id="stop15" />
+      <stop style="stop-color:#b9681b;stop-opacity:1;" offset="1" id="stop14" />
+    </linearGradient>
+    <linearGradient id="linearGradient1">
+      <stop style="stop-color:#929292;stop-opacity:0.99607843;" offset="0" id="stop1" />
+      <stop style="stop-color:#f7f7f7;stop-opacity:0.98823529;" offset="0.5" id="stop3" />
+      <stop style="stop-color:#929292;stop-opacity:0.99607843;" offset="1" id="stop2" />
+    </linearGradient>
+    <linearGradient xlink:href="#linearGradient1" id="linearGradient2" x1="32.276512" y1="8.1228752" x2="32.276512" y2="55.877125" gradientUnits="userSpaceOnUse" />
+    <linearGradient xlink:href="#linearGradient1" id="linearGradient12" x1="34.5" y1="7.2480469" x2="34.5" y2="56.876953" gradientUnits="userSpaceOnUse" />
+    <linearGradient xlink:href="#linearGradient13" id="linearGradient14" x1="32.178017" y1="16.692142" x2="32.178017" y2="47.307858" gradientUnits="userSpaceOnUse" />
+    <filter style="color-interpolation-filters:sRGB" id="filter16" x="-0.14471226" y="-0.14507674" width="1.2894245" height="1.2901535">
+      <feFlood result="flood" in="SourceGraphic" flood-opacity="1.000000" flood-color="rgb(255,255,255)" id="feFlood15" class="theme-aware-flood" />
+      <feGaussianBlur result="blur" in="SourceGraphic" stdDeviation="3.000000" id="feGaussianBlur15" />
+      <feOffset result="offset" in="blur" dx="0.000000" dy="0.000000" id="feOffset15" />
+      <feComposite result="comp1" operator="in" in="flood" in2="offset" id="feComposite15" />
+      <feComposite result="comp2" operator="over" in="SourceGraphic" in2="comp1" id="feComposite16" />
+    </filter>
+    <linearGradient xlink:href="#linearGradient1" id="linearGradient3" gradientUnits="userSpaceOnUse" x1="32.276512" y1="8.1228752" x2="32.276512" y2="55.877125" />
+  </defs>
+  <g id="layer3" style="display:inline">
+    <g id="g15" style="filter:url(#filter16)">
+      <path id="path10" style="baseline-shift:baseline;display:inline;overflow:visible;opacity:1;vector-effect:none;fill:url(#linearGradient2);fill-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke;enable-background:accumulate;stop-color:#000000;stop-opacity:1" d="M 29.5,7.2480469 C 19.785048,8.2222039 11.698131,14.810796 8.5429688,23.710938 l 3.9003902,0.949218 C 15.126337,17.48819 21.633377,12.20296 29.5,11.269531 Z m 5,0 v 4.0214841 c 7.866623,0.933429 14.373663,6.218659 17.056641,13.390625 l 3.90039,-0.949218 C 52.301869,14.810796 44.214952,8.2222039 34.5,7.2480469 Z M 7.359375,28.570312 C 7.2040102,29.691724 7.1230469,30.836579 7.1230469,32 c 0,7.946639 3.7469181,15.036002 9.5664061,19.59375 l 2.132813,-3.384766 C 14.119893,44.385106 11.123047,38.551528 11.123047,32 c 0,-0.838447 0.04905,-1.664321 0.144531,-2.476562 z m 49.28125,0 -3.908203,0.953126 c 0.09549,0.812241 0.144531,1.638115 0.144531,2.476562 0,6.551528 -2.996846,12.385106 -7.699219,16.208984 l 2.132813,3.384766 C 53.130035,47.036002 56.876953,39.946639 56.876953,32 c 0,-1.163421 -0.08096,-2.308276 -0.236328,-3.429688 z m -33.587891,22.306641 -2.138672,3.390625 c 3.339743,1.669639 7.105606,2.609375 11.085938,2.609375 3.980332,0 7.746195,-0.939736 11.085938,-2.609375 l -2.138672,-3.390625 c -2.709968,1.283029 -5.742798,2 -8.947266,2 -3.204468,0 -6.237298,-0.716971 -8.947266,-2 z" />
+      <circle style="fill:url(#linearGradient14);fill-rule:evenodd;stroke:url(#linearGradient12);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke" id="path11" cx="32" cy="32" r="13.807858" />
+    </g>
+  </g>
+</svg>

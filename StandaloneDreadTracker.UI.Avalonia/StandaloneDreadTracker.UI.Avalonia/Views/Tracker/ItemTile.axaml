@@ -93,6 +93,7 @@
 
 			<!-- Location Hint -->
 			<Border Grid.Row="0" Grid.Column="0"
+					IsVisible="{Binding ShowLocationHint}"
 					Classes="BadgeBorder">
 				<TextBlock Classes="BadgeText"
 						   Text="{Binding LocationHint}" />

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg width="64" height="64" viewBox="0 0 64 64" version="1.1" id="svg5"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+   <defs id="defs2">
+      <linearGradient id="linearGradient5527">
+         <stop style="stop-color:#969696;stop-opacity:1;" offset="0" id="stop5523" />
+         <stop style="stop-color:#ffffff;stop-opacity:1;" offset="0.50291121" id="stop16273" />
+         <stop style="stop-color:#969696;stop-opacity:1;" offset="1" id="stop5525" />
+      </linearGradient>
+      <linearGradient xlink:href="#linearGradient5527" id="linearGradient5529" x1="33.365101" y1="8.1750975" x2="33.365101" y2="57.151592" gradientUnits="userSpaceOnUse" />
+      <filter style="color-interpolation-filters:sRGB" id="filter19388" x="-0.13399612" y="-0.14700939" width="1.2679922" height="1.2940188">
+         <feFlood flood-opacity="1" flood-color="rgb(255,255,255)" result="flood" id="feFlood19378" class="theme-aware-flood" />
+         <feComposite in="flood" in2="SourceGraphic" operator="in" result="composite1" id="feComposite19380" />
+         <feGaussianBlur in="composite1" stdDeviation="3" result="blur" id="feGaussianBlur19382" />
+         <feOffset dx="0" dy="0" result="offset" id="feOffset19384" />
+         <feComposite in="SourceGraphic" in2="offset" operator="over" result="fbSourceGraphic" id="feComposite19386" />
+      </filter>
+   </defs>
+   <g id="layer2" style="display:inline">
+      <path style="display:inline;fill:url(#linearGradient5529);fill-opacity:1;stroke:none;stroke-width:1.00157;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter19388)" d="M 19.323035,8.1751301 H 40.281096 V 15.904344 H 25.7145 l -3.121413,13.451805 h 16.35026 l 6.391466,7.729214 H 20.363506 L 17.390731,49.19942 h 36.565128 l 6.094188,7.952172 H 6.317146 Z" id="path4770" />
+   </g>
+</svg>

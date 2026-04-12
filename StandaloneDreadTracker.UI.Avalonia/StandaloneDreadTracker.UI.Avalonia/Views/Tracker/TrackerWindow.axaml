@@ -8,16 +8,46 @@
 						 xmlns:views="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views"
 						 xmlns:tracker="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views.Tracker"
 						 xmlns:designTime="clr-namespace:StandaloneDreadTracker.UI.Avalonia.DesignTime"
+						 xmlns:system="clr-namespace:System;assembly=System.Runtime"
 						 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 						 x:Class="StandaloneDreadTracker.UI.Avalonia.Views.Tracker.TrackerWindow"
 						 x:DataType="viewModels:TrackerViewModel"
 						 Title="{Binding Name, StringFormat='{}{0} - Randomizer Tracker'}"
 						 Icon="/Assets/avalonia-logo.ico"
 						 Design.DataContext="{x:Static designTime:DesignTimeModels.LocalTrackerViewModel}">
+	<Window.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.ThemeDictionaries>
+				<ResourceDictionary x:Key="Light">
+					<system:String x:Key="IconCss">
+						.theme-aware-flood { flood-color: #181818; }
+					</system:String>
+				</ResourceDictionary>
+				<ResourceDictionary x:Key="Dark">
+					<!-- ReSharper disable Xaml.RedundantResource -->
+					<system:String x:Key="IconCss">
+						.theme-aware-flood { flood-color: #f8f8f8; }
+					</system:String>
+					<!-- ReSharper disable Xaml.RedundantResource -->
+				</ResourceDictionary>
+			</ResourceDictionary.ThemeDictionaries>
+		</ResourceDictionary>
+	</Window.Resources>
+
 	<Window.Styles>
-		<Style Selector="StackPanel.InventoryAuxPanel">
+		<Style Selector="Grid.InventoryAuxPanel">
 			<Style Selector="^ :is(Control)">
+				<Setter Property="VerticalAlignment" Value="Center" />
+			</Style>
+
+			<Style Selector="^ Svg">
 				<Setter Property="HorizontalAlignment" Value="Center" />
+			</Style>
+
+			<Style Selector="^ TextBlock.QuantityLabel">
+				<Setter Property="FontSize" Value="18" />
+				<Setter Property="FontWeight" Value="Medium" />
+				<Setter Property="TextAlignment" Value="Right" />
 			</Style>
 		</Style>
 
@@ -60,8 +90,8 @@
 
 	<views:GroupBox Margin="10" Header="Inventory">
 		<Border Padding="10">
-			<Grid DataContext="{Binding Connector.CurrentInventory}"
-				  ColumnDefinitions="*,Auto"
+			<Grid DataContext="{Binding CurrentInventory}"
+				  ColumnDefinitions="*,1,Auto"
 				  ColumnSpacing="10">
 				<WrapPanel>
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/beam-wide.png"
@@ -168,6 +198,7 @@
 
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/dna.png"
 									  IsVisible="{Binding RequiredDnaCount, FallbackValue=False}"
+									  ShowLocationHint="False"
 									  Classes="DnaGroup First Last"
 									  IsCollected="{Binding AllMetroidDnaCollected}"
 									  ToolTip.Tip="Metroid DNA">
@@ -180,20 +211,47 @@
 					</tracker:ItemTile>
 				</WrapPanel>
 
-				<StackPanel Grid.Column="1"
-							Classes="InventoryAuxPanel">
-					<TextBlock FontSize="64">E</TextBlock>
+				<Border Grid.Column="1"
+						Background="{DynamicResource PrimaryTextBrush}"
+						Opacity="0.25" />
 
-					<TextBlock Text="{Binding MaxEnergyCapacity, FallbackValue='1499'}" />
+				<Grid Grid.Column="2"
+					  RowDefinitions="*,*,*"
+					  RowSpacing="4"
+					  ColumnDefinitions="40,50"
+					  ColumnSpacing="8"
+					  Classes="InventoryAuxPanel"
+					  VerticalAlignment="Top">
+					<Svg Grid.Row="0" Grid.Column="0"
+						 Path="/Assets/EnergyIcon.svg"
+						 Svg.Css="{DynamicResource IconCss}"
+						 ToolTip.Tip="Max. Energy" />
 
-					<TextBlock FontSize="64">M</TextBlock>
+					<TextBlock Grid.Row="0" Grid.Column="1"
+							   Text="{Binding MaxEnergyCapacity, FallbackValue='1499'}"
+							   Classes="QuantityLabel"
+							   ToolTip.Tip="Max. Energy" />
 
-					<TextBlock Text="{Binding MaxMissileCapacity, FallbackValue='250'}" />
+					<Svg Grid.Row="1" Grid.Column="0"
+						 Path="/Assets/MissileIcon.svg"
+						 Svg.Css="{DynamicResource IconCss}"
+						 ToolTip.Tip="Max. Missiles" />
 
-					<TextBlock FontSize="64">P</TextBlock>
+					<TextBlock Grid.Row="1" Grid.Column="1"
+							   Text="{Binding MaxMissileCapacity, FallbackValue='250'}"
+							   Classes="QuantityLabel"
+							   ToolTip.Tip="Max. Missiles" />
 
-					<TextBlock Text="{Binding MaxPowerBombCapacity, FallbackValue='15'}" />
-				</StackPanel>
+					<Svg Grid.Row="2" Grid.Column="0"
+						 Path="/Assets/PowerBombIcon.svg"
+						 Svg.Css="{DynamicResource IconCss}"
+						 ToolTip.Tip="Max. Power Bombs" />
+
+					<TextBlock Grid.Row="2" Grid.Column="1"
+							   Text="{Binding MaxPowerBombCapacity, FallbackValue='15'}"
+							   Classes="QuantityLabel"
+							   ToolTip.Tip="Max. Power Bombs" />
+				</Grid>
 			</Grid>
 		</Border>
 	</views:GroupBox>

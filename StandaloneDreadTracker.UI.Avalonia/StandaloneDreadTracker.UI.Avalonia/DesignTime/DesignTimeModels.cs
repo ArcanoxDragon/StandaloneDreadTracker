@@ -13,6 +13,9 @@ internal static class DesignTimeModels
 			return;
 
 		Inventory = new DreadInventory {
+			MaxEnergyCapacity = 1499,
+			MaxMissileCapacity = 250,
+			MaxPowerBombCapacity = 15,
 			RequiredDnaCount = 6,
 			MetroidDna1 = true,
 			MetroidDna5 = true,

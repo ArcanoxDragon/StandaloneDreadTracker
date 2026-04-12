@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg width="64" height="64" viewBox="0 0 64 64" version="1.1" id="svg5" xml:space="preserve"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:svg="http://www.w3.org/2000/svg">
+  <defs id="defs2">
+    <linearGradient id="linearGradient5">
+      <stop style="stop-color:#929292;stop-opacity:1;" offset="0" id="stop6" />
+      <stop style="stop-color:#f9f9f9;stop-opacity:1;" offset="0.5" id="stop8" />
+      <stop style="stop-color:#929292;stop-opacity:1;" offset="1" id="stop7" />
+    </linearGradient>
+    <linearGradient id="linearGradient3">
+      <stop style="stop-color:#93062b;stop-opacity:1;" offset="0" id="stop3" />
+      <stop style="stop-color:#e90027;stop-opacity:1;" offset="0.5" id="stop5" />
+      <stop style="stop-color:#93062b;stop-opacity:1;" offset="1" id="stop4" />
+    </linearGradient>
+    <linearGradient xlink:href="#linearGradient3" id="linearGradient4" x1="32.175694" y1="5.9889088" x2="31.975229" y2="57.319016" gradientUnits="userSpaceOnUse" />
+    <linearGradient xlink:href="#linearGradient5" id="linearGradient7" x1="35.433239" y1="5.9889088" x2="35.433239" y2="57.218784" gradientUnits="userSpaceOnUse" />
+    <filter style="color-interpolation-filters:sRGB" id="filter9" x="-0.16341928" y="-0.16222213" width="1.3268339" height="1.3244542">
+      <feFlood result="flood" in="SourceGraphic" flood-opacity="1.000000" flood-color="rgb(255,255,255)" id="feFlood8" class="theme-aware-flood" />
+      <feGaussianBlur result="blur" in="SourceGraphic" stdDeviation="3.000000" id="feGaussianBlur8" />
+      <feOffset result="offset" in="blur" dx="0.000000" dy="0.000000" id="feOffset8" />
+      <feComposite result="comp1" operator="in" in="flood" in2="offset" id="feComposite8" />
+      <feComposite result="comp2" operator="over" in="SourceGraphic" in2="comp1" id="feComposite9" />
+    </filter>
+  </defs>
+  <g id="layer2" style="display:inline">
+    <path id="path1" style="fill:url(#linearGradient4);stroke:url(#linearGradient7);stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;filter:url(#filter9)" d="M 26.56153,35.782892 V 25.329387 C 35.456325,15.513219 41.819779,6.4192918 56.831652,7.0162533 57.136992,18.067257 51.350862,25.32885 38.699699,35.782892 Z M 6.6654407,42.598681 V 33.277087 H 17.340169 l 3.98423,-3.984229 v 8.043633 l -9.935516,9.935516 z m 23.9554933,1.403251 v 13.531345 h -9.221361 l -6.089106,-6.089105 10.148509,-10.14851 h 8.269156 z" />
+  </g>
+</svg>
