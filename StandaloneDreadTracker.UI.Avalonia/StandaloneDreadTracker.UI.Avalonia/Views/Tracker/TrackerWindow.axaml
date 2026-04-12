@@ -61,82 +61,105 @@
 				<WrapPanel>
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/beam-wide.png"
 									  Classes="BeamGroup First"
-									  IsCollected="{Binding WideBeam}" />
+									  IsCollected="{Binding WideBeam}"
+									  ToolTip.Tip="Wide Beam" />
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/beam-plasma.png"
 									  Classes="BeamGroup"
-									  IsCollected="{Binding PlasmaBeam}" />
+									  IsCollected="{Binding PlasmaBeam}"
+									  ToolTip.Tip="Plasma Beam" />
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/beam-wave.png"
 									  Classes="BeamGroup Last"
-									  IsCollected="{Binding WaveBeam}" />
+									  IsCollected="{Binding WaveBeam}"
+									  ToolTip.Tip="Wave Beam" />
 
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/beam-charge.png"
 									  Classes="ChargeBeamGroup First"
-									  IsCollected="{Binding ChargeBeam}" />
+									  IsCollected="{Binding ChargeBeam}"
+									  ToolTip.Tip="Charge Beam" />
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/beam-diffusion.png"
 									  Classes="ChargeBeamGroup Last"
-									  IsCollected="{Binding DiffusionBeam}" />
+									  IsCollected="{Binding DiffusionBeam}"
+									  ToolTip.Tip="Diffusion Beam" />
 
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/movement-morphball.png"
 									  Classes="MorphBallGroup First"
-									  IsCollected="{Binding MorphBall}" />
+									  IsCollected="{Binding MorphBall}"
+									  ToolTip.Tip="Morph Ball" />
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/bomb-morph.png"
 									  Classes="MorphBallGroup"
-									  IsCollected="{Binding Bomb}" />
+									  IsCollected="{Binding Bomb}"
+									  ToolTip.Tip="Bomb" />
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/bomb-cross.png"
 									  Classes="MorphBallGroup"
-									  IsCollected="{Binding CrossBomb}" />
+									  IsCollected="{Binding CrossBomb}"
+									  ToolTip.Tip="Cross Bomb" />
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/bomb-power.png"
 									  Classes="MorphBallGroup Last"
-									  IsCollected="{Binding PowerBomb}" />
+									  IsCollected="{Binding PowerBomb}"
+									  ToolTip.Tip="Power Bomb" />
 
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/missile-super.png"
 									  Classes="MissileGroup First"
-									  IsCollected="{Binding SuperMissile}" />
+									  IsCollected="{Binding SuperMissile}"
+									  ToolTip.Tip="Super Missile" />
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/missile-ice.png"
 									  Classes="MissileGroup"
-									  IsCollected="{Binding IceMissile}" />
+									  IsCollected="{Binding IceMissile}"
+									  ToolTip.Tip="Ice Missile" />
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/missile-storm.png"
 									  Classes="MissileGroup Last"
-									  IsCollected="{Binding StormMissile}" />
+									  IsCollected="{Binding StormMissile}"
+									  ToolTip.Tip="Storm Missile" />
 
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/spin-spinboost.png"
 									  Classes="JumpGroup First"
-									  IsCollected="{Binding SpinBoost}" />
+									  IsCollected="{Binding SpinBoost}"
+									  ToolTip.Tip="Spin Boost" />
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/spin-spacejump.png"
 									  Classes="JumpGroup Last"
-									  IsCollected="{Binding SpaceJump}" />
+									  IsCollected="{Binding SpaceJump}"
+									  ToolTip.Tip="Space Jump" />
 
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/suit-varia.png"
 									  Classes="SuitGroup First"
-									  IsCollected="{Binding VariaSuit}" />
+									  IsCollected="{Binding VariaSuit}"
+									  ToolTip.Tip="Varia Suit" />
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/suit-gravity.png"
 									  Classes="SuitGroup Last"
-									  IsCollected="{Binding GravitySuit}" />
+									  IsCollected="{Binding GravitySuit}"
+									  ToolTip.Tip="Gravity Suit" />
 
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/movement-spidermagnet.png"
 									  Classes="MiscGroup First"
-									  IsCollected="{Binding SpiderMagnet}" />
+									  IsCollected="{Binding SpiderMagnet}"
+									  ToolTip.Tip="Spider Magnet" />
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/movement-grapplebeam.png"
 									  Classes="MiscGroup"
-									  IsCollected="{Binding GrappleBeam}" />
+									  IsCollected="{Binding GrappleBeam}"
+									  ToolTip.Tip="Grapple Beam" />
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/movement-speedbooster.png"
 									  Classes="MiscGroup"
 									  IsCollected="{Binding SpeedBooster}"
-									  AuxText="{Binding SpeedBoosterChargeTime, StringFormat='{}{0}s'}" />
+									  AuxText="{Binding SpeedBoosterChargeTime, StringFormat='{}{0}s'}"
+									  ToolTip.Tip="Speed Booster" />
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/movement-screwattack.png"
 									  Classes="MiscGroup Last"
-									  IsCollected="{Binding ScrewAttack}" />
+									  IsCollected="{Binding ScrewAttack}"
+									  ToolTip.Tip="Screw Attack" />
 
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/aeion-phantomcloak.png"
 									  Classes="AeionGroup First"
-									  IsCollected="{Binding PhantomCloak}" />
+									  IsCollected="{Binding PhantomCloak}"
+									  ToolTip.Tip="Phantom Cloak" />
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/aeion-flashshift.png"
 									  Classes="AeionGroup"
 									  IsCollected="{Binding FlashShift}"
-									  AuxText="{Binding FlashShiftChainCount}" />
+									  AuxText="{Binding FlashShiftChainCount}"
+									  ToolTip.Tip="Flash Shift" />
 					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/aeion-pulseradar.png"
 									  Classes="AeionGroup Last"
-									  IsCollected="{Binding PulseRadar}" />
+									  IsCollected="{Binding PulseRadar}"
+									  ToolTip.Tip="Pulse Radar" />
 				</WrapPanel>
 
 				<StackPanel Grid.Column="1"
