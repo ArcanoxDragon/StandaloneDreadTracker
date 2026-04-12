@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using DreadRemoteConnector.Events;
+using DreadRemoteConnector.Extensions;
 using DreadRemoteConnector.Lua;
 using DreadRemoteConnector.Packets;
 using DreadRemoteConnector.Packets.Receiving;
@@ -168,13 +169,10 @@ public sealed partial class DreadSocket : IDisposable
 
 	public async ValueTask DisconnectAsync()
 	{
-		if (this.connecting)
-			throw new InvalidOperationException("Cannot disconnect while a connection attempt is in progress");
-
 		try
 		{
 			if (this.connectingCancelSource != null)
-				await this.connectingCancelSource.CancelAsync().ConfigureAwait(false);
+				await this.connectingCancelSource.TryCancelAsync().ConfigureAwait(false);
 
 			if (this.socket != null)
 				await this.socket.DisconnectAsync(false).ConfigureAwait(false);
@@ -220,17 +218,26 @@ public sealed partial class DreadSocket : IDisposable
 	{
 		const string SuccessResult = "ok";
 
+		Log.BeforeSendBootstrapStage(0);
+
 		// Send stage 0, which will return a string indicating whether or not we can continue
 		var stage0Code = LuaSnippets.GetSnippet(LuaSnippets.SnippetNames.BootstrapStage0);
 		var stage0Result = await ExecuteLuaAsync(stage0Code, cancellationToken).ConfigureAwait(false);
 
+		Log.AfterSendBootstrapStage(0);
+
 		if (stage0Result != SuccessResult)
 			throw new DreadLuaException($"Bootstrap failed: {stage0Result}");
+
+		Log.BeforeSendBootstrapStage(1);
 
 		// Send stage 1 (no need to check result)
 		var stage1Code = LuaSnippets.GetSnippet(LuaSnippets.SnippetNames.BootstrapStage1);
 
 		await ExecuteLuaAsync(stage1Code, cancellationToken).ConfigureAwait(false);
+
+		Log.AfterSendBootstrapStage(1);
+		Log.BootstrapComplete();
 
 		// Queue an initial update
 		await ExecuteLuaAsync("""Game.AddSF(2.0, RL.UpdateRDVClient, "")""", cancellationToken).ConfigureAwait(false);
@@ -393,6 +400,15 @@ public sealed partial class DreadSocket : IDisposable
 
 	private void DestroySocket()
 	{
+		try
+		{
+			this.socket?.Disconnect(false);
+		}
+		catch
+		{
+			// Ignore any exceptions here - don't care when we're destroying it anyways
+		}
+
 		this.socket?.Dispose();
 		this.socket = null;
 	}

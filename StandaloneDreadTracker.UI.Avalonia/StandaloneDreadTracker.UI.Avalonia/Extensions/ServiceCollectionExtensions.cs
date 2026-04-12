@@ -22,11 +22,16 @@ internal static class ServiceCollectionExtensions
 #if DEBUG
 					.MinimumLevel.Debug()
 #else
-				.MinimumLevel.Information()
+					.MinimumLevel.Information()
 #endif
 					.Enrich.FromLogContext()
 					.WriteTo.File(logPath, rollingInterval: RollingInterval.Day)
 					.CreateLogger();
+
+#if DEBUG
+				logging.SetMinimumLevel(LogLevel.Debug);
+				logging.AddDebug();
+#endif
 
 				logging.AddConsole();
 				logging.AddSerilog(serilogLogger);

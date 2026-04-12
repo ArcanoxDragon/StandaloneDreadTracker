@@ -373,7 +373,16 @@ public sealed partial class DreadConnector : NotifyPropertyChangedObject, IDispo
 			return;
 
 		IsConnected = false;
-		await StopAsync().ConfigureAwait(false);
+
+		try
+		{
+			await StopAsync().ConfigureAwait(false);
+		}
+		catch
+		{
+			// Ignore any exceptions while disposing
+		}
+
 		Socket.Dispose();
 	}
 

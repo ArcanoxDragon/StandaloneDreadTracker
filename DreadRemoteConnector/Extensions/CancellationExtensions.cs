@@ -1,6 +1,6 @@
-﻿namespace StandaloneDreadTracker.App.Extensions;
+﻿namespace DreadRemoteConnector.Extensions;
 
-internal static class CancellationExtensions
+public static class CancellationExtensions
 {
 	extension(CancellationTokenSource cts)
 	{
@@ -22,7 +22,7 @@ internal static class CancellationExtensions
 		{
 			try
 			{
-				await cts.CancelAsync();
+				await cts.CancelAsync().ConfigureAwait(false);
 				return true;
 			}
 			catch (ObjectDisposedException)

@@ -75,10 +75,10 @@ public partial class MainView : ReactiveUserControl<MainViewModel>
 
 			if (tracker.TargetType != originalType || tracker.TargetAddress != originalAddress)
 			{
-				// Need to re-initialize TrackerManager so it re-connects to the new target.
+				// Need to re-initialize the tracker so it re-connects to the new target.
 				var trackerManager = app.ServiceProvider.GetRequiredService<TrackerManager>();
 
-				await trackerManager.InitializeAsync();
+				await trackerManager.ReInitializeTrackerAsync(tracker);
 			}
 		}
 		catch

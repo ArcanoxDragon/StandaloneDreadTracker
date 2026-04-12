@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using DreadRemoteConnector;
+using DreadRemoteConnector.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using StandaloneDreadTracker.App.Configuration;
@@ -13,7 +14,8 @@ namespace StandaloneDreadTracker.App.Utility;
 public sealed class TrackerManager(
 	IOptionsMonitor<ApplicationSettings> settingsMonitor,
 	ISettingsManager settingsManager,
-	ILogger<TrackerManager> logger
+	ILogger<TrackerManager> logger,
+	ILoggerFactory loggerFactory
 )
 {
 	private CancellationTokenSource?               initializationCancelSource;
@@ -94,6 +96,20 @@ public sealed class TrackerManager(
 		}
 	}
 
+	public async Task ReInitializeTrackerAsync(TrackerViewModel tracker)
+	{
+		if (this.initializationCancelSource != null)
+			throw new InvalidOperationException($"Cannot re-initialize an individual tracker while {nameof(TrackerManager)} is still initializing itself");
+
+		await DisposeTrackerAsync(tracker);
+
+		if (!TryCreateConnector(tracker.TargetType, tracker.TargetAddress, out var newConnector, out var errorMessage))
+			throw new ArgumentException(errorMessage, nameof(tracker));
+
+		tracker.Connector = newConnector;
+		InitializeTracker(tracker, CancellationToken.None);
+	}
+
 	private async void InitializeTracker(TrackerViewModel tracker, CancellationToken cancellationToken)
 	{
 		try
@@ -122,35 +138,51 @@ public sealed class TrackerManager(
 		{
 			// Ignore exceptions during clean-up
 		}
+
+		tracker.Connector = null;
 	}
 
 	private bool TryCreateTracker(TrackerSettings trackerSettings, [NotNullWhen(true)] out TrackerViewModel? tracker, [NotNullWhen(false)] out string? errorMessage)
 	{
+		if (!TryCreateConnector(trackerSettings.TargetType, trackerSettings.IpAddress, out var connector, out errorMessage))
+		{
+			tracker = null;
+			return false;
+		}
+
+		tracker = TrackerViewModel.Create(trackerSettings, connector);
+		return true;
+	}
+
+	private bool TryCreateConnector(TrackerTargetType targetType, string? ipAddressString, [NotNullWhen(true)] out DreadConnector? connector, [NotNullWhen(false)] out string? errorMessage)
+	{
 		IPAddress? ipAddress;
 
-		tracker = null;
+		connector = null;
 		errorMessage = null;
 
-		if (trackerSettings.TargetType == TrackerTargetType.LocalEmulator)
+		if (targetType == TrackerTargetType.LocalEmulator)
 		{
 			ipAddress = IPAddress.Loopback;
 		}
 		else
 		{
-			if (string.IsNullOrEmpty(trackerSettings.IpAddress))
+			if (string.IsNullOrEmpty(ipAddressString))
 			{
 				errorMessage = "No IP address was configured";
 				return false;
 			}
 
-			if (!IPAddress.TryParse(trackerSettings.IpAddress, out ipAddress))
+			if (!IPAddress.TryParse(ipAddressString, out ipAddress))
 			{
-				errorMessage = $"Invalid IP address: {trackerSettings.IpAddress}";
+				errorMessage = $"Invalid IP address: {ipAddressString}";
 				return false;
 			}
 		}
 
-		tracker = TrackerViewModel.Create(trackerSettings, new DreadConnector(ipAddress));
+		connector = new DreadConnector(ipAddress) {
+			Logger = loggerFactory.CreateLogger<DreadConnector>(),
+		};
 		return true;
 	}
 }

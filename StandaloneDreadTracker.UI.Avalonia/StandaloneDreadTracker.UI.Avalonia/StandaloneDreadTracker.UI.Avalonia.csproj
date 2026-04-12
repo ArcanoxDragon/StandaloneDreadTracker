@@ -27,6 +27,7 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
 		<PackageReference Include="Microsoft.Extensions.Logging" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" />
 		<PackageReference Include="ReactiveUI.Avalonia" />
 		<PackageReference Include="ReactiveUI.SourceGenerators">
 			<PrivateAssets>all</PrivateAssets>

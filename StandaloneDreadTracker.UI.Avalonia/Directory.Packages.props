@@ -17,6 +17,7 @@
 		<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
 		<PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.2" />
 		<PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="10.0.2" />
+		<PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="10.0.2" />
 		<PackageVersion Include="ReactiveUI.Avalonia" Version="11.4.12" />
 		<PackageVersion Include="ReactiveUI.SourceGenerators" Version="2.6.1" />
 		<PackageVersion Include="Serilog.Extensions.Logging" Version="10.0.0" />

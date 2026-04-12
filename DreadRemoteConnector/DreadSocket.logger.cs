@@ -37,6 +37,15 @@ public partial class DreadSocket
 					   "Buffer size: {BufferSize}. World GUID: {WorldGuid:B}.")]
 		private partial void GotGameDetails(int apiVersion, string gameVersion, int bufferSize, Guid worldGuid);
 
+		[LoggerMessage(LogLevel.Debug, "Sending bootstrap stage {Stage}...")]
+		public partial void BeforeSendBootstrapStage(int stage);
+
+		[LoggerMessage(LogLevel.Debug, "Done sending bootstrap stage {Stage}.")]
+		public partial void AfterSendBootstrapStage(int stage);
+
+		[LoggerMessage(LogLevel.Debug, "Bootstrap complete. Queueing first update.")]
+		public partial void BootstrapComplete();
+
 		public void MalformedPacket(MalformedPacketReceivePacket info)
 			=> MalformedPacket(info.MalformedPacketType, info.ExpectedBytes, info.ReceivedBytes);
 
