@@ -37,5 +37,9 @@
 					DataContext="{Binding CurrentInventory}" />
 			</Grid>
 		</views:GroupBox>
+
+		<views:GroupBox Header="Bosses &amp; DNA">
+
+		</views:GroupBox>
 	</StackPanel>
 </avalonia:ReactiveWindow>
