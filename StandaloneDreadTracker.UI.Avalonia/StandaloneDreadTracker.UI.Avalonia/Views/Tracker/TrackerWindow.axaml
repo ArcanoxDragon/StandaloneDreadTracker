@@ -8,251 +8,34 @@
 						 xmlns:views="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views"
 						 xmlns:tracker="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views.Tracker"
 						 xmlns:designTime="clr-namespace:StandaloneDreadTracker.UI.Avalonia.DesignTime"
-						 xmlns:system="clr-namespace:System;assembly=System.Runtime"
-						 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+						 mc:Ignorable="d" d:DesignWidth="820" d:DesignHeight="450"
 						 x:Class="StandaloneDreadTracker.UI.Avalonia.Views.Tracker.TrackerWindow"
 						 x:DataType="viewModels:TrackerViewModel"
 						 Title="{Binding Name, StringFormat='{}{0} - Randomizer Tracker'}"
 						 Icon="/Assets/avalonia-logo.ico"
 						 Design.DataContext="{x:Static designTime:DesignTimeModels.LocalTrackerViewModel}">
-	<Window.Resources>
-		<ResourceDictionary>
-			<ResourceDictionary.ThemeDictionaries>
-				<ResourceDictionary x:Key="Light">
-					<system:String x:Key="IconCss">
-						.theme-aware-flood { flood-color: #181818; }
-					</system:String>
-				</ResourceDictionary>
-				<ResourceDictionary x:Key="Dark">
-					<!-- ReSharper disable Xaml.RedundantResource -->
-					<system:String x:Key="IconCss">
-						.theme-aware-flood { flood-color: #f8f8f8; }
-					</system:String>
-					<!-- ReSharper disable Xaml.RedundantResource -->
-				</ResourceDictionary>
-			</ResourceDictionary.ThemeDictionaries>
-		</ResourceDictionary>
-	</Window.Resources>
-
 	<Window.Styles>
-		<Style Selector="Grid.InventoryAuxPanel">
-			<Style Selector="^ :is(Control)">
-				<Setter Property="VerticalAlignment" Value="Center" />
-			</Style>
-
-			<Style Selector="^ Svg">
-				<Setter Property="HorizontalAlignment" Value="Center" />
-			</Style>
-
-			<Style Selector="^ TextBlock.QuantityLabel">
-				<Setter Property="FontSize" Value="18" />
-				<Setter Property="FontWeight" Value="Medium" />
-				<Setter Property="TextAlignment" Value="Right" />
-			</Style>
-		</Style>
-
-		<Style Selector="tracker|ItemTile">
-			<Style Selector="^.First">
-				<Setter Property="IsFirstInGroup" Value="True" />
-			</Style>
-			<Style Selector="^.Last">
-				<Setter Property="IsLastInGroup" Value="True" />
-			</Style>
-			<Style Selector="^.BeamGroup">
-				<Setter Property="GroupBackground" Value="DarkMagenta" />
-			</Style>
-			<Style Selector="^.ChargeBeamGroup">
-				<Setter Property="GroupBackground" Value="Brown" />
-			</Style>
-			<Style Selector="^.MorphBallGroup">
-				<Setter Property="GroupBackground" Value="SteelBlue" />
-			</Style>
-			<Style Selector="^.MissileGroup">
-				<Setter Property="GroupBackground" Value="YellowGreen" />
-			</Style>
-			<Style Selector="^.JumpGroup">
-				<Setter Property="GroupBackground" Value="Tomato" />
-			</Style>
-			<Style Selector="^.SuitGroup">
-				<Setter Property="GroupBackground" Value="SandyBrown" />
-			</Style>
-			<Style Selector="^.MiscGroup">
-				<Setter Property="GroupBackground" Value="MediumSeaGreen" />
-			</Style>
-			<Style Selector="^.AeionGroup">
-				<Setter Property="GroupBackground" Value="HotPink" />
-			</Style>
-			<Style Selector="^.DnaGroup">
-				<Setter Property="GroupBackground" Value="CornflowerBlue" />
-			</Style>
+		<Style Selector="views|GroupBox">
+			<Setter Property="Padding" Value="10" />
 		</Style>
 	</Window.Styles>
 
-	<views:GroupBox Margin="10" Header="Inventory">
-		<Border Padding="10">
-			<Grid DataContext="{Binding CurrentInventory}"
-				  ColumnDefinitions="*,1,Auto"
-				  ColumnSpacing="10">
-				<WrapPanel>
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/beam-wide.png"
-									  Classes="BeamGroup First"
-									  IsCollected="{Binding WideBeam}"
-									  ToolTip.Tip="Wide Beam" />
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/beam-plasma.png"
-									  Classes="BeamGroup"
-									  IsCollected="{Binding PlasmaBeam}"
-									  ToolTip.Tip="Plasma Beam" />
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/beam-wave.png"
-									  Classes="BeamGroup Last"
-									  IsCollected="{Binding WaveBeam}"
-									  ToolTip.Tip="Wave Beam" />
+	<StackPanel Margin="10" Spacing="10">
+		<views:GroupBox Header="Inventory">
+			<Grid ColumnDefinitions="*,1,Auto" ColumnSpacing="10">
+				<tracker:InventoryItemsView
+					Grid.Column="0"
+					DataContext="{Binding CurrentInventory}" />
 
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/beam-charge.png"
-									  Classes="ChargeBeamGroup First"
-									  IsCollected="{Binding ChargeBeam}"
-									  ToolTip.Tip="Charge Beam" />
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/beam-diffusion.png"
-									  Classes="ChargeBeamGroup Last"
-									  IsCollected="{Binding DiffusionBeam}"
-									  ToolTip.Tip="Diffusion Beam" />
+				<Border
+					Grid.Column="1"
+					Background="{DynamicResource PrimaryTextBrush}"
+					Opacity="0.25" />
 
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/movement-morphball.png"
-									  Classes="MorphBallGroup First"
-									  IsCollected="{Binding MorphBall}"
-									  ToolTip.Tip="Morph Ball" />
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/bomb-morph.png"
-									  Classes="MorphBallGroup"
-									  IsCollected="{Binding Bomb}"
-									  ToolTip.Tip="Bomb" />
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/bomb-cross.png"
-									  Classes="MorphBallGroup"
-									  IsCollected="{Binding CrossBomb}"
-									  ToolTip.Tip="Cross Bomb" />
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/bomb-power.png"
-									  Classes="MorphBallGroup Last"
-									  IsCollected="{Binding PowerBomb}"
-									  ToolTip.Tip="Power Bomb" />
-
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/missile-super.png"
-									  Classes="MissileGroup First"
-									  IsCollected="{Binding SuperMissile}"
-									  ToolTip.Tip="Super Missile" />
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/missile-ice.png"
-									  Classes="MissileGroup"
-									  IsCollected="{Binding IceMissile}"
-									  ToolTip.Tip="Ice Missile" />
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/missile-storm.png"
-									  Classes="MissileGroup Last"
-									  IsCollected="{Binding StormMissile}"
-									  ToolTip.Tip="Storm Missile" />
-
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/spin-spinboost.png"
-									  Classes="JumpGroup First"
-									  IsCollected="{Binding SpinBoost}"
-									  ToolTip.Tip="Spin Boost" />
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/spin-spacejump.png"
-									  Classes="JumpGroup Last"
-									  IsCollected="{Binding SpaceJump}"
-									  ToolTip.Tip="Space Jump" />
-
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/suit-varia.png"
-									  Classes="SuitGroup First"
-									  IsCollected="{Binding VariaSuit}"
-									  ToolTip.Tip="Varia Suit" />
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/suit-gravity.png"
-									  Classes="SuitGroup Last"
-									  IsCollected="{Binding GravitySuit}"
-									  ToolTip.Tip="Gravity Suit" />
-
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/movement-spidermagnet.png"
-									  Classes="MiscGroup First"
-									  IsCollected="{Binding SpiderMagnet}"
-									  ToolTip.Tip="Spider Magnet" />
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/movement-grapplebeam.png"
-									  Classes="MiscGroup"
-									  IsCollected="{Binding GrappleBeam}"
-									  ToolTip.Tip="Grapple Beam" />
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/movement-speedbooster.png"
-									  Classes="MiscGroup"
-									  IsCollected="{Binding SpeedBooster}"
-									  AuxText="{Binding SpeedBoosterChargeTime, StringFormat='{}{0}s'}"
-									  ToolTip.Tip="Speed Booster" />
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/movement-screwattack.png"
-									  Classes="MiscGroup Last"
-									  IsCollected="{Binding ScrewAttack}"
-									  ToolTip.Tip="Screw Attack" />
-
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/aeion-phantomcloak.png"
-									  Classes="AeionGroup First"
-									  IsCollected="{Binding PhantomCloak}"
-									  ToolTip.Tip="Phantom Cloak" />
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/aeion-flashshift.png"
-									  Classes="AeionGroup"
-									  IsCollected="{Binding FlashShift}"
-									  AuxText="{Binding FlashShiftChainCount}"
-									  ToolTip.Tip="Flash Shift" />
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/aeion-pulseradar.png"
-									  Classes="AeionGroup Last"
-									  IsCollected="{Binding PulseRadar}"
-									  ToolTip.Tip="Pulse Radar" />
-
-					<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/dna.png"
-									  IsVisible="{Binding RequiredDnaCount, FallbackValue=False}"
-									  ShowLocationHint="False"
-									  Classes="DnaGroup First Last"
-									  IsCollected="{Binding AllMetroidDnaCollected}"
-									  ToolTip.Tip="Metroid DNA">
-						<tracker:ItemTile.AuxText>
-							<MultiBinding StringFormat="{}{0} / {1}">
-								<Binding Path="CollectedDnaCount" FallbackValue="0" />
-								<Binding Path="RequiredDnaCount" FallbackValue="0" />
-							</MultiBinding>
-						</tracker:ItemTile.AuxText>
-					</tracker:ItemTile>
-				</WrapPanel>
-
-				<Border Grid.Column="1"
-						Background="{DynamicResource PrimaryTextBrush}"
-						Opacity="0.25" />
-
-				<Grid Grid.Column="2"
-					  RowDefinitions="*,*,*"
-					  RowSpacing="4"
-					  ColumnDefinitions="40,50"
-					  ColumnSpacing="8"
-					  Classes="InventoryAuxPanel"
-					  VerticalAlignment="Top">
-					<Svg Grid.Row="0" Grid.Column="0"
-						 Path="/Assets/EnergyIcon.svg"
-						 Svg.Css="{DynamicResource IconCss}"
-						 ToolTip.Tip="Max. Energy" />
-
-					<TextBlock Grid.Row="0" Grid.Column="1"
-							   Text="{Binding MaxEnergyCapacity, FallbackValue='1499'}"
-							   Classes="QuantityLabel"
-							   ToolTip.Tip="Max. Energy" />
-
-					<Svg Grid.Row="1" Grid.Column="0"
-						 Path="/Assets/MissileIcon.svg"
-						 Svg.Css="{DynamicResource IconCss}"
-						 ToolTip.Tip="Max. Missiles" />
-
-					<TextBlock Grid.Row="1" Grid.Column="1"
-							   Text="{Binding MaxMissileCapacity, FallbackValue='250'}"
-							   Classes="QuantityLabel"
-							   ToolTip.Tip="Max. Missiles" />
-
-					<Svg Grid.Row="2" Grid.Column="0"
-						 Path="/Assets/PowerBombIcon.svg"
-						 Svg.Css="{DynamicResource IconCss}"
-						 ToolTip.Tip="Max. Power Bombs" />
-
-					<TextBlock Grid.Row="2" Grid.Column="1"
-							   Text="{Binding MaxPowerBombCapacity, FallbackValue='15'}"
-							   Classes="QuantityLabel"
-							   ToolTip.Tip="Max. Power Bombs" />
-				</Grid>
+				<tracker:InventoryAuxView
+					Grid.Column="2"
+					DataContext="{Binding CurrentInventory}" />
 			</Grid>
-		</Border>
-	</views:GroupBox>
+		</views:GroupBox>
+	</StackPanel>
 </avalonia:ReactiveWindow>

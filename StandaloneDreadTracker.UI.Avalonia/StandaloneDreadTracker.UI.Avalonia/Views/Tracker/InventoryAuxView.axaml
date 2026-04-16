@@ -1,0 +1,80 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:inventory="clr-namespace:DreadRemoteConnector.Inventory;assembly=DreadRemoteConnector"
+			 xmlns:system="clr-namespace:System;assembly=System.Runtime"
+			 mc:Ignorable="d" d:DesignWidth="120" d:DesignHeight="160"
+			 x:Class="StandaloneDreadTracker.UI.Avalonia.Views.Tracker.InventoryAuxView"
+			 x:DataType="inventory:DreadInventory">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.ThemeDictionaries>
+				<ResourceDictionary x:Key="Light">
+					<system:String x:Key="IconCss">
+						.theme-aware-flood { flood-color: #181818; }
+					</system:String>
+				</ResourceDictionary>
+				<ResourceDictionary x:Key="Dark">
+					<!-- ReSharper disable Xaml.RedundantResource -->
+					<system:String x:Key="IconCss">
+						.theme-aware-flood { flood-color: #f8f8f8; }
+					</system:String>
+					<!-- ReSharper disable Xaml.RedundantResource -->
+				</ResourceDictionary>
+			</ResourceDictionary.ThemeDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+
+	<Grid RowDefinitions="*,*,*"
+		  RowSpacing="4"
+		  ColumnDefinitions="40,50"
+		  ColumnSpacing="8"
+		  VerticalAlignment="Top">
+		<Grid.Styles>
+			<Style Selector=":is(Control)">
+				<Setter Property="VerticalAlignment" Value="Center" />
+			</Style>
+
+			<Style Selector="Svg">
+				<Setter Property="HorizontalAlignment" Value="Center" />
+			</Style>
+
+			<Style Selector="TextBlock.QuantityLabel">
+				<Setter Property="FontSize" Value="18" />
+				<Setter Property="FontWeight" Value="Medium" />
+				<Setter Property="TextAlignment" Value="Right" />
+			</Style>
+		</Grid.Styles>
+
+		<Svg Grid.Row="0" Grid.Column="0"
+			 Path="/Assets/EnergyIcon.svg"
+			 Svg.Css="{DynamicResource IconCss}"
+			 ToolTip.Tip="Max. Energy" />
+
+		<TextBlock Grid.Row="0" Grid.Column="1"
+				   Text="{Binding MaxEnergyCapacity, FallbackValue='1499'}"
+				   Classes="QuantityLabel"
+				   ToolTip.Tip="Max. Energy" />
+
+		<Svg Grid.Row="1" Grid.Column="0"
+			 Path="/Assets/MissileIcon.svg"
+			 Svg.Css="{DynamicResource IconCss}"
+			 ToolTip.Tip="Max. Missiles" />
+
+		<TextBlock Grid.Row="1" Grid.Column="1"
+				   Text="{Binding MaxMissileCapacity, FallbackValue='250'}"
+				   Classes="QuantityLabel"
+				   ToolTip.Tip="Max. Missiles" />
+
+		<Svg Grid.Row="2" Grid.Column="0"
+			 Path="/Assets/PowerBombIcon.svg"
+			 Svg.Css="{DynamicResource IconCss}"
+			 ToolTip.Tip="Max. Power Bombs" />
+
+		<TextBlock Grid.Row="2" Grid.Column="1"
+				   Text="{Binding MaxPowerBombCapacity, FallbackValue='15'}"
+				   Classes="QuantityLabel"
+				   ToolTip.Tip="Max. Power Bombs" />
+	</Grid>
+</UserControl>

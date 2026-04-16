@@ -5,7 +5,7 @@ namespace StandaloneDreadTracker.UI.Avalonia.Views;
 
 public partial class GroupBox : ContentControl
 {
-	public static readonly StyledProperty<object?> HeaderProperty = AvaloniaProperty.Register<GroupBox, object?>(nameof(Header));
+	public static readonly StyledProperty<object?>   HeaderProperty  = AvaloniaProperty.Register<GroupBox, object?>(nameof(Header));
 
 	public GroupBox()
 	{

@@ -2,9 +2,9 @@
 				xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 				xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 				xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+				xmlns:views="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views"
 				mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="200"
 				x:Class="StandaloneDreadTracker.UI.Avalonia.Views.GroupBox">
-
 	<ContentControl.Styles>
 		<Style Selector="Border.ContentBorder">
 			<Setter Property="BorderBrush" Value="{DynamicResource PrimaryTextBrush}" />
@@ -22,11 +22,12 @@
 	</ContentControl.Styles>
 
 	<ContentControl.Template>
-		<ControlTemplate>
+		<ControlTemplate TargetType="views:GroupBox">
 			<Grid RowDefinitions="Auto,Auto,*">
 				<Border Grid.Row="1" Grid.RowSpan="2"
 						Classes="ContentBorder">
-					<ContentPresenter Content="{TemplateBinding Content}" />
+					<ContentPresenter Content="{TemplateBinding Content}"
+									  Padding="{TemplateBinding Padding}" />
 				</Border>
 
 				<ContentPresenter Grid.Row="0" Grid.RowSpan="2"
