@@ -54,6 +54,8 @@ public partial class TrackerViewModel : ViewModelBase
 
 	public DreadInventory? CurrentInventory => MockInventory ?? Connector?.CurrentInventory;
 
+	public DreadBosses DefeatedBosses { get; set; } = new();
+
 	#region Settings
 
 	[Reactive]

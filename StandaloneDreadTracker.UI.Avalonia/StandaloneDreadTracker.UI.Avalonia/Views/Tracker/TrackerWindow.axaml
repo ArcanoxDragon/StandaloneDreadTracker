@@ -8,7 +8,7 @@
 						 xmlns:views="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views"
 						 xmlns:tracker="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views.Tracker"
 						 xmlns:designTime="clr-namespace:StandaloneDreadTracker.UI.Avalonia.DesignTime"
-						 mc:Ignorable="d" d:DesignWidth="820" d:DesignHeight="450"
+						 mc:Ignorable="d" d:DesignWidth="820" d:DesignHeight="550"
 						 x:Class="StandaloneDreadTracker.UI.Avalonia.Views.Tracker.TrackerWindow"
 						 x:DataType="viewModels:TrackerViewModel"
 						 Title="{Binding Name, StringFormat='{}{0} - Randomizer Tracker'}"
@@ -39,7 +39,7 @@
 		</views:GroupBox>
 
 		<views:GroupBox Header="Bosses &amp; DNA">
-
+			<tracker:BossesView DataContext="{Binding DefeatedBosses}" />
 		</views:GroupBox>
 	</StackPanel>
 </avalonia:ReactiveWindow>

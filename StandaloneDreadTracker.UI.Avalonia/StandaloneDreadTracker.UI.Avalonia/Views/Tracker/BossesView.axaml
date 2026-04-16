@@ -2,9 +2,108 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:tracker="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views.Tracker"
+			 xmlns:inventory="clr-namespace:DreadRemoteConnector.Inventory;assembly=DreadRemoteConnector"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-			 x:Class="StandaloneDreadTracker.UI.Avalonia.Views.Tracker.BossesView">
-	<Grid>
+			 x:Class="StandaloneDreadTracker.UI.Avalonia.Views.Tracker.BossesView"
+			 x:DataType="inventory:DreadBosses">
+	<UserControl.Styles>
+		<Style Selector="tracker|BossTile">
+			<Setter Property="Height" Value="{Binding Width, RelativeSource={RelativeSource Self}}" />
+			<Setter Property="MaxWidth" Value="80" />
 
+			<Style Selector="^.RegionArtaria">
+				<Setter Property="RegionBorder" Value="#99a452" />
+			</Style>
+			<Style Selector="^.RegionBurenia">
+				<Setter Property="RegionBorder" Value="#3174ad" />
+			</Style>
+			<Style Selector="^.RegionCataris">
+				<Setter Property="RegionBorder" Value="#b53829" />
+			</Style>
+			<Style Selector="^.RegionDairon">
+				<Setter Property="RegionBorder" Value="#a43481" />
+			</Style>
+			<Style Selector="^.RegionFerenia">
+				<Setter Property="RegionBorder" Value="#213094" />
+			</Style>
+			<Style Selector="^.RegionGhavoran">
+				<Setter Property="RegionBorder" Value="#089a4a" />
+			</Style>
+			<Style Selector="^.RegionHanubia">
+				<Setter Property="RegionBorder" Value="#af7310" />
+			</Style>
+		</Style>
+	</UserControl.Styles>
+
+	<Grid RowDefinitions="*,*"
+		  RowSpacing="4"
+		  ColumnDefinitions="*,*,*,*,*,*"
+		  ColumnSpacing="4"
+		  HorizontalAlignment="Left"
+		  VerticalAlignment="Top">
+		<!-- EMMIs -->
+		<tracker:BossTile Grid.Row="0" Grid.Column="0"
+						  IconPath="/Assets/Placeholders/boss-icons/emmi-spidermagnet.png"
+						  Classes="RegionArtaria"
+						  IsDefeated="{Binding WhiteEmmi}"
+						  ToolTip.Tip="White E.M.M.I. (Spider Magnet)" />
+		<tracker:BossTile Grid.Row="0" Grid.Column="1"
+						  IconPath="/Assets/Placeholders/boss-icons/emmi-morph.png"
+						  Classes="RegionCataris"
+						  IsDefeated="{Binding GreenEmmi}"
+						  ToolTip.Tip="Green E.M.M.I. (Morph Ball)" />
+		<tracker:BossTile Grid.Row="0" Grid.Column="2"
+						  IconPath="/Assets/Placeholders/boss-icons/emmi-speedbooster.png"
+						  Classes="RegionDairon"
+						  IsDefeated="{Binding YellowEmmi}"
+						  ToolTip.Tip="Yellow E.M.M.I. (Speed Booster)" />
+		<tracker:BossTile Grid.Row="0" Grid.Column="3"
+						  IconPath="/Assets/Placeholders/boss-icons/emmi-ice.png"
+						  Classes="RegionGhavoran"
+						  IsDefeated="{Binding BlueEmmi}"
+						  ToolTip.Tip="Blue E.M.M.I. (Ice Missile)" />
+		<tracker:BossTile Grid.Row="0" Grid.Column="4"
+						  IconPath="/Assets/Placeholders/boss-icons/emmi-wavebeam.png"
+						  Classes="RegionFerenia"
+						  IsDefeated="{Binding PurpleEmmi}"
+						  ToolTip.Tip="Purple E.M.M.I. (Wave Beam)" />
+		<tracker:BossTile Grid.Row="0" Grid.Column="5"
+						  IconPath="/Assets/Placeholders/boss-icons/emmi-powerbomb.png"
+						  Classes="RegionHanubia"
+						  IsDefeated="{Binding OrangeEmmi}"
+						  ToolTip.Tip="Orange E.M.M.I. (Power Bomb)" />
+
+		<!-- Other bosses -->
+		<tracker:BossTile Grid.Row="1" Grid.Column="0"
+						  IconPath="/Assets/Placeholders/boss-icons/boss-corpius.png"
+						  Classes="RegionArtaria"
+						  IsDefeated="{Binding Corpius}"
+						  ToolTip.Tip="Corpius" />
+		<tracker:BossTile Grid.Row="1" Grid.Column="1"
+						  IconPath="/Assets/Placeholders/boss-icons/boss-kraid.png"
+						  Classes="RegionCataris"
+						  IsDefeated="{Binding Kraid}"
+						  ToolTip.Tip="Kraid" />
+		<tracker:BossTile Grid.Row="1" Grid.Column="2"
+						  IconPath="/Assets/Placeholders/boss-icons/boss-drogyga.png"
+						  Classes="RegionBurenia"
+						  IsDefeated="{Binding Drogyga}"
+						  ToolTip.Tip="Drogyga" />
+		<tracker:BossTile Grid.Row="1" Grid.Column="3"
+						  IconPath="/Assets/Placeholders/boss-icons/boss-z57.png"
+						  Classes="RegionCataris"
+						  IsDefeated="{Binding ExperimentZ57}"
+						  ToolTip.Tip="Experiment Z-57" />
+		<tracker:BossTile Grid.Row="1" Grid.Column="4"
+						  IconPath="/Assets/Placeholders/boss-icons/boss-golzuna.png"
+						  Classes="RegionGhavoran"
+						  IsDefeated="{Binding Golzuna}"
+						  ToolTip.Tip="Golzuna" />
+		<tracker:BossTile Grid.Row="1" Grid.Column="5"
+						  IconPath="/Assets/Placeholders/boss-icons/boss-escue.png"
+						  Classes="RegionFerenia"
+						  IsDefeated="{Binding Escue}"
+						  ToolTip.Tip="Escue" />
 	</Grid>
 </UserControl>

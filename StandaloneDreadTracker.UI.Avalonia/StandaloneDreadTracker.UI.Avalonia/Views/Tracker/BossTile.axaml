@@ -36,14 +36,19 @@
 			<Setter Property="Margin" Value="4,4,4,4" />
 		</Style>
 
+		<Style Selector="Border.Background">
+			<Setter Property="Background" Value="Black" />
+			<Setter Property="CornerRadius" Value="6" />
+		</Style>
+
 		<Style Selector="Border.IconBorder">
 			<Setter Property="Background" Value="Black" />
 			<Setter Property="CornerRadius" Value="6" />
-			<Setter Property="BorderThickness" Value="4" />
+			<Setter Property="BorderThickness" Value="3" />
 		</Style>
 
 		<Style Selector="Border.IconBorderInner">
-			<Setter Property="CornerRadius" Value="3" />
+			<Setter Property="CornerRadius" Value="5" />
 		</Style>
 
 		<Style Selector="Border.BadgeBorder">
@@ -65,52 +70,55 @@
 		</Style>
 
 		<Style Selector="tracker|BossTile[IsDefeated=True]">
-			<Style Selector="^ Image.Icon">
-				<Setter Property="Opacity" Value="0.3" />
+			<Style Selector="^ Border.IconBorder, ^ Image.Icon">
+				<Setter Property="Visual.Opacity" Value="0.4" />
 			</Style>
 		</Style>
 	</UserControl.Styles>
 
-	<ThemeVariantScope RequestedThemeVariant="Light">
-		<Panel DataContext="{Binding #Self}" Classes="RootPanel">
-			<Grid Classes="LayoutGrid"
-				  RowDefinitions="24,*,24"
-				  ColumnDefinitions="24,*,24">
-				<!-- Image -->
-				<Border Grid.Row="0" Grid.RowSpan="3"
-						Grid.Column="0" Grid.ColumnSpan="3"
-						BorderBrush="{Binding RegionBorder}"
-						Classes="IconBorder">
-					<!-- Nested borders allow us to make the image clipping corner radius look better -->
-					<Border Classes="IconBorderInner"
-							ClipToBounds="True">
-						<Image Source="{Binding IconPath}"
-							   Classes="Icon" />
-					</Border>
+	<Panel DataContext="{Binding #Self}">
+		<Grid Classes="LayoutGrid"
+			  RowDefinitions="24,*,24"
+			  ColumnDefinitions="24,*,24">
+			<!-- Background -->
+			<Border Grid.Row="0" Grid.RowSpan="3"
+					Grid.Column="0" Grid.ColumnSpan="3"
+					Classes="Background" />
+
+			<!-- Image -->
+			<Border Grid.Row="0" Grid.RowSpan="3"
+					Grid.Column="0" Grid.ColumnSpan="3"
+					BorderBrush="{Binding RegionBorder}"
+					Classes="IconBorder">
+				<!-- Nested borders allow us to make the image clipping corner radius look better -->
+				<Border Classes="IconBorderInner"
+						ClipToBounds="True">
+					<Image Source="{Binding IconPath}"
+						   Classes="Icon" />
 				</Border>
+			</Border>
 
-				<!-- DNA Hint -->
-				<Border Grid.Row="0"
-						Grid.Column="0"
-						Grid.ColumnSpan="3"
-						Classes="BadgeBorder">
-					<Border.IsVisible>
-						<MultiBinding Converter="{x:Static BoolConverters.And}">
-							<Binding Path="ShowDnaHint" />
-							<Binding Path="DnaHint" Converter="{x:Static tracker:BossTile.HasDnaHintConverter}" />
-						</MultiBinding>
-					</Border.IsVisible>
+			<!-- DNA Hint -->
+			<Border Grid.Row="0"
+					Grid.Column="0"
+					Grid.ColumnSpan="3"
+					Classes="BadgeBorder">
+				<Border.IsVisible>
+					<MultiBinding Converter="{x:Static BoolConverters.And}">
+						<Binding Path="ShowDnaHint" />
+						<Binding Path="DnaHint" Converter="{x:Static tracker:BossTile.HasDnaHintConverter}" />
+					</MultiBinding>
+				</Border.IsVisible>
 
-					<StackPanel Orientation="Horizontal" Spacing="2">
-						<!-- TODO: Simpler icon -->
-						<Image Source="/Assets/Placeholders/item-icons/dna.png"
-							   Margin="1" />
+				<StackPanel Orientation="Horizontal" Spacing="2">
+					<!-- TODO: Simpler icon -->
+					<Image Source="/Assets/Placeholders/item-icons/dna.png"
+						   Margin="1" />
 
-						<TextBlock Classes="BadgeText"
-								   Text="{Binding DnaHint}" />
-					</StackPanel>
-				</Border>
-			</Grid>
-		</Panel>
-	</ThemeVariantScope>
+					<TextBlock Classes="BadgeText"
+							   Text="{Binding DnaHint}" />
+				</StackPanel>
+			</Border>
+		</Grid>
+	</Panel>
 </UserControl>

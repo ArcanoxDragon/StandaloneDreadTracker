@@ -1,5 +1,6 @@
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
+using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
@@ -12,10 +13,12 @@ namespace StandaloneDreadTracker.UI.Avalonia.Views.Tracker;
 
 public partial class BossTile : UserControl, IActivatableView
 {
-	public static readonly StyledProperty<bool>    IsDefeatedProperty   = AvaloniaProperty.Register<BossTile, bool>(nameof(IsDefeated));
-	public static readonly StyledProperty<IBrush?> RegionBorderProperty = AvaloniaProperty.Register<ItemTile, IBrush?>(nameof(RegionBorder), Brushes.Transparent);
-	public static readonly StyledProperty<IImage?> IconPathProperty     = AvaloniaProperty.Register<BossTile, IImage?>(nameof(IconPath));
-	public static readonly StyledProperty<bool>    ShowDnaHintProperty  = AvaloniaProperty.Register<BossTile, bool>(nameof(ShowDnaHint), defaultValue: true);
+	public static readonly StyledProperty<bool>      IsDefeatedProperty                 = AvaloniaProperty.Register<BossTile, bool>(nameof(IsDefeated));
+	public static readonly StyledProperty<IBrush?>   RegionBorderProperty               = AvaloniaProperty.Register<ItemTile, IBrush?>(nameof(RegionBorder), Brushes.Transparent);
+	public static readonly StyledProperty<IImage?>   IconPathProperty                   = AvaloniaProperty.Register<BossTile, IImage?>(nameof(IconPath));
+	public static readonly StyledProperty<bool>      ShowDnaHintProperty                = AvaloniaProperty.Register<BossTile, bool>(nameof(ShowDnaHint), defaultValue: true);
+	public static readonly StyledProperty<ICommand?> RightClickCommandProperty          = AvaloniaProperty.Register<BossTile, ICommand?>(nameof(RightClickCommand));
+	public static readonly StyledProperty<object?>   RightClickCommandParameterProperty = AvaloniaProperty.Register<BossTile, object?>(nameof(RightClickCommandParameter));
 
 	public static readonly StyledProperty<int> DnaHintProperty = AvaloniaProperty.Register<BossTile, int>(
 		nameof(DnaHint),
@@ -69,6 +72,18 @@ public partial class BossTile : UserControl, IActivatableView
 		set => SetValue(ShowDnaHintProperty, value);
 	}
 
+	public ICommand? RightClickCommand
+	{
+		get => GetValue(RightClickCommandProperty);
+		set => SetValue(RightClickCommandProperty, value);
+	}
+
+	public object? RightClickCommandParameter
+	{
+		get => GetValue(RightClickCommandParameterProperty);
+		set => SetValue(RightClickCommandParameterProperty, value);
+	}
+
 	protected void OnGlobalKeyDown(object? sender, KeyEventArgs e)
 	{
 		if (!IsPointerOver)
@@ -90,6 +105,16 @@ public partial class BossTile : UserControl, IActivatableView
 			// Clearing DNA number
 			DnaHint = 0;
 		}
+	}
+
+	protected override void OnPointerReleased(PointerReleasedEventArgs e)
+	{
+		base.OnPointerReleased(e);
+
+		if (e.InitialPressMouseButton == MouseButton.Left)
+			IsDefeated = !IsDefeated;
+		else if (e.InitialPressMouseButton == MouseButton.Right)
+			RightClickCommand?.Execute(RightClickCommandParameter);
 	}
 
 	protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
