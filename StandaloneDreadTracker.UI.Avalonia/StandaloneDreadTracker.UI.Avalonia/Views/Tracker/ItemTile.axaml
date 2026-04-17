@@ -3,6 +3,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:tracker="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views.Tracker"
+			 xmlns:system="clr-namespace:System;assembly=System.Runtime"
 			 mc:Ignorable="d" d:DesignWidth="76" d:DesignHeight="76"
 			 x:Class="StandaloneDreadTracker.UI.Avalonia.Views.Tracker.ItemTile"
 			 Name="Self">
@@ -12,10 +13,16 @@
 			<Setter Property="GroupBackground" Value="Red" />
 			<Setter Property="IsFirstInGroup" Value="True" />
 			<Setter Property="IsLastInGroup" Value="True" />
-			<Setter Property="IconPath" Value="/Assets/Placeholders/item-icons/beam-wide.png" />
+			<Setter Property="Icon" Value="/Assets/Placeholders/item-icons/beam-wide.png" />
 			<Setter Property="AuxText" Value="1.5s" />
 		</Style>
 	</Design.DesignStyle>
+
+	<UserControl.Resources>
+		<system:String x:Key="SvgIconFadeCss">
+			g { opacity: 0.3 !important; }
+		</system:String>
+	</UserControl.Resources>
 
 	<UserControl.Styles>
 		<Style Selector="Panel.RootPanel">
@@ -41,6 +48,9 @@
 		</Style>
 
 		<Style Selector="tracker|ItemTile[IsCollected=False]">
+			<!-- Need to apply CSS directly to this control if IconPath is an SVG image -->
+			<Setter Property="Svg.Css" Value="{StaticResource SvgIconFadeCss}" />
+
 			<Style Selector="^ Image.Icon">
 				<Setter Property="Opacity" Value="0.3" />
 			</Style>
@@ -87,7 +97,7 @@
 					Background="Black"
 					CornerRadius="28"
 					Width="56" Height="56">
-				<Image Source="{Binding IconPath}"
+				<Image Source="{Binding Icon}"
 					   Classes="Icon" />
 			</Border>
 

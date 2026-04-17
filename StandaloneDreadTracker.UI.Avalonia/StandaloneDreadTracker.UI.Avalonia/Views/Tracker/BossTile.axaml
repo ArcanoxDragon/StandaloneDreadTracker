@@ -3,6 +3,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:tracker="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views.Tracker"
+			 xmlns:system="clr-namespace:System;assembly=System.Runtime"
 			 mc:Ignorable="d" d:DesignWidth="76" d:DesignHeight="76"
 			 x:Class="StandaloneDreadTracker.UI.Avalonia.Views.Tracker.BossTile"
 			 Name="Self">
@@ -20,11 +21,17 @@
 				<ResourceDictionary x:Key="Light">
 					<Color x:Key="DnaHintTextColor">#ff8888</Color>
 					<Color x:Key="DnaHintBackgroundColor">#440000</Color>
+					<system:String x:Key="IconCss">
+						#dna_shape { fill: #ff8888; }
+					</system:String>
 				</ResourceDictionary>
 				<ResourceDictionary x:Key="Dark">
 					<!-- ReSharper disable Xaml.RedundantResource -->
 					<Color x:Key="DnaHintTextColor">#880000</Color>
 					<Color x:Key="DnaHintBackgroundColor">#ffcccc</Color>
+					<system:String x:Key="IconCss">
+						#dna_shape { fill: #880000; }
+					</system:String>
 					<!-- ReSharper restore Xaml.RedundantResource -->
 				</ResourceDictionary>
 			</ResourceDictionary.ThemeDictionaries>
@@ -110,10 +117,9 @@
 					</MultiBinding>
 				</Border.IsVisible>
 
-				<StackPanel Orientation="Horizontal" Spacing="2">
-					<!-- TODO: Simpler icon -->
-					<Image Source="/Assets/Placeholders/item-icons/dna.png"
-						   Margin="1" />
+				<StackPanel Orientation="Horizontal">
+					<Svg Path="/Assets/DNA-Simple.svg"
+						 Svg.Css="{DynamicResource IconCss}" />
 
 					<TextBlock Classes="BadgeText"
 							   Text="{Binding DnaHint}" />

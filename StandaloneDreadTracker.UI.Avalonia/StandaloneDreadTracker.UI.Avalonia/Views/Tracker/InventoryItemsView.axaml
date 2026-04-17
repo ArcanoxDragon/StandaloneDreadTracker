@@ -4,9 +4,11 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:tracker="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views.Tracker"
 			 xmlns:inventory="clr-namespace:DreadRemoteConnector.Inventory;assembly=DreadRemoteConnector"
+			 xmlns:designTime="clr-namespace:StandaloneDreadTracker.UI.Avalonia.DesignTime"
 			 mc:Ignorable="d" d:DesignWidth="640" d:DesignHeight="240"
 			 x:Class="StandaloneDreadTracker.UI.Avalonia.Views.Tracker.InventoryItemsView"
-			 x:DataType="inventory:DreadInventory">
+			 x:DataType="inventory:DreadInventory"
+			 Design.DataContext="{x:Static designTime:DesignTimeModels.Inventory}">
 	<UserControl.Styles>
 		<Style Selector="tracker|ItemTile">
 			<Style Selector="^.First">
@@ -46,109 +48,109 @@
 	</UserControl.Styles>
 
 	<WrapPanel>
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/beam-wide.png"
+		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/beam-wide.png"
 						  Classes="BeamGroup First"
 						  IsCollected="{Binding WideBeam}"
 						  ToolTip.Tip="Wide Beam" />
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/beam-plasma.png"
+		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/beam-plasma.png"
 						  Classes="BeamGroup"
 						  IsCollected="{Binding PlasmaBeam}"
 						  ToolTip.Tip="Plasma Beam" />
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/beam-wave.png"
+		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/beam-wave.png"
 						  Classes="BeamGroup Last"
 						  IsCollected="{Binding WaveBeam}"
 						  ToolTip.Tip="Wave Beam" />
 
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/beam-charge.png"
+		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/beam-charge.png"
 						  Classes="ChargeBeamGroup First"
 						  IsCollected="{Binding ChargeBeam}"
 						  ToolTip.Tip="Charge Beam" />
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/beam-diffusion.png"
+		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/beam-diffusion.png"
 						  Classes="ChargeBeamGroup Last"
 						  IsCollected="{Binding DiffusionBeam}"
 						  ToolTip.Tip="Diffusion Beam" />
 
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/movement-morphball.png"
+		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/movement-morphball.png"
 						  Classes="MorphBallGroup First"
 						  IsCollected="{Binding MorphBall}"
 						  ToolTip.Tip="Morph Ball" />
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/bomb-morph.png"
+		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/bomb-morph.png"
 						  Classes="MorphBallGroup"
 						  IsCollected="{Binding Bomb}"
 						  ToolTip.Tip="Bomb" />
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/bomb-cross.png"
+		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/bomb-cross.png"
 						  Classes="MorphBallGroup"
 						  IsCollected="{Binding CrossBomb}"
 						  ToolTip.Tip="Cross Bomb" />
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/bomb-power.png"
+		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/bomb-power.png"
 						  Classes="MorphBallGroup Last"
 						  IsCollected="{Binding PowerBomb}"
 						  ToolTip.Tip="Power Bomb" />
 
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/missile-super.png"
+		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/missile-super.png"
 						  Classes="MissileGroup First"
 						  IsCollected="{Binding SuperMissile}"
 						  ToolTip.Tip="Super Missile" />
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/missile-ice.png"
+		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/missile-ice.png"
 						  Classes="MissileGroup"
 						  IsCollected="{Binding IceMissile}"
 						  ToolTip.Tip="Ice Missile" />
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/missile-storm.png"
+		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/missile-storm.png"
 						  Classes="MissileGroup Last"
 						  IsCollected="{Binding StormMissile}"
 						  ToolTip.Tip="Storm Missile" />
 
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/spin-spinboost.png"
+		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/spin-spinboost.png"
 						  Classes="JumpGroup First"
 						  IsCollected="{Binding SpinBoost}"
 						  ToolTip.Tip="Spin Boost" />
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/spin-spacejump.png"
+		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/spin-spacejump.png"
 						  Classes="JumpGroup Last"
 						  IsCollected="{Binding SpaceJump}"
 						  ToolTip.Tip="Space Jump" />
 
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/suit-varia.png"
+		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/suit-varia.png"
 						  Classes="SuitGroup First"
 						  IsCollected="{Binding VariaSuit}"
 						  ToolTip.Tip="Varia Suit" />
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/suit-gravity.png"
+		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/suit-gravity.png"
 						  Classes="SuitGroup Last"
 						  IsCollected="{Binding GravitySuit}"
 						  ToolTip.Tip="Gravity Suit" />
 
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/movement-spidermagnet.png"
+		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/movement-spidermagnet.png"
 						  Classes="MiscGroup First"
 						  IsCollected="{Binding SpiderMagnet}"
 						  ToolTip.Tip="Spider Magnet" />
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/movement-grapplebeam.png"
+		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/movement-grapplebeam.png"
 						  Classes="MiscGroup"
 						  IsCollected="{Binding GrappleBeam}"
 						  ToolTip.Tip="Grapple Beam" />
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/movement-speedbooster.png"
+		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/movement-speedbooster.png"
 						  Classes="MiscGroup"
 						  IsCollected="{Binding SpeedBooster}"
 						  AuxText="{Binding SpeedBoosterChargeTime, StringFormat='{}{0}s'}"
 						  ToolTip.Tip="Speed Booster" />
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/movement-screwattack.png"
+		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/movement-screwattack.png"
 						  Classes="MiscGroup Last"
 						  IsCollected="{Binding ScrewAttack}"
 						  ToolTip.Tip="Screw Attack" />
 
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/aeion-phantomcloak.png"
+		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/aeion-phantomcloak.png"
 						  Classes="AeionGroup First"
 						  IsCollected="{Binding PhantomCloak}"
 						  ToolTip.Tip="Phantom Cloak" />
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/aeion-flashshift.png"
+		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/aeion-flashshift.png"
 						  Classes="AeionGroup"
 						  IsCollected="{Binding FlashShift}"
 						  AuxText="{Binding FlashShiftChainCount}"
 						  ToolTip.Tip="Flash Shift" />
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/aeion-pulseradar.png"
+		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/aeion-pulseradar.png"
 						  Classes="AeionGroup Last"
 						  IsCollected="{Binding PulseRadar}"
 						  ToolTip.Tip="Pulse Radar" />
 
-		<tracker:ItemTile IconPath="/Assets/Placeholders/item-icons/dna.png"
+		<tracker:ItemTile Icon="{SvgImage /Assets/ItemIcons/DNA.svg}"
 						  IsVisible="{Binding RequiredDnaCount, FallbackValue=False}"
 						  ShowLocationHint="False"
 						  Classes="DnaGroup First Last"

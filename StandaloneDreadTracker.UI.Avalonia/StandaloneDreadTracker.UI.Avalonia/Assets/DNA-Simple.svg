@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg width="64" height="64" viewBox="0 0 64 64" version="1.1" id="svg5" xml:space="preserve"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:svg="http://www.w3.org/2000/svg">
+  <style>
+    #dna_shape { fill: #ff4d4c; }
+  </style>
+  <defs id="defs2" />
+  <g id="layer3">
+    <path id="dna_shape" style="baseline-shift:baseline;display:inline;overflow:visible;opacity:1;vector-effect:none;enable-background:accumulate;stop-color:#000000;stop-opacity:1" d="m 22.714844,47 v 2 h 18.570312 v -2 z m 3.095703,-6 v 2 h 12.378906 v -2 z m 0,-20 v 2 h 12.378906 v -2 z m -3.095703,-6 v 2 H 41.285156 V 15 Z M 42,9 a 2,2 0 0 0 -2,2 C 40,17.611111 35.392578,24.058594 30.392578,30.808594 25.392578,37.558594 20,44.611111 20,53 a 2,2 0 0 0 2,2 2,2 0 0 0 2,-2 C 24,46.388889 28.607422,39.941406 33.607422,33.191406 38.607422,26.441406 44,19.388889 44,11 A 2,2 0 0 0 42,9 Z M 22,9 a 2,2 0 0 0 -2,2 c 0,8.388889 5.392578,15.441406 10.392578,22.191406 C 35.392578,39.941406 40,46.388889 40,53 a 2,2 0 0 0 2,2 2,2 0 0 0 2,-2 C 44,44.611111 38.607422,37.558594 33.607422,30.808594 28.607422,24.058594 24,17.611111 24,11 A 2,2 0 0 0 22,9 Z" />
+  </g>
+</svg>
