@@ -1,4 +1,5 @@
-﻿using DreadRemoteConnector.Observability;
+﻿using System.Runtime.CompilerServices;
+using DreadRemoteConnector.Observability;
 using JetBrains.Annotations;
 
 namespace DreadRemoteConnector.Inventory;
@@ -238,7 +239,11 @@ public partial class DreadInventory : NotifyPropertyChangedObject
 
 	#region Metroid DNA
 
+	private static readonly string MetroidDnaPropertyNamePrefix = nameof(MetroidDna1)[..^1];
+
 	private readonly bool[] metroidDna = new bool[Items.MaxMetroidDnaCount];
+
+	public event EventHandler<int>? OnDnaStateChanged;
 
 	public IReadOnlyList<bool> AllMetroidDna => this.metroidDna;
 
@@ -262,130 +267,55 @@ public partial class DreadInventory : NotifyPropertyChangedObject
 		}
 	}
 
-	public bool MetroidDna1
+	public bool MetroidDna1  { get => GetDna(); set => SetDna(value); }
+	public bool MetroidDna2  { get => GetDna(); set => SetDna(value); }
+	public bool MetroidDna3  { get => GetDna(); set => SetDna(value); }
+	public bool MetroidDna4  { get => GetDna(); set => SetDna(value); }
+	public bool MetroidDna5  { get => GetDna(); set => SetDna(value); }
+	public bool MetroidDna6  { get => GetDna(); set => SetDna(value); }
+	public bool MetroidDna7  { get => GetDna(); set => SetDna(value); }
+	public bool MetroidDna8  { get => GetDna(); set => SetDna(value); }
+	public bool MetroidDna9  { get => GetDna(); set => SetDna(value); }
+	public bool MetroidDna10 { get => GetDna(); set => SetDna(value); }
+	public bool MetroidDna11 { get => GetDna(); set => SetDna(value); }
+	public bool MetroidDna12 { get => GetDna(); set => SetDna(value); }
+
+	private bool GetDna([CallerMemberName] string? propertyName = null)
 	{
-		get => this.metroidDna[0];
-		set
-		{
-			if (SetField(ref this.metroidDna[0], value))
-				RaisePropertyChanged(nameof(AllMetroidDnaCollected));
-		}
+		ArgumentNullException.ThrowIfNull(propertyName);
+		return GetDnaRef(propertyName, out _);
 	}
 
-	public bool MetroidDna2
+	private void SetDna(bool collected, [CallerMemberName] string? propertyName = null)
 	{
-		get => this.metroidDna[1];
-		set
-		{
-			if (SetField(ref this.metroidDna[1], value))
-				NotifyWhenAnyDnaChanged();
-		}
+		ArgumentNullException.ThrowIfNull(propertyName);
+
+		ref var dnaRef = ref GetDnaRef(propertyName, out var dnaNumber);
+
+		if (dnaRef == collected)
+			// Value not actually changing
+			return;
+
+		dnaRef = collected;
+		NotifyWhenDnaChanged(dnaNumber);
 	}
 
-	public bool MetroidDna3
+	private ref bool GetDnaRef(string propertyName, out int dnaNumber)
 	{
-		get => this.metroidDna[2];
-		set
-		{
-			if (SetField(ref this.metroidDna[2], value))
-				NotifyWhenAnyDnaChanged();
-		}
+		if (!int.TryParse(propertyName[MetroidDnaPropertyNamePrefix.Length..], out dnaNumber))
+			throw new ArgumentException($"Invalid DNA property name: {propertyName}", nameof(propertyName));
+
+		return ref this.metroidDna[dnaNumber - 1];
 	}
 
-	public bool MetroidDna4
+	private void NotifyWhenDnaChanged(int dnaNumber)
 	{
-		get => this.metroidDna[3];
-		set
-		{
-			if (SetField(ref this.metroidDna[3], value))
-				NotifyWhenAnyDnaChanged();
-		}
-	}
+		string dnaPropertyName = MetroidDnaPropertyNamePrefix + dnaNumber;
 
-	public bool MetroidDna5
-	{
-		get => this.metroidDna[4];
-		set
-		{
-			if (SetField(ref this.metroidDna[4], value))
-				NotifyWhenAnyDnaChanged();
-		}
-	}
-
-	public bool MetroidDna6
-	{
-		get => this.metroidDna[5];
-		set
-		{
-			if (SetField(ref this.metroidDna[5], value))
-				NotifyWhenAnyDnaChanged();
-		}
-	}
-
-	public bool MetroidDna7
-	{
-		get => this.metroidDna[6];
-		set
-		{
-			if (SetField(ref this.metroidDna[6], value))
-				NotifyWhenAnyDnaChanged();
-		}
-	}
-
-	public bool MetroidDna8
-	{
-		get => this.metroidDna[7];
-		set
-		{
-			if (SetField(ref this.metroidDna[7], value))
-				NotifyWhenAnyDnaChanged();
-		}
-	}
-
-	public bool MetroidDna9
-	{
-		get => this.metroidDna[8];
-		set
-		{
-			if (SetField(ref this.metroidDna[8], value))
-				NotifyWhenAnyDnaChanged();
-		}
-	}
-
-	public bool MetroidDna10
-	{
-		get => this.metroidDna[9];
-		set
-		{
-			if (SetField(ref this.metroidDna[9], value))
-				NotifyWhenAnyDnaChanged();
-		}
-	}
-
-	public bool MetroidDna11
-	{
-		get => this.metroidDna[10];
-		set
-		{
-			if (SetField(ref this.metroidDna[10], value))
-				NotifyWhenAnyDnaChanged();
-		}
-	}
-
-	public bool MetroidDna12
-	{
-		get => this.metroidDna[11];
-		set
-		{
-			if (SetField(ref this.metroidDna[11], value))
-				NotifyWhenAnyDnaChanged();
-		}
-	}
-
-	private void NotifyWhenAnyDnaChanged()
-	{
+		RaisePropertyChanged(dnaPropertyName);
 		RaisePropertyChanged(nameof(CollectedDnaCount));
 		RaisePropertyChanged(nameof(AllMetroidDnaCollected));
+		OnDnaStateChanged?.Invoke(this, dnaNumber);
 	}
 
 	#endregion
@@ -539,17 +469,14 @@ public partial class DreadInventory : NotifyPropertyChangedObject
 			if (dnaNumber is < 1 or > Items.MaxMetroidDnaCount)
 				return;
 
-			ref var dnaField = ref this.metroidDna[dnaNumber - 1];
-			var hasDna = quantity > 0;
+			ref var dnaSlot = ref this.metroidDna[dnaNumber - 1];
+			var prevDnaCollected = dnaSlot;
+			var newDnaCollected = quantity > 0;
 
-			if (dnaField != hasDna)
+			if (prevDnaCollected != newDnaCollected)
 			{
-				dnaField = hasDna;
-
-				string propertyNamePrefix = nameof(MetroidDna1)[..^1];
-
-				RaisePropertyChanged($"{propertyNamePrefix}{dnaNumber}");
-				NotifyWhenAnyDnaChanged();
+				dnaSlot = newDnaCollected;
+				NotifyWhenDnaChanged(dnaNumber);
 			}
 		}
 
