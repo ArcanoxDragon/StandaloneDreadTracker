@@ -45,17 +45,17 @@
 
 		<Style Selector="Border.Background">
 			<Setter Property="Background" Value="Black" />
-			<Setter Property="CornerRadius" Value="6" />
+			<Setter Property="CornerRadius" Value="7" />
 		</Style>
 
 		<Style Selector="Border.IconBorder">
 			<Setter Property="Background" Value="Black" />
-			<Setter Property="CornerRadius" Value="6" />
+			<Setter Property="CornerRadius" Value="5" />
 			<Setter Property="BorderThickness" Value="3" />
 		</Style>
 
 		<Style Selector="Border.IconBorderInner">
-			<Setter Property="CornerRadius" Value="5" />
+			<Setter Property="CornerRadius" Value="4" />
 		</Style>
 
 		<Style Selector="Border.BadgeBorder">
