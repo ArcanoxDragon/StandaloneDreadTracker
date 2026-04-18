@@ -13,7 +13,7 @@ namespace StandaloneDreadTracker.UI.Avalonia.Views.Tracker;
 
 public partial class BossTile : UserControl, IActivatableView
 {
-	public static readonly StyledProperty<bool>      IsDefeatedProperty                 = AvaloniaProperty.Register<BossTile, bool>(nameof(IsDefeated));
+	public static readonly StyledProperty<bool>      IsDefeatedProperty                 = AvaloniaProperty.Register<BossTile, bool>(nameof(IsDefeated), defaultBindingMode: BindingMode.TwoWay);
 	public static readonly StyledProperty<IBrush?>   RegionBorderProperty               = AvaloniaProperty.Register<ItemTile, IBrush?>(nameof(RegionBorder), Brushes.Transparent);
 	public static readonly StyledProperty<IImage?>   IconPathProperty                   = AvaloniaProperty.Register<BossTile, IImage?>(nameof(IconPath));
 	public static readonly StyledProperty<bool>      ShowDnaHintProperty                = AvaloniaProperty.Register<BossTile, bool>(nameof(ShowDnaHint), defaultValue: true);
@@ -93,7 +93,7 @@ public partial class BossTile : UserControl, IActivatableView
 		{
 			// Setting DNA number
 			DnaHint = character switch {
-				>= '1' and <= '9' => 1 + ( character - '1' ),
+				>= '1' and <= '9' => 1 + (character - '1'),
 				'0'               => 10,
 				'-'               => 11,
 				'='               => 12,
@@ -111,7 +111,9 @@ public partial class BossTile : UserControl, IActivatableView
 	{
 		base.OnPointerReleased(e);
 
-		if (e.InitialPressMouseButton == MouseButton.Left)
+		// Left-clicking to toggle only works when there is no DNA,
+		// as bosses with DNA are synchronized to the DNA items.
+		if (e.InitialPressMouseButton == MouseButton.Left && DnaHint == 0)
 			IsDefeated = !IsDefeated;
 		else if (e.InitialPressMouseButton == MouseButton.Right)
 			RightClickCommand?.Execute(RightClickCommandParameter);
@@ -125,7 +127,7 @@ public partial class BossTile : UserControl, IActivatableView
 
 		if (e.Delta.Y <= -1) // Scroll wheel down
 		{
-			DnaHint = ( DnaHint + 1 ) % MaxValueExclusive;
+			DnaHint = (DnaHint + 1) % MaxValueExclusive;
 		}
 		else if (e.Delta.Y >= 1) // Scroll wheel up
 		{

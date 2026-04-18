@@ -1,11 +1,13 @@
 ﻿using System.Drawing;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
+using System.Reactive.Linq;
 using DreadRemoteConnector;
 using DreadRemoteConnector.Inventory;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using StandaloneDreadTracker.App.Configuration;
+using StandaloneDreadTracker.App.Extensions;
 using StandaloneDreadTracker.App.Tracker;
 using StandaloneDreadTracker.App.Utility;
 
@@ -27,20 +29,22 @@ public partial class TrackerViewModel : ViewModelBase
 
 	#endregion
 
-	private CompositeDisposable? connectorDisposable;
+	private readonly SerialSubscription<DreadConnector> connectorSubscription;
+	private readonly SerialSubscription<BossDnaHints>   dnaHintsSubscription;
 
 	public TrackerViewModel()
 	{
+		this.connectorSubscription = new SerialSubscription<DreadConnector>(SubscribeConnector);
+		this.dnaHintsSubscription = new SerialSubscription<BossDnaHints>(SubscribeDnaHints);
+
 		this.WhenActivated(disposables => {
 			this.WhenAnyValue(m => m.Connector)
-				.Subscribe(SubscribeConnector)
+				.SubscribeWith(this.connectorSubscription)
 				.DisposeWith(disposables);
 
-			// Clean up current subscription when de-activating
-			Disposable.Create(() => {
-				this.connectorDisposable?.Dispose();
-				this.connectorDisposable = null;
-			}).DisposeWith(disposables);
+			this.WhenAnyValue(m => m.BossDnaHints)
+				.SubscribeWith(this.dnaHintsSubscription)
+				.DisposeWith(disposables);
 		});
 	}
 
@@ -121,22 +125,8 @@ public partial class TrackerViewModel : ViewModelBase
 
 	#endregion
 
-	private void SubscribeConnector(DreadConnector? connector)
+	private void SubscribeConnector(DreadConnector connector, CompositeDisposable disposables)
 	{
-		CompositeDisposable? previousDisposable;
-
-		if (connector is null)
-		{
-			previousDisposable = Interlocked.Exchange(ref this.connectorDisposable, null);
-			previousDisposable?.Dispose();
-			return;
-		}
-
-		var newDisposable = new CompositeDisposable();
-
-		previousDisposable = Interlocked.Exchange(ref this.connectorDisposable, newDisposable);
-		previousDisposable?.Dispose();
-
 		// Bind ObservableAsPropertyHelper to the "State" property until this connector is disposed
 		connector.WhenAnyValue(
 				c => c.IsConnected,
@@ -145,7 +135,47 @@ public partial class TrackerViewModel : ViewModelBase
 				GetStateText,
 				isDistinct: true)
 			.ToProperty(this, m => m.State, out this._stateHelper)
-			.DisposeWith(newDisposable);
+			.DisposeWith(disposables);
+
+		// Auto-toggle the defeated state of bosses with DNA locations assigned when DNA items change
+		Observable.FromEventPattern<int>(
+				h => connector.CurrentInventory.DnaStateChanged += h,
+				h => connector.CurrentInventory.DnaStateChanged -= h)
+			.Subscribe(@event => SetBossDefeatedForDna(@event.EventArgs))
+			.DisposeWith(disposables);
+	}
+
+	private void SubscribeDnaHints(BossDnaHints dnaHints, CompositeDisposable disposables)
+	{
+		// Sync the defeated state of bosses when their DNA hint is changed
+		Observable.FromEventPattern<BossValueChangedEventArgs>(
+				h => dnaHints.ValueChanged += h,
+				h => dnaHints.ValueChanged -= h)
+			.Subscribe(@event => {
+				var dnaNumber = BossDnaHints[@event.EventArgs.BossIndex];
+
+				if (dnaNumber is < 1 or >= DreadInventory.Items.MaxMetroidDnaCount)
+					return;
+
+				SetBossDefeatedForDna(dnaNumber);
+			})
+			.DisposeWith(disposables);
+	}
+
+	private void SetBossDefeatedForDna(int dnaNumber)
+	{
+		if (CurrentInventory is not { } inventory)
+			return;
+
+		var dnaCollected = inventory.AllMetroidDna[dnaNumber - 1];
+
+		for (var i = 0; i < DreadBosses.BossOrder.Count; i++)
+		{
+			if (BossDnaHints[i] != dnaNumber)
+				continue;
+
+			DefeatedBosses[i] = dnaCollected;
+		}
 	}
 
 	private static string GetStateText(bool isConnected, GameState gameState, string scenarioName)

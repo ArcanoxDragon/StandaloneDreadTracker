@@ -3,9 +3,17 @@ using DreadRemoteConnector.Observability;
 
 namespace DreadRemoteConnector.Inventory;
 
+public class BossValueChangedEventArgs(int bossIndex, string bossName) : EventArgs
+{
+	public int    BossIndex { get; } = bossIndex;
+	public string BossName  { get; } = bossName;
+}
+
 public abstract class DreadBossContainer<T> : NotifyPropertyChangedObject
 {
 	private readonly T[] storage = new T[DreadBosses.BossOrder.Count];
+
+	public event EventHandler<BossValueChangedEventArgs>? ValueChanged;
 
 	#region EMMIs
 
@@ -37,7 +45,7 @@ public abstract class DreadBossContainer<T> : NotifyPropertyChangedObject
 			ref var slot = ref GetSlot(bossIndex);
 			var bossName = DreadBosses.BossOrder[bossIndex];
 
-			SetField(ref slot, value, bossName);
+			SetValueCore(ref slot, value, bossName);
 		}
 	}
 
@@ -48,7 +56,7 @@ public abstract class DreadBossContainer<T> : NotifyPropertyChangedObject
 		{
 			ref var slot = ref GetSlot(bossName);
 
-			SetField(ref slot, value, bossName);
+			SetValueCore(ref slot, value, bossName);
 		}
 	}
 
@@ -97,6 +105,23 @@ public abstract class DreadBossContainer<T> : NotifyPropertyChangedObject
 		if (Unsafe.IsNullRef(ref slot))
 			throw new ArgumentException($"Unknown boss: {bossName}", nameof(bossName));
 
-		return SetField(ref slot, value, bossName);
+		return SetValueCore(ref slot, value, bossName!);
+	}
+
+	protected bool SetValueCore(ref T slot, T value, string bossName)
+	{
+		if (!SetField(ref slot, value, bossName))
+			return false;
+
+		if (ValueChanged is not { } valueChanged)
+			return true;
+
+		ref var firstSlot = ref this.storage[0];
+		var byteDifference = Unsafe.ByteOffset(ref firstSlot, ref slot);
+		var bossIndex = (int) (byteDifference / Unsafe.SizeOf<T>());
+		var eventArgs = new BossValueChangedEventArgs(bossIndex, bossName);
+
+		valueChanged(this, eventArgs);
+		return true;
 	}
 }

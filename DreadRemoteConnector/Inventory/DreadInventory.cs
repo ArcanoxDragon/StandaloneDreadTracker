@@ -243,7 +243,7 @@ public partial class DreadInventory : NotifyPropertyChangedObject
 
 	private readonly bool[] metroidDna = new bool[Items.MaxMetroidDnaCount];
 
-	public event EventHandler<int>? OnDnaStateChanged;
+	public event EventHandler<int>? DnaStateChanged;
 
 	public IReadOnlyList<bool> AllMetroidDna => this.metroidDna;
 
@@ -315,7 +315,7 @@ public partial class DreadInventory : NotifyPropertyChangedObject
 		RaisePropertyChanged(dnaPropertyName);
 		RaisePropertyChanged(nameof(CollectedDnaCount));
 		RaisePropertyChanged(nameof(AllMetroidDnaCollected));
-		OnDnaStateChanged?.Invoke(this, dnaNumber);
+		DnaStateChanged?.Invoke(this, dnaNumber);
 	}
 
 	#endregion
