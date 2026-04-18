@@ -39,7 +39,7 @@
 		</views:GroupBox>
 
 		<views:GroupBox Header="Bosses &amp; DNA">
-			<tracker:BossesView DataContext="{Binding DefeatedBosses}" />
+			<tracker:BossesView />
 		</views:GroupBox>
 	</StackPanel>
 </avalonia:ReactiveWindow>

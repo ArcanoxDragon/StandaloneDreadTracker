@@ -6,6 +6,7 @@ using DreadRemoteConnector.Inventory;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using StandaloneDreadTracker.App.Configuration;
+using StandaloneDreadTracker.App.Tracker;
 using StandaloneDreadTracker.App.Utility;
 
 namespace StandaloneDreadTracker.App.ViewModels;
@@ -54,7 +55,8 @@ public partial class TrackerViewModel : ViewModelBase
 
 	public DreadInventory? CurrentInventory => MockInventory ?? Connector?.CurrentInventory;
 
-	public DreadBosses DefeatedBosses { get; set; } = new();
+	public DreadBosses  DefeatedBosses { get; set; } = new();
+	public BossDnaHints BossDnaHints   { get; set; } = new();
 
 	#region Settings
 
@@ -105,6 +107,19 @@ public partial class TrackerViewModel : ViewModelBase
 		settings.LastWindowSize = LastWindowSize;
 		settings.LastWindowPosition = LastWindowPosition;
 	}
+
+	#region Commands
+
+	[ReactiveCommand]
+	private void ToggleBossDnaHint(string? bossName)
+	{
+		if (bossName is null)
+			return;
+
+		BossDnaHints.ToggleDnaHint(bossName);
+	}
+
+	#endregion
 
 	private void SubscribeConnector(DreadConnector? connector)
 	{
