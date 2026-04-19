@@ -22,6 +22,9 @@ public partial class TrackerViewModel : ViewModelBase
 			Name = settings.Name,
 			TargetType = settings.TargetType,
 			TargetAddress = settings.IpAddress,
+			ShowItemGroups = settings.ShowItemGroups,
+			ItemIconSize = settings.ItemIconSize,
+			BossIconSize = settings.BossIconSize,
 			LastWindowSize = settings.LastWindowSize,
 			LastWindowPosition = settings.LastWindowPosition,
 			Connector = connector,
@@ -73,6 +76,15 @@ public partial class TrackerViewModel : ViewModelBase
 	[Reactive(nameof(Description))]
 	public partial string? TargetAddress { get; set; }
 
+	[Reactive]
+	public partial bool ShowItemGroups { get; set; } = true;
+
+	[Reactive]
+	public partial int ItemIconSize { get; set; } = TrackerSettings.DefaultItemIconSize;
+
+	[Reactive]
+	public partial int BossIconSize { get; set; } = TrackerSettings.DefaultBossIconSize;
+
 	public Size  LastWindowSize     { get; set; }
 	public Point LastWindowPosition { get; set; }
 
@@ -96,6 +108,9 @@ public partial class TrackerViewModel : ViewModelBase
 		other.Name = Name;
 		other.TargetType = TargetType;
 		other.TargetAddress = TargetAddress;
+		other.ShowItemGroups = ShowItemGroups;
+		other.ItemIconSize = ItemIconSize;
+		other.BossIconSize = BossIconSize;
 		other.LastWindowSize = LastWindowSize;
 		other.LastWindowPosition = LastWindowPosition;
 	}

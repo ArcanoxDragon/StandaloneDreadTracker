@@ -11,7 +11,9 @@ using ReactiveUI;
 using ReactiveUI.Avalonia;
 using ReactiveUI.SourceGenerators;
 using StandaloneDreadTracker.App.Configuration;
+using StandaloneDreadTracker.App.Utility;
 using StandaloneDreadTracker.App.ViewModels;
+using StandaloneDreadTracker.UI.Avalonia.Views.Dialogs;
 
 namespace StandaloneDreadTracker.UI.Avalonia.Views.Tracker;
 
@@ -75,6 +77,37 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 	{
 		base.OnUnloaded(e);
 		this.serviceScope?.Dispose();
+	}
+
+	[ReactiveCommand]
+	private async Task EditTrackerSettingsAsync()
+	{
+		if (ViewModel is not { } tracker)
+			return;
+
+		var dialog = new TrackerSettingsDialog(tracker) {
+			Title = "Tracker Settings",
+		};
+		var result = await dialog.ShowDialog<bool>(this);
+
+		if (!result)
+			return;
+
+		try
+		{
+			var settingsManager = Services.GetRequiredService<ISettingsManager>();
+
+			await settingsManager.ModifyAsync(settings => {
+				var trackerSettings = settings.Trackers.Find(t => string.Equals(t.Name, tracker.Name));
+
+				if (trackerSettings != null)
+					tracker.CopySettingsTo(trackerSettings);
+			});
+		}
+		catch
+		{
+			// Ignore all exceptions here
+		}
 	}
 
 	[ReactiveCommand]

@@ -5,12 +5,22 @@
 			 xmlns:tracker="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views.Tracker"
 			 xmlns:inventory="clr-namespace:DreadRemoteConnector.Inventory;assembly=DreadRemoteConnector"
 			 xmlns:designTime="clr-namespace:StandaloneDreadTracker.UI.Avalonia.DesignTime"
-			 mc:Ignorable="d" d:DesignWidth="640" d:DesignHeight="240"
+			 mc:Ignorable="d" d:DesignWidth="670" d:DesignHeight="260"
 			 x:Class="StandaloneDreadTracker.UI.Avalonia.Views.Tracker.InventoryItemsView"
 			 x:DataType="inventory:DreadInventory"
-			 Design.DataContext="{x:Static designTime:DesignTimeModels.Inventory}">
+			 Design.DataContext="{x:Static designTime:DesignTimeModels.Inventory}"
+			 Name="Self">
+	<Design.DesignStyle>
+		<Style Selector="tracker|InventoryItemsView">
+			<Setter Property="ItemIconSize" Value="64" />
+		</Style>
+	</Design.DesignStyle>
+
 	<UserControl.Styles>
 		<Style Selector="tracker|ItemTile">
+			<Setter Property="IconSize" Value="{Binding #Self.ItemIconSize}" />
+			<Setter Property="ShowGroupBackground" Value="{Binding #Self.ShowGroupBackgrounds}" />
+
 			<Style Selector="^.First">
 				<Setter Property="IsFirstInGroup" Value="True" />
 			</Style>
@@ -47,7 +57,7 @@
 		</Style>
 	</UserControl.Styles>
 
-	<WrapPanel>
+	<WrapPanel VerticalAlignment="Top">
 		<tracker:ItemTile Icon="/Assets/Placeholders/item-icons/beam-wide.png"
 						  Classes="BeamGroup First"
 						  IsCollected="{Binding WideBeam}"

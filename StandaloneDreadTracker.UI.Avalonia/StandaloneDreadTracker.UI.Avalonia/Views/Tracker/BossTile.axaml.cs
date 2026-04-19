@@ -8,14 +8,19 @@ using Avalonia.Data.Converters;
 using Avalonia.Input;
 using Avalonia.Media;
 using ReactiveUI;
+using StandaloneDreadTracker.App.Configuration;
+using StandaloneDreadTracker.App.ViewModels;
 
 namespace StandaloneDreadTracker.UI.Avalonia.Views.Tracker;
 
 public partial class BossTile : UserControl, IActivatableView
 {
+	public const int DefaultIconSize = TrackerSettings.DefaultBossIconSize;
+
 	public static readonly StyledProperty<bool>      IsDefeatedProperty                 = AvaloniaProperty.Register<BossTile, bool>(nameof(IsDefeated), defaultBindingMode: BindingMode.TwoWay);
-	public static readonly StyledProperty<IBrush?>   RegionBorderProperty               = AvaloniaProperty.Register<ItemTile, IBrush?>(nameof(RegionBorder), Brushes.Transparent);
-	public static readonly StyledProperty<IImage?>   IconPathProperty                   = AvaloniaProperty.Register<BossTile, IImage?>(nameof(IconPath));
+	public static readonly StyledProperty<IBrush?>   RegionBorderProperty               = AvaloniaProperty.Register<BossTile, IBrush?>(nameof(RegionBorder), Brushes.Transparent);
+	public static readonly StyledProperty<IImage?>   IconProperty                       = AvaloniaProperty.Register<BossTile, IImage?>(nameof(Icon));
+	public static readonly StyledProperty<int>       IconSizeProperty                   = AvaloniaProperty.Register<BossTile, int>(nameof(IconSize), defaultValue: DefaultIconSize);
 	public static readonly StyledProperty<bool>      ShowDnaHintProperty                = AvaloniaProperty.Register<BossTile, bool>(nameof(ShowDnaHint), defaultValue: true);
 	public static readonly StyledProperty<ICommand?> RightClickCommandProperty          = AvaloniaProperty.Register<BossTile, ICommand?>(nameof(RightClickCommand));
 	public static readonly StyledProperty<object?>   RightClickCommandParameterProperty = AvaloniaProperty.Register<BossTile, object?>(nameof(RightClickCommandParameter));
@@ -60,10 +65,16 @@ public partial class BossTile : UserControl, IActivatableView
 		set => SetValue(DnaHintProperty, value);
 	}
 
-	public IImage? IconPath
+	public IImage? Icon
 	{
-		get => GetValue(IconPathProperty);
-		set => SetValue(IconPathProperty, value);
+		get => GetValue(IconProperty);
+		set => SetValue(IconProperty, value);
+	}
+
+	public int IconSize
+	{
+		get => GetValue(IconSizeProperty);
+		set => SetValue(IconSizeProperty, value);
 	}
 
 	public bool ShowDnaHint
@@ -93,7 +104,7 @@ public partial class BossTile : UserControl, IActivatableView
 		{
 			// Setting DNA number
 			DnaHint = character switch {
-				>= '1' and <= '9' => 1 + (character - '1'),
+				>= '1' and <= '9' => 1 + ( character - '1' ),
 				'0'               => 10,
 				'-'               => 11,
 				'='               => 12,
@@ -127,7 +138,7 @@ public partial class BossTile : UserControl, IActivatableView
 
 		if (e.Delta.Y <= -1) // Scroll wheel down
 		{
-			DnaHint = (DnaHint + 1) % MaxValueExclusive;
+			DnaHint = ( DnaHint + 1 ) % MaxValueExclusive;
 		}
 		else if (e.Delta.Y >= 1) // Scroll wheel up
 		{

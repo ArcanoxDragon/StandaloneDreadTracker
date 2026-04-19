@@ -4,14 +4,15 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:tracker="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views.Tracker"
 			 xmlns:system="clr-namespace:System;assembly=System.Runtime"
-			 mc:Ignorable="d" d:DesignWidth="76" d:DesignHeight="76"
+			 mc:Ignorable="d"
 			 x:Class="StandaloneDreadTracker.UI.Avalonia.Views.Tracker.BossTile"
 			 Name="Self">
 	<Design.DesignStyle>
 		<Style Selector="tracker|BossTile">
-			<Setter Property="IconPath" Value="/Assets/Placeholders/boss-icons/boss-corpius.png" />
+			<Setter Property="Icon" Value="/Assets/Placeholders/boss-icons/boss-corpius.png" />
 			<Setter Property="DnaHint" Value="12" />
 			<Setter Property="RegionBorder" Value="#b8a853" />
+			<Setter Property="Padding" Value="4" />
 		</Style>
 	</Design.DesignStyle>
 
@@ -39,10 +40,6 @@
 	</UserControl.Resources>
 
 	<UserControl.Styles>
-		<Style Selector="Grid.LayoutGrid">
-			<Setter Property="Margin" Value="4,4,4,4" />
-		</Style>
-
 		<Style Selector="Border.Background">
 			<Setter Property="Background" Value="Black" />
 			<Setter Property="CornerRadius" Value="7" />
@@ -83,7 +80,9 @@
 		</Style>
 	</UserControl.Styles>
 
-	<Panel DataContext="{Binding #Self}">
+	<Panel DataContext="{Binding #Self}"
+		   Width="{Binding IconSize}"
+		   Height="{Binding IconSize}">
 		<Grid Classes="LayoutGrid"
 			  RowDefinitions="24,*,24"
 			  ColumnDefinitions="24,*,24">
@@ -100,7 +99,7 @@
 				<!-- Nested borders allow us to make the image clipping corner radius look better -->
 				<Border Classes="IconBorderInner"
 						ClipToBounds="True">
-					<Image Source="{Binding IconPath}"
+					<Image Source="{Binding Icon}"
 						   Classes="Icon" />
 				</Border>
 			</Border>

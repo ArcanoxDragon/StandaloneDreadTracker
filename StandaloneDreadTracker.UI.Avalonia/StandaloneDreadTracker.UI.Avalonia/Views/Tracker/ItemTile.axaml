@@ -4,16 +4,18 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:tracker="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views.Tracker"
 			 xmlns:system="clr-namespace:System;assembly=System.Runtime"
-			 mc:Ignorable="d" d:DesignWidth="76" d:DesignHeight="76"
+			 mc:Ignorable="d"
 			 x:Class="StandaloneDreadTracker.UI.Avalonia.Views.Tracker.ItemTile"
 			 Name="Self">
 	<Design.DesignStyle>
 		<Style Selector="tracker|ItemTile">
 			<Setter Property="IsCollected" Value="True" />
 			<Setter Property="GroupBackground" Value="Red" />
+			<Setter Property="ShowGroupBackground" Value="True" />
 			<Setter Property="IsFirstInGroup" Value="True" />
 			<Setter Property="IsLastInGroup" Value="True" />
 			<Setter Property="Icon" Value="/Assets/Placeholders/item-icons/beam-wide.png" />
+			<Setter Property="IconSize" Value="64" />
 			<Setter Property="AuxText" Value="1.5s" />
 		</Style>
 	</Design.DesignStyle>
@@ -37,11 +39,14 @@
 			<Setter Property="BorderBrush" Value="{DynamicResource SystemRegionBrush}" />
 			<Setter Property="BorderThickness" Value="1" />
 			<Setter Property="Background" Value="{DynamicResource TextControlForeground}" />
-			<Setter Property="CornerRadius" Value="20" />
+			<Setter Property="CornerRadius" Value="12" />
+			<Setter Property="MinWidth" Value="24" />
+			<Setter Property="Height" Value="24" />
 		</Style>
 
 		<Style Selector="TextBlock.BadgeText">
 			<Setter Property="FontSize" Value="16" />
+			<Setter Property="FontWeight" Value="Bold" />
 			<Setter Property="Foreground" Value="{DynamicResource SystemRegionBrush}" />
 			<Setter Property="HorizontalAlignment" Value="Center" />
 			<Setter Property="VerticalAlignment" Value="Center" />
@@ -81,6 +86,12 @@
 				<Setter Property="CornerRadius" Value="16,16,16,16" />
 			</Style>
 		</Style>
+
+		<Style Selector="tracker|ItemTile[ShowGroupBackground=False]">
+			<Style Selector="^ Border.GroupBackgroundBorder">
+				<Setter Property="IsVisible" Value="False" />
+			</Style>
+		</Style>
 	</UserControl.Styles>
 
 	<Panel DataContext="{Binding #Self}" Classes="RootPanel">
@@ -89,14 +100,15 @@
 				Opacity="0.5" />
 
 		<Grid Classes="LayoutGrid"
-			  RowDefinitions="24,*,24"
-			  ColumnDefinitions="24,*,24">
+			  RowDefinitions="Auto,*,Auto"
+			  ColumnDefinitions="Auto,*,Auto">
 			<!-- Image -->
 			<Border Grid.Row="0" Grid.RowSpan="3"
 					Grid.Column="0" Grid.ColumnSpan="3"
 					Background="Black"
-					CornerRadius="28"
-					Width="56" Height="56">
+					Width="{Binding IconSize}"
+					Height="{Binding IconSize}"
+					CornerRadius="{Binding IconSize, Converter={x:Static tracker:ItemTile.IconCornerRadiusConverter}}">
 				<Image Source="{Binding Icon}"
 					   Classes="Icon" />
 			</Border>
@@ -104,6 +116,7 @@
 			<!-- Location Hint -->
 			<Border Grid.Row="0" Grid.Column="0"
 					IsVisible="{Binding ShowLocationHint}"
+					VerticalAlignment="Top"
 					Classes="BadgeBorder">
 				<TextBlock Classes="BadgeText"
 						   Text="{Binding LocationHint}" />
@@ -115,11 +128,11 @@
 					Grid.ColumnSpan="3"
 					IsVisible="{Binding AuxText, Converter={x:Static ObjectConverters.IsNotNull}}"
 					HorizontalAlignment="Right"
-					MinWidth="24"
+					VerticalAlignment="Bottom"
 					Classes="BadgeBorder">
 				<TextBlock Classes="BadgeText"
 						   FontSize="12"
-						   Margin="4,0"
+						   Margin="4"
 						   Text="{Binding AuxText}" />
 			</Border>
 		</Grid>

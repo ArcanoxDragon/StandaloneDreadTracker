@@ -4,13 +4,14 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:tracker="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views.Tracker"
 			 xmlns:viewModels="clr-namespace:StandaloneDreadTracker.App.ViewModels;assembly=StandaloneDreadTracker.App"
-			 mc:Ignorable="d" d:DesignWidth="505" d:DesignHeight="170"
+			 mc:Ignorable="d"
 			 x:Class="StandaloneDreadTracker.UI.Avalonia.Views.Tracker.BossesView"
-			 x:DataType="viewModels:TrackerViewModel">
+			 x:DataType="viewModels:TrackerViewModel"
+			 Name="Self"
+			 HorizontalAlignment="Left">
 	<UserControl.Styles>
 		<Style Selector="tracker|BossTile">
-			<Setter Property="Height" Value="{Binding Width, RelativeSource={RelativeSource Self}}" />
-			<Setter Property="MaxWidth" Value="80" />
+			<Setter Property="IconSize" Value="{Binding #Self.BossIconSize}" />
 
 			<Style Selector="^.RegionArtaria">
 				<Setter Property="RegionBorder" Value="#99a452" />
@@ -39,12 +40,10 @@
 	<Grid RowDefinitions="*,*"
 		  RowSpacing="4"
 		  ColumnDefinitions="*,*,*,*,*,*"
-		  ColumnSpacing="4"
-		  HorizontalAlignment="Left"
-		  VerticalAlignment="Top">
+		  ColumnSpacing="4">
 		<!-- EMMIs -->
 		<tracker:BossTile Grid.Row="0" Grid.Column="0"
-						  IconPath="/Assets/Placeholders/boss-icons/emmi-spidermagnet.png"
+						  Icon="/Assets/Placeholders/boss-icons/emmi-spidermagnet.png"
 						  Classes="RegionArtaria"
 						  IsDefeated="{Binding DefeatedBosses.WhiteEmmi}"
 						  DnaHint="{Binding BossDnaHints.WhiteEmmi}"
@@ -52,7 +51,7 @@
 						  RightClickCommandParameter="WhiteEmmi"
 						  ToolTip.Tip="White E.M.M.I. (Spider Magnet)" />
 		<tracker:BossTile Grid.Row="0" Grid.Column="1"
-						  IconPath="/Assets/Placeholders/boss-icons/emmi-morph.png"
+						  Icon="/Assets/Placeholders/boss-icons/emmi-morph.png"
 						  Classes="RegionCataris"
 						  IsDefeated="{Binding DefeatedBosses.GreenEmmi}"
 						  DnaHint="{Binding BossDnaHints.GreenEmmi}"
@@ -60,7 +59,7 @@
 						  RightClickCommandParameter="GreenEmmi"
 						  ToolTip.Tip="Green E.M.M.I. (Morph Ball)" />
 		<tracker:BossTile Grid.Row="0" Grid.Column="2"
-						  IconPath="/Assets/Placeholders/boss-icons/emmi-speedbooster.png"
+						  Icon="/Assets/Placeholders/boss-icons/emmi-speedbooster.png"
 						  Classes="RegionDairon"
 						  IsDefeated="{Binding DefeatedBosses.YellowEmmi}"
 						  DnaHint="{Binding BossDnaHints.YellowEmmi}"
@@ -68,7 +67,7 @@
 						  RightClickCommandParameter="YellowEmmi"
 						  ToolTip.Tip="Yellow E.M.M.I. (Speed Booster)" />
 		<tracker:BossTile Grid.Row="0" Grid.Column="3"
-						  IconPath="/Assets/Placeholders/boss-icons/emmi-ice.png"
+						  Icon="/Assets/Placeholders/boss-icons/emmi-ice.png"
 						  Classes="RegionGhavoran"
 						  IsDefeated="{Binding DefeatedBosses.BlueEmmi}"
 						  DnaHint="{Binding BossDnaHints.BlueEmmi}"
@@ -76,7 +75,7 @@
 						  RightClickCommandParameter="BlueEmmi"
 						  ToolTip.Tip="Blue E.M.M.I. (Ice Missile)" />
 		<tracker:BossTile Grid.Row="0" Grid.Column="4"
-						  IconPath="/Assets/Placeholders/boss-icons/emmi-wavebeam.png"
+						  Icon="/Assets/Placeholders/boss-icons/emmi-wavebeam.png"
 						  Classes="RegionFerenia"
 						  IsDefeated="{Binding DefeatedBosses.PurpleEmmi}"
 						  DnaHint="{Binding BossDnaHints.PurpleEmmi}"
@@ -84,7 +83,7 @@
 						  RightClickCommandParameter="PurpleEmmi"
 						  ToolTip.Tip="Purple E.M.M.I. (Wave Beam)" />
 		<tracker:BossTile Grid.Row="0" Grid.Column="5"
-						  IconPath="/Assets/Placeholders/boss-icons/emmi-powerbomb.png"
+						  Icon="/Assets/Placeholders/boss-icons/emmi-powerbomb.png"
 						  Classes="RegionHanubia"
 						  IsDefeated="{Binding DefeatedBosses.OrangeEmmi}"
 						  DnaHint="{Binding BossDnaHints.OrangeEmmi}"
@@ -94,7 +93,7 @@
 
 		<!-- Other bosses -->
 		<tracker:BossTile Grid.Row="1" Grid.Column="0"
-						  IconPath="/Assets/Placeholders/boss-icons/boss-corpius.png"
+						  Icon="/Assets/Placeholders/boss-icons/boss-corpius.png"
 						  Classes="RegionArtaria"
 						  IsDefeated="{Binding DefeatedBosses.Corpius}"
 						  DnaHint="{Binding BossDnaHints.Corpius}"
@@ -102,7 +101,7 @@
 						  RightClickCommandParameter="Corpius"
 						  ToolTip.Tip="Corpius" />
 		<tracker:BossTile Grid.Row="1" Grid.Column="1"
-						  IconPath="/Assets/Placeholders/boss-icons/boss-kraid.png"
+						  Icon="/Assets/Placeholders/boss-icons/boss-kraid.png"
 						  Classes="RegionCataris"
 						  IsDefeated="{Binding DefeatedBosses.Kraid}"
 						  DnaHint="{Binding BossDnaHints.Kraid}"
@@ -110,7 +109,7 @@
 						  RightClickCommandParameter="Kraid"
 						  ToolTip.Tip="Kraid" />
 		<tracker:BossTile Grid.Row="1" Grid.Column="2"
-						  IconPath="/Assets/Placeholders/boss-icons/boss-drogyga.png"
+						  Icon="/Assets/Placeholders/boss-icons/boss-drogyga.png"
 						  Classes="RegionBurenia"
 						  IsDefeated="{Binding DefeatedBosses.Drogyga}"
 						  DnaHint="{Binding BossDnaHints.Drogyga}"
@@ -118,7 +117,7 @@
 						  RightClickCommandParameter="Drogyga"
 						  ToolTip.Tip="Drogyga" />
 		<tracker:BossTile Grid.Row="1" Grid.Column="3"
-						  IconPath="/Assets/Placeholders/boss-icons/boss-z57.png"
+						  Icon="/Assets/Placeholders/boss-icons/boss-z57.png"
 						  Classes="RegionCataris"
 						  IsDefeated="{Binding DefeatedBosses.ExperimentZ57}"
 						  DnaHint="{Binding BossDnaHints.ExperimentZ57}"
@@ -126,7 +125,7 @@
 						  RightClickCommandParameter="ExperimentZ57"
 						  ToolTip.Tip="Experiment Z-57" />
 		<tracker:BossTile Grid.Row="1" Grid.Column="4"
-						  IconPath="/Assets/Placeholders/boss-icons/boss-golzuna.png"
+						  Icon="/Assets/Placeholders/boss-icons/boss-golzuna.png"
 						  Classes="RegionGhavoran"
 						  IsDefeated="{Binding DefeatedBosses.Golzuna}"
 						  DnaHint="{Binding BossDnaHints.Golzuna}"
@@ -134,7 +133,7 @@
 						  RightClickCommandParameter="Golzuna"
 						  ToolTip.Tip="Golzuna" />
 		<tracker:BossTile Grid.Row="1" Grid.Column="5"
-						  IconPath="/Assets/Placeholders/boss-icons/boss-escue.png"
+						  Icon="/Assets/Placeholders/boss-icons/boss-escue.png"
 						  Classes="RegionFerenia"
 						  IsDefeated="{Binding DefeatedBosses.Escue}"
 						  DnaHint="{Binding BossDnaHints.Escue}"

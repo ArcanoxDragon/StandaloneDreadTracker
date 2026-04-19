@@ -8,9 +8,10 @@
 						 xmlns:views="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views"
 						 xmlns:tracker="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views.Tracker"
 						 xmlns:designTime="clr-namespace:StandaloneDreadTracker.UI.Avalonia.DesignTime"
-						 mc:Ignorable="d" d:DesignWidth="820" d:DesignHeight="550"
+						 mc:Ignorable="d" d:DesignWidth="820"
 						 x:Class="StandaloneDreadTracker.UI.Avalonia.Views.Tracker.TrackerWindow"
 						 x:DataType="viewModels:TrackerViewModel"
+						 Name="Self"
 						 Title="{Binding Name, StringFormat='{}{0} - Randomizer Tracker'}"
 						 Icon="/Assets/avalonia-logo.ico"
 						 Design.DataContext="{x:Static designTime:DesignTimeModels.LocalTrackerViewModel}">
@@ -20,12 +21,18 @@
 		</Style>
 	</Window.Styles>
 
-	<StackPanel Margin="10" Spacing="10">
-		<views:GroupBox Header="Inventory">
+	<Grid RowDefinitions="Auto,Auto,*"
+		  RowSpacing="10"
+		  ColumnDefinitions="*,Auto"
+		  ColumnSpacing="10"
+		  Margin="10">
+		<views:GroupBox Grid.Row="0" Grid.Column="0" Header="Inventory">
 			<Grid ColumnDefinitions="*,1,Auto" ColumnSpacing="10">
 				<tracker:InventoryItemsView
 					Grid.Column="0"
-					DataContext="{Binding CurrentInventory}" />
+					DataContext="{Binding CurrentInventory}"
+					ItemIconSize="{Binding #Self.ViewModel.ItemIconSize}"
+					ShowGroupBackgrounds="{Binding #Self.ViewModel.ShowItemGroups}" />
 
 				<Border
 					Grid.Column="1"
@@ -38,8 +45,20 @@
 			</Grid>
 		</views:GroupBox>
 
-		<views:GroupBox Header="Bosses &amp; DNA">
-			<tracker:BossesView />
+		<views:GroupBox Grid.Row="1" Grid.Column="0" Header="Bosses &amp; DNA">
+			<tracker:BossesView BossIconSize="{Binding BossIconSize}" />
 		</views:GroupBox>
-	</StackPanel>
+
+		<Button Grid.Row="1"
+				Grid.RowSpan="2"
+				Grid.Column="1"
+				Command="{Binding #Self.EditTrackerSettingsCommand}"
+				Width="32"
+				Height="32"
+				VerticalAlignment="Bottom"
+				Classes="FlatButton"
+				ToolTip.Tip="Tracker Settings">
+			<PathIcon Data="{StaticResource SettingsIcon}" />
+		</Button>
+	</Grid>
 </avalonia:ReactiveWindow>

@@ -30,12 +30,9 @@
 				<Setter Property="VerticalContentAlignment" Value="Center" />
 			</Style>
 
-			<Style Selector="Label, TextBox, ComboBox">
-				<Setter Property="Layoutable.VerticalAlignment" Value="Stretch" />
-			</Style>
-
-			<Style Selector="Label, TextBox, ComboBox">
-				<Setter Property="Layoutable.HorizontalAlignment" Value="Stretch" />
+			<Style Selector=":is(Layoutable)">
+				<Setter Property="VerticalAlignment" Value="Stretch" />
+				<Setter Property="HorizontalAlignment" Value="Stretch" />
 			</Style>
 		</Grid.Styles>
 

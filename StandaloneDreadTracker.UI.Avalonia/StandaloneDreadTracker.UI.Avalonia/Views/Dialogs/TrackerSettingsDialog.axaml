@@ -1,0 +1,128 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:viewModels="clr-namespace:StandaloneDreadTracker.App.ViewModels;assembly=StandaloneDreadTracker.App"
+		xmlns:designTime="clr-namespace:StandaloneDreadTracker.UI.Avalonia.DesignTime"
+		mc:Ignorable="d"
+		x:Class="StandaloneDreadTracker.UI.Avalonia.Views.Dialogs.TrackerSettingsDialog"
+		x:DataType="viewModels:TrackerSettingsViewModel"
+		Name="Dialog"
+		Icon="/Assets/avalonia-logo.ico"
+		WindowStartupLocation="CenterOwner"
+		Classes="Dialog NoControlButtons MicaWindow ImmersiveWindow"
+		SizeToContent="WidthAndHeight"
+		CanResize="False">
+	<Design.DataContext>
+		<viewModels:TrackerSettingsViewModel Tracker="{x:Static designTime:DesignTimeModels.RemoteTrackerViewModel}" />
+	</Design.DataContext>
+
+	<Grid RowDefinitions="*,Auto,*,*,Auto"
+		  ColumnDefinitions="Auto,*"
+		  ColumnSpacing="8"
+		  Margin="20,10"
+		  Width="400">
+		<Grid.Styles>
+			<Style Selector="Label">
+				<Setter Property="VerticalContentAlignment" Value="Center" />
+			</Style>
+
+			<Style Selector=":is(Layoutable)">
+				<Setter Property="VerticalAlignment" Value="Stretch" />
+				<Setter Property="HorizontalAlignment" Value="Stretch" />
+			</Style>
+
+			<Style Selector="ToggleSwitch">
+				<Setter Property="HorizontalAlignment" Value="Right" />
+
+				<!-- This makes the switch line up against the right side of its consumed space, -->
+				<!-- even though it doesn't have "Off" or "On" content to the right of it. -->
+				<Style Selector="^ /template/ Border#OuterBorder,
+								 ^ /template/ Border#SwitchKnobBounds,
+								 ^ /template/ Canvas#PART_SwitchKnob">
+					<Setter Property="Grid.Column" Value="2" />
+				</Style>
+			</Style>
+
+			<Style Selector="Grid.NumericStepper">
+				<Setter Property="HorizontalAlignment" Value="Right" />
+
+				<Style Selector="^ Button">
+					<Setter Property="Width" Value="{Binding $parent[Grid].Bounds.Height}" />
+				</Style>
+
+				<Style Selector="^ TextBlock">
+					<Setter Property="TextAlignment" Value="Center" />
+					<Setter Property="VerticalAlignment" Value="Center" />
+				</Style>
+			</Style>
+		</Grid.Styles>
+
+		<Label Grid.Row="0"
+			   Grid.Column="0"
+			   Content="Show item groups:"
+			   Target="ShowItemGroupsSwitch"
+			   ToolTip.Tip="{Binding #ShowItemGroupsSwitch.(ToolTip.Tip)}" />
+
+		<ToggleSwitch Grid.Row="0"
+					  Grid.Column="1"
+					  Name="ShowItemGroupsSwitch"
+					  IsChecked="{Binding Tracker.ShowItemGroups}"
+					  OffContent=""
+					  OnContent=""
+					  ToolTip.Tip="Show colored backgrounds behind groups of related items" />
+
+		<Label Grid.Row="1"
+			   Grid.Column="0"
+			   Content="Item icon size:" />
+
+		<Grid Grid.Row="1"
+			  Grid.Column="1"
+			  ColumnDefinitions="*,40">
+			<Slider Minimum="32"
+					Maximum="128"
+					SmallChange="4"
+					LargeChange="8"
+					Value="{Binding Tracker.ItemIconSize}" />
+
+			<TextBlock Grid.Column="1"
+					   Text="{Binding Tracker.ItemIconSize}"
+					   HorizontalAlignment="Right"
+					   VerticalAlignment="Center" />
+		</Grid>
+
+		<Label Grid.Row="2"
+			   Grid.Column="0"
+			   Content="Boss icon size:" />
+
+		<Grid Grid.Row="2"
+			  Grid.Column="1"
+			  ColumnDefinitions="*,40">
+			<Slider Minimum="32"
+					Maximum="128"
+					SmallChange="4"
+					LargeChange="8"
+					Value="{Binding Tracker.BossIconSize}" />
+
+			<TextBlock Grid.Column="1"
+					   Text="{Binding Tracker.BossIconSize}"
+					   HorizontalAlignment="Right"
+					   VerticalAlignment="Center" />
+		</Grid>
+
+		<StackPanel Grid.Row="3"
+					Grid.Column="0"
+					Grid.ColumnSpan="2"
+					Orientation="Horizontal"
+					Classes="ButtonContainer">
+			<Button Content="Save"
+					IsDefault="True"
+					Command="{Binding #Dialog.OnPositiveButtonClicked}"
+					Classes="accent" />
+
+			<Button Content="Cancel"
+					IsCancel="True"
+					Command="{Binding #Dialog.OnNegativeButtonClicked}" />
+		</StackPanel>
+	</Grid>
+</Window>
