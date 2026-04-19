@@ -9,8 +9,7 @@
 		WindowStartupLocation="CenterOwner"
 		Classes="Dialog NoControlButtons MicaWindow ImmersiveWindow"
 		SizeToContent="WidthAndHeight"
-		CanResize="False"
-		ExtendClientAreaTitleBarHeightHint="-1">
+		CanResize="False">
 	<Grid RowDefinitions="*,Auto" Margin="20,10" MaxWidth="600">
 		<TextBlock Grid.Row="0" Text="{Binding #Dialog.Message}" TextWrapping="Wrap" />
 

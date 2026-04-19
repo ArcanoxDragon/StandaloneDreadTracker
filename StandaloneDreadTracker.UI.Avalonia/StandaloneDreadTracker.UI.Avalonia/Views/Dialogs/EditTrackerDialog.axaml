@@ -14,8 +14,7 @@
 		WindowStartupLocation="CenterOwner"
 		Classes="Dialog NoControlButtons MicaWindow ImmersiveWindow"
 		SizeToContent="WidthAndHeight"
-		CanResize="False"
-		ExtendClientAreaTitleBarHeightHint="-1">
+		CanResize="False">
 	<Design.DataContext>
 		<viewModels:EditTrackerViewModel Tracker="{x:Static designTime:DesignTimeModels.RemoteTrackerViewModel}" />
 	</Design.DataContext>
