@@ -115,9 +115,16 @@
 
 			<!-- Location Hint -->
 			<Border Grid.Row="0" Grid.Column="0"
-					IsVisible="{Binding ShowLocationHint}"
 					VerticalAlignment="Top"
 					Classes="BadgeBorder">
+				<Border.IsVisible>
+					<!-- TODO: Add setting to determine whether or not this is hidden when collected -->
+					<MultiBinding Converter="{x:Static BoolConverters.And}">
+						<Binding Path="ShowLocationHint" />
+						<Binding Path="IsCollected" Converter="{x:Static BoolConverters.Not}" />
+					</MultiBinding>
+				</Border.IsVisible>
+
 				<TextBlock Classes="BadgeText"
 						   Text="{Binding LocationHint}" />
 			</Border>
