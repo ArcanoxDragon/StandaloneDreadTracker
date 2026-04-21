@@ -38,26 +38,29 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 
 		ViewModel = viewModel;
 
+		if (ViewModel is { LastMainWindowSize: { IsEmpty: false } size })
+			ClientSize = new Size(size.Width, size.Height);
+		else
+			ClientSize = new Size(600, 400);
+
+		if (ViewModel is { LastMainWindowPosition: { IsEmpty: false } position })
+		{
+			var proposedRect = new PixelRect(position.X, position.Y, (int) ClientSize.Width, (int) ClientSize.Height);
+			var anyScreensFit = Screens.All.Any(s => s.Bounds.Contains(proposedRect));
+
+			if (anyScreensFit)
+			{
+				Position = proposedRect.TopLeft;
+				WindowStartupLocation = WindowStartupLocation.Manual;
+			}
+		}
+
 		// Allow the window to take focus so global key events can occur
 		Focusable = true;
 
 		InitializeComponent();
 
 		this.WhenActivated(disposables => {
-			if (ViewModel is { LastMainWindowSize: { IsEmpty: false } size })
-				ClientSize = new Size(size.Width, size.Height);
-			else
-				ClientSize = new Size(600, 400);
-
-			if (ViewModel is { LastMainWindowPosition: { IsEmpty: false } position })
-			{
-				var proposedRect = new PixelRect(position.X, position.Y, (int) ClientSize.Width, (int) ClientSize.Height);
-				var anyScreensFit = Screens.All.Any(s => s.Bounds.Contains(proposedRect));
-
-				if (anyScreensFit)
-					Position = proposedRect.TopLeft;
-			}
-
 			// Subscribe to observables on new trackers
 			this.WhenAnyValue(w => w.ViewModel)
 				.SubscribeWith(this.trackerSubscription)

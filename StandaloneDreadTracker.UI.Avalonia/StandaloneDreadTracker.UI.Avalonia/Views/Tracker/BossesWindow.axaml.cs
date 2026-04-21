@@ -30,21 +30,24 @@ public partial class BossesWindow : ReactiveWindow<TrackerViewModel>
 
 		ViewModel = viewModel;
 
+		if (ViewModel is { LastBossWindowPosition: { IsEmpty: false } position })
+		{
+			var proposedRect = new PixelRect(position.X, position.Y, (int) ClientSize.Width, (int) ClientSize.Height);
+			var anyScreensFit = Screens.All.Any(s => s.Bounds.Contains(proposedRect));
+
+			if (anyScreensFit)
+			{
+				Position = proposedRect.TopLeft;
+				WindowStartupLocation = WindowStartupLocation.Manual;
+			}
+		}
+
 		// Allow the window to take focus so global key events can occur
 		Focusable = true;
 
 		InitializeComponent();
 
 		this.WhenActivated(disposables => {
-			if (ViewModel is { LastBossWindowPosition: { IsEmpty: false } position })
-			{
-				var proposedRect = new PixelRect(position.X, position.Y, (int) ClientSize.Width, (int) ClientSize.Height);
-				var anyScreensFit = Screens.All.Any(s => s.Bounds.Contains(proposedRect));
-
-				if (anyScreensFit)
-					Position = proposedRect.TopLeft;
-			}
-
 			Observable.FromEventPattern<PixelPointEventArgs>(
 					h => PositionChanged += h,
 					h => PositionChanged -= h)
