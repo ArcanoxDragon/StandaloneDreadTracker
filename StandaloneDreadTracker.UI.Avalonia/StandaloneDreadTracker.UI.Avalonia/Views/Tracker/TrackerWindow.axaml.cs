@@ -11,7 +11,6 @@ using ReactiveUI;
 using ReactiveUI.Avalonia;
 using ReactiveUI.SourceGenerators;
 using StandaloneDreadTracker.App.Configuration;
-using StandaloneDreadTracker.App.Utility;
 using StandaloneDreadTracker.App.ViewModels;
 using StandaloneDreadTracker.UI.Avalonia.Views.Dialogs;
 

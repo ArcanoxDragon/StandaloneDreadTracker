@@ -8,7 +8,6 @@ using Avalonia.Input;
 using Avalonia.Media;
 using ReactiveUI;
 using StandaloneDreadTracker.App.Configuration;
-using StandaloneDreadTracker.App.ViewModels;
 
 namespace StandaloneDreadTracker.UI.Avalonia.Views.Tracker;
 

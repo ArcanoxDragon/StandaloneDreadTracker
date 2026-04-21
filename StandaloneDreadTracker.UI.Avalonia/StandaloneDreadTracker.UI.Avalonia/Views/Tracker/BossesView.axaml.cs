@@ -1,7 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
 using StandaloneDreadTracker.App.Configuration;
-using StandaloneDreadTracker.App.ViewModels;
 
 namespace StandaloneDreadTracker.UI.Avalonia.Views.Tracker;
 
