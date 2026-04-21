@@ -1,4 +1,5 @@
 ﻿using System.Reactive;
+using StandaloneDreadTracker.App.ViewModels;
 
 namespace StandaloneDreadTracker.App.Services;
 
@@ -12,4 +13,6 @@ public interface IDialogs
 
 	IObservable<string?> Prompt(string title, string message, string? defaultValue = null, string? inputWatermark = null, string? positiveText = null, string? negativeText = null, bool positiveButtonAccent = true);
 	Task<string?> PromptAsync(string title, string message, string? defaultValue = null, string? inputWatermark = null, string? positiveText = null, string? negativeText = null, bool positiveButtonAccent = true);
+
+	Task<bool> EditTrackerAsync(TrackerViewModel tracker, string? title = "Edit Tracker");
 }

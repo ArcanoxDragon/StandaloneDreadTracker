@@ -123,7 +123,7 @@ public sealed class TrackerManager(
 		}
 	}
 
-	public async Task ReInitializeTrackerAsync(TrackerViewModel tracker)
+	private async Task ReInitializeTrackerAsync(TrackerViewModel tracker)
 	{
 		if (this.initializationCancelSource != null)
 			throw new InvalidOperationException($"Cannot re-initialize an individual tracker while {nameof(TrackerManager)} is still initializing itself");

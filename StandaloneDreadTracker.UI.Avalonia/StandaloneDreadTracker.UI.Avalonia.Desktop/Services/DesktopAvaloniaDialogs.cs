@@ -7,6 +7,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using StandaloneDreadTracker.App.Services;
+using StandaloneDreadTracker.App.ViewModels;
 using StandaloneDreadTracker.UI.Avalonia.Services;
 using StandaloneDreadTracker.UI.Avalonia.Views.Dialogs;
 
@@ -80,6 +81,23 @@ internal class DesktopAvaloniaDialogs(WindowContext windowContext) : IDialogs
 				dialog.NegativeText = negativeText;
 
 			return await dialog.ShowDialog<string?>(ParentWindow);
+		});
+	}
+
+	public async Task<bool> EditTrackerAsync(TrackerViewModel tracker, string? title = "Edit Tracker")
+	{
+		return await Dispatcher.UIThread.InvokeAsync(async () => {
+			var dialog = new EditTrackerDialog(tracker) {
+				Title = title,
+			};
+			var result = await dialog.ShowDialog<bool>(ParentWindow);
+
+			if (!result)
+				return false;
+
+			// Apply dialog changes to tracker
+			dialog.ApplySettingsTo(tracker);
+			return true;
 		});
 	}
 }

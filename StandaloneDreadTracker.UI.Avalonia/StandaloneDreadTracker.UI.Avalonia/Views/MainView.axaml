@@ -22,20 +22,71 @@
 		</viewModels:MainViewModel>
 	</Design.DataContext>
 
-	<ItemsControl Padding="8"
-				  ItemsSource="{Binding TrackerTargets}">
-		<ItemsControl.ItemsPanel>
-			<ItemsPanelTemplate>
-				<StackPanel Spacing="8" />
-			</ItemsPanelTemplate>
-		</ItemsControl.ItemsPanel>
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.ThemeDictionaries>
+				<ResourceDictionary x:Key="Light">
+					<SolidColorBrush x:Key="NewButtonBackground"
+									 Color="#18000000" />
+					<SolidColorBrush x:Key="NewButtonBackgroundHover"
+									 Color="#20000000" />
+				</ResourceDictionary>
+				<ResourceDictionary x:Key="Dark">
+					<!-- ReSharper disable Xaml.RedundantResource -->
+					<SolidColorBrush x:Key="NewButtonBackground"
+									 Color="#18ffffff" />
+					<SolidColorBrush x:Key="NewButtonBackgroundHover"
+									 Color="#20ffffff" />
+					<!-- ReSharper disable Xaml.RedundantResource -->
+				</ResourceDictionary>
+			</ResourceDictionary.ThemeDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
 
-		<ItemsControl.ItemTemplate>
-			<DataTemplate>
-				<views:TrackerSummaryView OpenCommand="{Binding #Self.OpenTrackerWindowCommand}"
-										  EditCommand="{Binding #Self.EditTrackerCommand}"
-										  DeleteCommand="{Binding #Self.ViewModel.DeleteTrackerCommand}" />
-			</DataTemplate>
-		</ItemsControl.ItemTemplate>
-	</ItemsControl>
+	<ScrollViewer HorizontalScrollBarVisibility="Disabled">
+		<Grid RowDefinitions="Auto,Auto">
+			<ItemsControl Padding="8"
+						  ItemsSource="{Binding TrackerTargets}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<StackPanel Spacing="8" />
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<views:TrackerSummaryView OpenCommand="{Binding #Self.OpenTrackerWindowCommand}"
+												  EditCommand="{Binding #Self.ViewModel.EditTrackerCommand}"
+												  DeleteCommand="{Binding #Self.ViewModel.DeleteTrackerCommand}" />
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+
+			<Button Grid.Row="1"
+					Background="{DynamicResource NewButtonBackground}"
+					BorderBrush="{DynamicResource TextControlBorderBrush}"
+					Command="{Binding AddTrackerCommand}"
+					CornerRadius="6"
+					FontSize="16"
+					Margin="8,0,8,8"
+					Padding="20"
+					HorizontalAlignment="Stretch"
+					HorizontalContentAlignment="Center">
+				<Button.Styles>
+					<Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+						<Setter Property="Background" Value="{DynamicResource NewButtonBackgroundHover}" />
+						<Setter Property="BorderBrush" Value="{DynamicResource TextControlBorderBrush}" />
+					</Style>
+				</Button.Styles>
+
+				<StackPanel Orientation="Horizontal" Spacing="10">
+					<PathIcon Data="{StaticResource PlusIcon}" />
+
+					<TextBlock>
+						Add Tracker...
+					</TextBlock>
+				</StackPanel>
+			</Button>
+		</Grid>
+	</ScrollViewer>
 </r:ReactiveUserControl>

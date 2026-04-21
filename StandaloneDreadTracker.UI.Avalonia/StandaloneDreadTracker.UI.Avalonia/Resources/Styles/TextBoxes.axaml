@@ -23,6 +23,10 @@
 	<Style Selector="TextBox.Invalid">
 		<Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}" />
 
+		<Style Selector="^:focus /template/ Border#PART_BorderElement">
+			<Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}" />
+		</Style>
+
 		<Style Selector="^:pointerover /template/ Border#PART_BorderElement">
 			<Setter Property="BorderBrush" Value="{DynamicResource ErrorLowBrush}" />
 		</Style>
