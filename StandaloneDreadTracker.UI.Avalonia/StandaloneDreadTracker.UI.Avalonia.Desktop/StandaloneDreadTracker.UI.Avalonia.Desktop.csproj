@@ -2,18 +2,13 @@
 	<PropertyGroup>
 		<AssemblyName>StandaloneDreadTracker</AssemblyName>
 		<OutputType>WinExe</OutputType>
-		<!--If you are willing to use platform-specific APIs, use conditional compilation.
-    See https://docs.avaloniaui.net/docs/guides/platforms/platform-specific-code/dotnet for more details.-->
-		<TargetFramework>net10.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<PublishSingleFile>true</PublishSingleFile>
+		<RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
 	</PropertyGroup>
 
 	<!-- Trimming-related properties -->
 	<PropertyGroup>
 		<PublishTrimmed>true</PublishTrimmed>
 		<TrimMode>partial</TrimMode>
-		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(RuntimeIdentifier)' != ''">

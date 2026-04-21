@@ -1,8 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net10.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<LangVersion>latest</LangVersion>
 		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
 	</PropertyGroup>
 
@@ -10,7 +7,7 @@
 		<InternalsVisibleTo Include="StandaloneDreadTracker.UI.Avalonia.Android" />
 		<InternalsVisibleTo Include="StandaloneDreadTracker" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
 		<AvaloniaResource Include="Assets\**" />
 	</ItemGroup>
