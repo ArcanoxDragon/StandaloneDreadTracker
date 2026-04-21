@@ -12,6 +12,6 @@ public sealed class ApplicationSettings
 		other.Trackers.Clear();
 
 		foreach (var tracker in Trackers)
-			other.Trackers.Add(tracker.Clone());
+			other.Trackers.Add(tracker.Clone(keepId: true));
 	}
 }

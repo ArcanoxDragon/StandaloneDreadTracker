@@ -66,8 +66,8 @@ public sealed class TrackerManager(
 
 	public async Task AddTrackerAsync(TrackerSettings trackerSettings)
 	{
-		if (AllTrackers.Any(t => string.Equals(t.Name, trackerSettings.Name, StringComparison.OrdinalIgnoreCase)))
-			throw new ArgumentException("A tracker with the specified name already exists", nameof(trackerSettings));
+		if (AllTrackers.Any(t => string.Equals(t.Id, trackerSettings.Id, StringComparison.OrdinalIgnoreCase)))
+			throw new ArgumentException("A tracker with the specified ID already exists", nameof(trackerSettings));
 
 		if (!TryCreateTracker(trackerSettings, out var tracker, out var errorMessage))
 			throw new ArgumentException(errorMessage, nameof(trackerSettings));
@@ -80,6 +80,33 @@ public sealed class TrackerManager(
 		InitializeTracker(tracker, CancellationToken.None);
 	}
 
+	public async Task UpdateTrackerAsync(TrackerViewModel tracker, Action<TrackerSettings>? updateSettings = null)
+	{
+		var foundSettings = false;
+		var originalType = TrackerTargetType.Unknown;
+		var originalAddress = default(string);
+
+		await settingsManager.ModifyAsync(settings => {
+			var trackerSettings = settings.Trackers.Find(t => string.Equals(t.Id, tracker.Id));
+
+			if (trackerSettings != null)
+			{
+				foundSettings = true;
+				originalType = trackerSettings.TargetType;
+				originalAddress = trackerSettings.IpAddress;
+
+				if (updateSettings != null)
+					updateSettings(trackerSettings);
+				else
+					tracker.CopySettingsTo(trackerSettings);
+			}
+		});
+
+		if (foundSettings && ( tracker.TargetType != originalType || tracker.TargetAddress != originalAddress ))
+			// Need to re-initialize the tracker so it re-connects to the new target.
+			await ReInitializeTrackerAsync(tracker);
+	}
+
 	public async Task RemoveTrackerAsync(TrackerViewModel tracker)
 	{
 		try
@@ -87,7 +114,7 @@ public sealed class TrackerManager(
 			AllTrackers.Remove(tracker);
 
 			await settingsManager.ModifyAsync(settings => {
-				settings.Trackers.RemoveAll(t => string.Equals(t.Name, tracker.Name, StringComparison.OrdinalIgnoreCase));
+				settings.Trackers.RemoveAll(t => string.Equals(t.Id, tracker.Id, StringComparison.OrdinalIgnoreCase));
 			});
 		}
 		finally

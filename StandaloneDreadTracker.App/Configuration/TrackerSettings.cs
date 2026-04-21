@@ -12,6 +12,7 @@ public sealed class TrackerSettings : IJsonOnSerializing
 	[JsonConverter(typeof(JsonStringEnumConverter<TrackerTargetType>))]
 	public TrackerTargetType TargetType { get; set; }
 
+	public string? Id                     { get; set; } = Guid.NewGuid().ToString("D");
 	public string? Name                   { get; set; }
 	public string? IpAddress              { get; set; }
 	public bool    ShowItemGroups         { get; set; } = true;
@@ -22,8 +23,9 @@ public sealed class TrackerSettings : IJsonOnSerializing
 	public Point   LastMainWindowPosition { get; set; }
 	public Point   LastBossWindowPosition { get; set; }
 
-	public TrackerSettings Clone()
-		=> new() {
+	public TrackerSettings Clone(bool keepId = false)
+	{
+		var cloned = new TrackerSettings {
 			TargetType = TargetType,
 			Name = Name,
 			IpAddress = IpAddress,
@@ -35,6 +37,12 @@ public sealed class TrackerSettings : IJsonOnSerializing
 			LastMainWindowPosition = LastMainWindowPosition,
 			LastBossWindowPosition = LastBossWindowPosition,
 		};
+
+		if (keepId)
+			cloned.Id = Id;
+
+		return cloned;
+	}
 
 	public void OnSerializing()
 	{

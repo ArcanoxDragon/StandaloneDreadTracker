@@ -12,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 using ReactiveUI.Avalonia;
 using ReactiveUI.SourceGenerators;
-using StandaloneDreadTracker.App.Configuration;
 using StandaloneDreadTracker.App.Extensions;
 using StandaloneDreadTracker.App.Utility;
 using StandaloneDreadTracker.App.ViewModels;
@@ -37,6 +36,7 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 		this.serviceScope = serviceScope;
 		this.trackerSubscription = new SerialSubscription<TrackerViewModel>(SubscribeTracker);
 
+		TrackerManager = serviceScope?.ServiceProvider.GetRequiredService<TrackerManager>();
 		ViewModel = viewModel;
 
 		if (ViewModel is { LastMainWindowSize: { IsEmpty: false } size })
@@ -93,8 +93,7 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 		});
 	}
 
-	private IServiceProvider Services
-		=> this.serviceScope?.ServiceProvider ?? throw new InvalidOperationException("Window was not initialized with a service provider");
+	private TrackerManager? TrackerManager { get; }
 
 	protected override void OnUnloaded(RoutedEventArgs e)
 	{
@@ -111,7 +110,7 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 	[ReactiveCommand]
 	private async Task EditTrackerSettingsAsync()
 	{
-		if (ViewModel is not { } tracker)
+		if (ViewModel is not { } tracker || TrackerManager is null)
 			return;
 
 		var dialog = new TrackerSettingsDialog(tracker) {
@@ -124,14 +123,7 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 
 		try
 		{
-			var settingsManager = Services.GetRequiredService<ISettingsManager>();
-
-			await settingsManager.ModifyAsync(settings => {
-				var trackerSettings = settings.Trackers.Find(t => string.Equals(t.Name, tracker.Name));
-
-				if (trackerSettings != null)
-					tracker.CopySettingsTo(trackerSettings);
-			});
+			await TrackerManager.UpdateTrackerAsync(tracker);
 		}
 		catch
 		{
@@ -156,19 +148,18 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 
 	private async Task ChangeBossWindowPoppedOutAsync(bool popOut)
 	{
-		if (ViewModel is not { } viewModel)
+		if (ViewModel is not { } tracker)
 			return;
 
-		viewModel.PopOutBossSection = popOut;
+		tracker.PopOutBossSection = popOut;
+
+		if (TrackerManager is null)
+			return;
 
 		try
 		{
-			var settingsManager = Services.GetRequiredService<ISettingsManager>();
-
-			await settingsManager.ModifyAsync(settings => {
-				var tracker = settings.Trackers.Find(t => string.Equals(t.Name, viewModel.Name));
-
-				tracker?.PopOutBossSection = popOut;
+			await TrackerManager.UpdateTrackerAsync(tracker, settings => {
+				settings.PopOutBossSection = tracker.PopOutBossSection;
 			});
 		}
 		catch
@@ -180,21 +171,20 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 	[ReactiveCommand]
 	private async Task SaveWindowSizeAsync(Size size)
 	{
-		if (ViewModel is not { } viewModel)
+		if (ViewModel is not { } tracker)
 			return;
 
 		var systemSize = new System.Drawing.Size((int) size.Width, (int) size.Height);
 
-		viewModel.LastMainWindowSize = systemSize;
+		tracker.LastMainWindowSize = systemSize;
+
+		if (TrackerManager is null)
+			return;
 
 		try
 		{
-			var settingsManager = Services.GetRequiredService<ISettingsManager>();
-
-			await settingsManager.ModifyAsync(settings => {
-				var tracker = settings.Trackers.Find(t => string.Equals(t.Name, viewModel.Name));
-
-				tracker?.LastMainWindowSize = systemSize;
+			await TrackerManager.UpdateTrackerAsync(tracker, settings => {
+				settings.LastMainWindowSize = tracker.LastMainWindowSize;
 			});
 		}
 		catch
@@ -206,21 +196,20 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 	[ReactiveCommand]
 	private async Task SaveWindowPositionAsync(PixelPoint position)
 	{
-		if (ViewModel is not { } viewModel)
+		if (ViewModel is not { } tracker)
 			return;
 
 		var systemPoint = new System.Drawing.Point(position.X, position.Y);
 
-		viewModel.LastMainWindowPosition = systemPoint;
+		tracker.LastMainWindowPosition = systemPoint;
+
+		if (TrackerManager is null)
+			return;
 
 		try
 		{
-			var settingsManager = Services.GetRequiredService<ISettingsManager>();
-
-			await settingsManager.ModifyAsync(settings => {
-				var tracker = settings.Trackers.Find(t => string.Equals(t.Name, viewModel.Name));
-
-				tracker?.LastMainWindowPosition = systemPoint;
+			await TrackerManager.UpdateTrackerAsync(tracker, settings => {
+				settings.LastMainWindowPosition = tracker.LastMainWindowPosition;
 			});
 		}
 		catch
@@ -245,7 +234,7 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 
 		if (newVisibility)
 		{
-			this.bossesWindow = new BossesWindow(this.serviceScope, ViewModel);
+			this.bossesWindow = new BossesWindow(TrackerManager, ViewModel);
 			this.bossesWindow.Closed += OnBossWindowClosed;
 			this.bossesWindow.Show(this);
 		}

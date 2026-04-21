@@ -19,6 +19,7 @@ public partial class TrackerViewModel : ViewModelBase
 
 	public static TrackerViewModel Create(TrackerSettings settings, DreadConnector? connector = null)
 		=> new() {
+			Id = settings.Id,
 			Name = settings.Name,
 			TargetType = settings.TargetType,
 			TargetAddress = settings.IpAddress,
@@ -52,6 +53,9 @@ public partial class TrackerViewModel : ViewModelBase
 				.DisposeWith(disposables);
 		});
 	}
+
+	[Reactive]
+	public partial string? Id { get; set; }
 
 	[Reactive(nameof(CurrentInventory))]
 	public partial DreadConnector? Connector { get; set; }

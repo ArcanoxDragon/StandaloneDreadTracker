@@ -5,12 +5,10 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Interactivity;
-using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 using ReactiveUI.Avalonia;
 using ReactiveUI.SourceGenerators;
-using StandaloneDreadTracker.App.Configuration;
+using StandaloneDreadTracker.App.Utility;
 using StandaloneDreadTracker.App.ViewModels;
 
 namespace StandaloneDreadTracker.UI.Avalonia.Views.Tracker;
@@ -19,15 +17,12 @@ public partial class BossesWindow : ReactiveWindow<TrackerViewModel>
 {
 	private static readonly TimeSpan SaveSettingsThrottleTime = TimeSpan.FromSeconds(1.0);
 
-	private readonly IServiceScope? serviceScope;
-
 	public BossesWindow()
 		: this(null, null) { }
 
-	public BossesWindow(IServiceScope? serviceScope, TrackerViewModel? viewModel)
+	public BossesWindow(TrackerManager? trackerManager, TrackerViewModel? viewModel)
 	{
-		this.serviceScope = serviceScope;
-
+		TrackerManager = trackerManager;
 		ViewModel = viewModel;
 
 		if (ViewModel is { LastBossWindowPosition: { IsEmpty: false } position })
@@ -60,33 +55,25 @@ public partial class BossesWindow : ReactiveWindow<TrackerViewModel>
 		});
 	}
 
-	private IServiceProvider Services
-		=> this.serviceScope?.ServiceProvider ?? throw new InvalidOperationException("Window was not initialized with a service provider");
-
-	protected override void OnUnloaded(RoutedEventArgs e)
-	{
-		base.OnUnloaded(e);
-		this.serviceScope?.Dispose();
-	}
+	private TrackerManager? TrackerManager { get; }
 
 	[ReactiveCommand]
 	private async Task SaveWindowPositionAsync(PixelPoint position)
 	{
-		if (ViewModel is not { } viewModel)
+		if (ViewModel is not { } tracker)
 			return;
 
 		var systemPoint = new System.Drawing.Point(position.X, position.Y);
 
-		viewModel.LastBossWindowPosition = systemPoint;
+		tracker.LastBossWindowPosition = systemPoint;
+
+		if (TrackerManager is null)
+			return;
 
 		try
 		{
-			var settingsManager = Services.GetRequiredService<ISettingsManager>();
-
-			await settingsManager.ModifyAsync(settings => {
-				var tracker = settings.Trackers.Find(t => string.Equals(t.Name, viewModel.Name));
-
-				tracker?.LastBossWindowPosition = systemPoint;
+			await TrackerManager.UpdateTrackerAsync(tracker, settings => {
+				settings.LastBossWindowPosition = tracker.LastBossWindowPosition;
 			});
 		}
 		catch
