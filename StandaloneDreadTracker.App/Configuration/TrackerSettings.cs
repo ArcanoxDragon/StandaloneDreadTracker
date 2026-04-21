@@ -12,16 +12,20 @@ public sealed class TrackerSettings : IJsonOnSerializing
 	[JsonConverter(typeof(JsonStringEnumConverter<TrackerTargetType>))]
 	public TrackerTargetType TargetType { get; set; }
 
-	public string? Id                     { get; set; } = Guid.NewGuid().ToString("D");
-	public string? Name                   { get; set; }
-	public string? IpAddress              { get; set; }
-	public bool    ShowItemGroups         { get; set; } = true;
-	public int     ItemIconSize           { get; set; } = DefaultItemIconSize;
-	public int     BossIconSize           { get; set; } = DefaultBossIconSize;
-	public bool    PopOutBossSection      { get; set; }
-	public Size    LastMainWindowSize     { get; set; }
-	public Point   LastMainWindowPosition { get; set; }
-	public Point   LastBossWindowPosition { get; set; }
+	public string? Id                { get; set; } = Guid.NewGuid().ToString("D");
+	public string? Name              { get; set; }
+	public string? IpAddress         { get; set; }
+	public bool    ShowItemGroups    { get; set; } = true;
+	public int     ItemIconSize      { get; set; } = DefaultItemIconSize;
+	public int     BossIconSize      { get; set; } = DefaultBossIconSize;
+	public bool    PopOutBossSection { get; set; }
+
+	[JsonConverter(typeof(JsonStringEnumConverter<TrackerOrientation>))]
+	public TrackerOrientation BossesOrientation { get; set; } = TrackerOrientation.Horizontal;
+
+	public Size  LastMainWindowSize     { get; set; }
+	public Point LastMainWindowPosition { get; set; }
+	public Point LastBossWindowPosition { get; set; }
 
 	public TrackerSettings Clone(bool keepId = false)
 	{
@@ -32,6 +36,7 @@ public sealed class TrackerSettings : IJsonOnSerializing
 			ShowItemGroups = ShowItemGroups,
 			ItemIconSize = ItemIconSize,
 			BossIconSize = BossIconSize,
+			BossesOrientation = BossesOrientation,
 			PopOutBossSection = PopOutBossSection,
 			LastMainWindowSize = LastMainWindowSize,
 			LastMainWindowPosition = LastMainWindowPosition,

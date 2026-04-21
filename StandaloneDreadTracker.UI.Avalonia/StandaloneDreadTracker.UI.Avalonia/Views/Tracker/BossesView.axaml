@@ -35,56 +35,109 @@
 				<Setter Property="RegionBorder" Value="#af7310" />
 			</Style>
 		</Style>
+
+		<Style Selector="tracker|BossesView[Orientation=Horizontal]">
+			<Style Selector="^ tracker|BossTile">
+				<Style Selector="^.Emmis">
+					<Setter Property="Grid.Row" Value="0" />
+				</Style>
+				<Style Selector="^.OtherBosses">
+					<Setter Property="Grid.Row" Value="1" />
+				</Style>
+
+				<Style Selector="^.Boss1">
+					<Setter Property="Grid.Column" Value="0" />
+				</Style>
+				<Style Selector="^.Boss2">
+					<Setter Property="Grid.Column" Value="1" />
+				</Style>
+				<Style Selector="^.Boss3">
+					<Setter Property="Grid.Column" Value="2" />
+				</Style>
+				<Style Selector="^.Boss4">
+					<Setter Property="Grid.Column" Value="3" />
+				</Style>
+				<Style Selector="^.Boss5">
+					<Setter Property="Grid.Column" Value="4" />
+				</Style>
+				<Style Selector="^.Boss6">
+					<Setter Property="Grid.Column" Value="5" />
+				</Style>
+			</Style>
+		</Style>
+
+		<Style Selector="tracker|BossesView[Orientation=Vertical]">
+			<Style Selector="^ tracker|BossTile">
+				<Style Selector="^.Emmis">
+					<Setter Property="Grid.Column" Value="0" />
+				</Style>
+				<Style Selector="^.OtherBosses">
+					<Setter Property="Grid.Column" Value="1" />
+				</Style>
+
+				<Style Selector="^.Boss1">
+					<Setter Property="Grid.Row" Value="0" />
+				</Style>
+				<Style Selector="^.Boss2">
+					<Setter Property="Grid.Row" Value="1" />
+				</Style>
+				<Style Selector="^.Boss3">
+					<Setter Property="Grid.Row" Value="2" />
+				</Style>
+				<Style Selector="^.Boss4">
+					<Setter Property="Grid.Row" Value="3" />
+				</Style>
+				<Style Selector="^.Boss5">
+					<Setter Property="Grid.Row" Value="4" />
+				</Style>
+				<Style Selector="^.Boss6">
+					<Setter Property="Grid.Row" Value="5" />
+				</Style>
+			</Style>
+		</Style>
 	</UserControl.Styles>
 
-	<Grid RowDefinitions="*,*"
+	<Grid Name="BossesGrid"
 		  RowSpacing="4"
-		  ColumnDefinitions="*,*,*,*,*,*"
 		  ColumnSpacing="4">
 		<!-- EMMIs -->
-		<tracker:BossTile Grid.Row="0" Grid.Column="0"
-						  Icon="/Assets/Placeholders/boss-icons/emmi-spidermagnet.png"
-						  Classes="RegionArtaria"
+		<tracker:BossTile Icon="/Assets/Placeholders/boss-icons/emmi-spidermagnet.png"
+						  Classes="RegionArtaria Emmis Boss1"
 						  IsDefeated="{Binding DefeatedBosses.WhiteEmmi}"
 						  DnaHint="{Binding BossDnaHints.WhiteEmmi}"
 						  RightClickCommand="{Binding ToggleBossDnaHintCommand}"
 						  RightClickCommandParameter="WhiteEmmi"
 						  ToolTip.Tip="White E.M.M.I. (Spider Magnet)" />
-		<tracker:BossTile Grid.Row="0" Grid.Column="1"
-						  Icon="/Assets/Placeholders/boss-icons/emmi-morph.png"
-						  Classes="RegionCataris"
+		<tracker:BossTile Icon="/Assets/Placeholders/boss-icons/emmi-morph.png"
+						  Classes="RegionCataris Emmis Boss2"
 						  IsDefeated="{Binding DefeatedBosses.GreenEmmi}"
 						  DnaHint="{Binding BossDnaHints.GreenEmmi}"
 						  RightClickCommand="{Binding ToggleBossDnaHintCommand}"
 						  RightClickCommandParameter="GreenEmmi"
 						  ToolTip.Tip="Green E.M.M.I. (Morph Ball)" />
-		<tracker:BossTile Grid.Row="0" Grid.Column="2"
-						  Icon="/Assets/Placeholders/boss-icons/emmi-speedbooster.png"
-						  Classes="RegionDairon"
+		<tracker:BossTile Icon="/Assets/Placeholders/boss-icons/emmi-speedbooster.png"
+						  Classes="RegionDairon Emmis Boss3"
 						  IsDefeated="{Binding DefeatedBosses.YellowEmmi}"
 						  DnaHint="{Binding BossDnaHints.YellowEmmi}"
 						  RightClickCommand="{Binding ToggleBossDnaHintCommand}"
 						  RightClickCommandParameter="YellowEmmi"
 						  ToolTip.Tip="Yellow E.M.M.I. (Speed Booster)" />
-		<tracker:BossTile Grid.Row="0" Grid.Column="3"
-						  Icon="/Assets/Placeholders/boss-icons/emmi-ice.png"
-						  Classes="RegionGhavoran"
+		<tracker:BossTile Icon="/Assets/Placeholders/boss-icons/emmi-ice.png"
+						  Classes="RegionGhavoran Emmis Boss4"
 						  IsDefeated="{Binding DefeatedBosses.BlueEmmi}"
 						  DnaHint="{Binding BossDnaHints.BlueEmmi}"
 						  RightClickCommand="{Binding ToggleBossDnaHintCommand}"
 						  RightClickCommandParameter="BlueEmmi"
 						  ToolTip.Tip="Blue E.M.M.I. (Ice Missile)" />
-		<tracker:BossTile Grid.Row="0" Grid.Column="4"
-						  Icon="/Assets/Placeholders/boss-icons/emmi-wavebeam.png"
-						  Classes="RegionFerenia"
+		<tracker:BossTile Icon="/Assets/Placeholders/boss-icons/emmi-wavebeam.png"
+						  Classes="RegionFerenia Emmis Boss5"
 						  IsDefeated="{Binding DefeatedBosses.PurpleEmmi}"
 						  DnaHint="{Binding BossDnaHints.PurpleEmmi}"
 						  RightClickCommand="{Binding ToggleBossDnaHintCommand}"
 						  RightClickCommandParameter="PurpleEmmi"
 						  ToolTip.Tip="Purple E.M.M.I. (Wave Beam)" />
-		<tracker:BossTile Grid.Row="0" Grid.Column="5"
-						  Icon="/Assets/Placeholders/boss-icons/emmi-powerbomb.png"
-						  Classes="RegionHanubia"
+		<tracker:BossTile Icon="/Assets/Placeholders/boss-icons/emmi-powerbomb.png"
+						  Classes="RegionHanubia Emmis Boss6"
 						  IsDefeated="{Binding DefeatedBosses.OrangeEmmi}"
 						  DnaHint="{Binding BossDnaHints.OrangeEmmi}"
 						  RightClickCommand="{Binding ToggleBossDnaHintCommand}"
@@ -92,49 +145,43 @@
 						  ToolTip.Tip="Orange E.M.M.I. (Power Bomb)" />
 
 		<!-- Other bosses -->
-		<tracker:BossTile Grid.Row="1" Grid.Column="0"
-						  Icon="/Assets/Placeholders/boss-icons/boss-corpius.png"
-						  Classes="RegionArtaria"
+		<tracker:BossTile Icon="/Assets/Placeholders/boss-icons/boss-corpius.png"
+						  Classes="RegionArtaria OtherBosses Boss1"
 						  IsDefeated="{Binding DefeatedBosses.Corpius}"
 						  DnaHint="{Binding BossDnaHints.Corpius}"
 						  RightClickCommand="{Binding ToggleBossDnaHintCommand}"
 						  RightClickCommandParameter="Corpius"
 						  ToolTip.Tip="Corpius" />
-		<tracker:BossTile Grid.Row="1" Grid.Column="1"
-						  Icon="/Assets/Placeholders/boss-icons/boss-kraid.png"
-						  Classes="RegionCataris"
+		<tracker:BossTile Icon="/Assets/Placeholders/boss-icons/boss-kraid.png"
+						  Classes="RegionCataris OtherBosses Boss2"
 						  IsDefeated="{Binding DefeatedBosses.Kraid}"
 						  DnaHint="{Binding BossDnaHints.Kraid}"
 						  RightClickCommand="{Binding ToggleBossDnaHintCommand}"
 						  RightClickCommandParameter="Kraid"
 						  ToolTip.Tip="Kraid" />
-		<tracker:BossTile Grid.Row="1" Grid.Column="2"
-						  Icon="/Assets/Placeholders/boss-icons/boss-drogyga.png"
-						  Classes="RegionBurenia"
+		<tracker:BossTile Icon="/Assets/Placeholders/boss-icons/boss-drogyga.png"
+						  Classes="RegionBurenia OtherBosses Boss3"
 						  IsDefeated="{Binding DefeatedBosses.Drogyga}"
 						  DnaHint="{Binding BossDnaHints.Drogyga}"
 						  RightClickCommand="{Binding ToggleBossDnaHintCommand}"
 						  RightClickCommandParameter="Drogyga"
 						  ToolTip.Tip="Drogyga" />
-		<tracker:BossTile Grid.Row="1" Grid.Column="3"
-						  Icon="/Assets/Placeholders/boss-icons/boss-z57.png"
-						  Classes="RegionCataris"
+		<tracker:BossTile Icon="/Assets/Placeholders/boss-icons/boss-z57.png"
+						  Classes="RegionCataris OtherBosses Boss4"
 						  IsDefeated="{Binding DefeatedBosses.ExperimentZ57}"
 						  DnaHint="{Binding BossDnaHints.ExperimentZ57}"
 						  RightClickCommand="{Binding ToggleBossDnaHintCommand}"
 						  RightClickCommandParameter="ExperimentZ57"
 						  ToolTip.Tip="Experiment Z-57" />
-		<tracker:BossTile Grid.Row="1" Grid.Column="4"
-						  Icon="/Assets/Placeholders/boss-icons/boss-golzuna.png"
-						  Classes="RegionGhavoran"
+		<tracker:BossTile Icon="/Assets/Placeholders/boss-icons/boss-golzuna.png"
+						  Classes="RegionGhavoran OtherBosses Boss5"
 						  IsDefeated="{Binding DefeatedBosses.Golzuna}"
 						  DnaHint="{Binding BossDnaHints.Golzuna}"
 						  RightClickCommand="{Binding ToggleBossDnaHintCommand}"
 						  RightClickCommandParameter="Golzuna"
 						  ToolTip.Tip="Golzuna" />
-		<tracker:BossTile Grid.Row="1" Grid.Column="5"
-						  Icon="/Assets/Placeholders/boss-icons/boss-escue.png"
-						  Classes="RegionFerenia"
+		<tracker:BossTile Icon="/Assets/Placeholders/boss-icons/boss-escue.png"
+						  Classes="RegionFerenia OtherBosses Boss6"
 						  IsDefeated="{Binding DefeatedBosses.Escue}"
 						  DnaHint="{Binding BossDnaHints.Escue}"
 						  RightClickCommand="{Binding ToggleBossDnaHintCommand}"

@@ -19,6 +19,7 @@
 						 Design.DataContext="{x:Static designTime:DesignTimeModels.LocalTrackerViewModel}">
 
 	<Border Margin="10">
-		<tracker:BossesView BossIconSize="{Binding BossIconSize}" />
+		<tracker:BossesView BossIconSize="{Binding BossIconSize}"
+							Orientation="{Binding BossesOrientation}" />
 	</Border>
 </avalonia:ReactiveWindow>

@@ -27,6 +27,7 @@ public partial class TrackerViewModel : ViewModelBase
 			ItemIconSize = settings.ItemIconSize,
 			BossIconSize = settings.BossIconSize,
 			PopOutBossSection = settings.PopOutBossSection,
+			BossesOrientation = settings.BossesOrientation,
 			LastMainWindowSize = settings.LastMainWindowSize,
 			LastMainWindowPosition = settings.LastMainWindowPosition,
 			LastBossWindowPosition = settings.LastBossWindowPosition,
@@ -94,6 +95,9 @@ public partial class TrackerViewModel : ViewModelBase
 	[Reactive]
 	public partial bool PopOutBossSection { get; set; }
 
+	[Reactive]
+	public partial TrackerOrientation BossesOrientation { get; set; } = TrackerOrientation.Horizontal;
+
 	public Size  LastMainWindowSize     { get; set; }
 	public Point LastMainWindowPosition { get; set; }
 	public Point LastBossWindowPosition { get; set; }
@@ -122,6 +126,7 @@ public partial class TrackerViewModel : ViewModelBase
 		other.ItemIconSize = ItemIconSize;
 		other.BossIconSize = BossIconSize;
 		other.PopOutBossSection = PopOutBossSection;
+		other.BossesOrientation = BossesOrientation;
 		other.LastMainWindowSize = LastMainWindowSize;
 		other.LastMainWindowPosition = LastMainWindowPosition;
 		other.LastBossWindowPosition = LastBossWindowPosition;
@@ -138,8 +143,11 @@ public partial class TrackerViewModel : ViewModelBase
 		settings.ShowItemGroups = ShowItemGroups;
 		settings.ItemIconSize = ItemIconSize;
 		settings.BossIconSize = BossIconSize;
+		settings.PopOutBossSection = PopOutBossSection;
+		settings.BossesOrientation = BossesOrientation;
 		settings.LastMainWindowSize = LastMainWindowSize;
 		settings.LastMainWindowPosition = LastMainWindowPosition;
+		settings.LastBossWindowPosition = LastBossWindowPosition;
 	}
 
 	#region Commands

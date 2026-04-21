@@ -4,6 +4,7 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:viewModels="clr-namespace:StandaloneDreadTracker.App.ViewModels;assembly=StandaloneDreadTracker.App"
 		xmlns:designTime="clr-namespace:StandaloneDreadTracker.UI.Avalonia.DesignTime"
+		xmlns:utility="clr-namespace:StandaloneDreadTracker.App.Utility;assembly=StandaloneDreadTracker.App"
 		mc:Ignorable="d"
 		x:Class="StandaloneDreadTracker.UI.Avalonia.Views.Dialogs.TrackerSettingsDialog"
 		x:DataType="viewModels:TrackerSettingsViewModel"
@@ -17,11 +18,11 @@
 		<viewModels:TrackerSettingsViewModel Tracker="{x:Static designTime:DesignTimeModels.RemoteTrackerViewModel}" />
 	</Design.DataContext>
 
-	<Grid RowDefinitions="*,Auto,*,*,Auto"
+	<Grid RowDefinitions="*,*,*,*,Auto"
 		  ColumnDefinitions="Auto,*"
 		  ColumnSpacing="8"
 		  Margin="20,10"
-		  Width="400">
+		  Width="500">
 		<Grid.Styles>
 			<Style Selector="Label">
 				<Setter Property="VerticalContentAlignment" Value="Center" />
@@ -43,19 +44,6 @@
 					<Setter Property="Grid.Column" Value="2" />
 				</Style>
 			</Style>
-
-			<Style Selector="Grid.NumericStepper">
-				<Setter Property="HorizontalAlignment" Value="Right" />
-
-				<Style Selector="^ Button">
-					<Setter Property="Width" Value="{Binding $parent[Grid].Bounds.Height}" />
-				</Style>
-
-				<Style Selector="^ TextBlock">
-					<Setter Property="TextAlignment" Value="Center" />
-					<Setter Property="VerticalAlignment" Value="Center" />
-				</Style>
-			</Style>
 		</Grid.Styles>
 
 		<Label Grid.Row="0"
@@ -74,12 +62,14 @@
 
 		<Label Grid.Row="1"
 			   Grid.Column="0"
-			   Content="Item icon size:" />
+			   Content="Item icon size:"
+			   Target="ItemIconSizeSlider" />
 
 		<Grid Grid.Row="1"
 			  Grid.Column="1"
 			  ColumnDefinitions="*,40">
-			<Slider Minimum="32"
+			<Slider Name="ItemIconSizeSlider"
+					Minimum="32"
 					Maximum="128"
 					SmallChange="4"
 					LargeChange="8"
@@ -93,12 +83,14 @@
 
 		<Label Grid.Row="2"
 			   Grid.Column="0"
-			   Content="Boss icon size:" />
+			   Content="Boss icon size:"
+			   Target="BossIconSizeSlider" />
 
 		<Grid Grid.Row="2"
 			  Grid.Column="1"
 			  ColumnDefinitions="*,40">
-			<Slider Minimum="32"
+			<Slider Name="BossIconSizeSlider"
+					Minimum="32"
 					Maximum="128"
 					SmallChange="4"
 					LargeChange="8"
@@ -110,7 +102,22 @@
 					   VerticalAlignment="Center" />
 		</Grid>
 
-		<StackPanel Grid.Row="3"
+		<Label Grid.Row="3"
+			   Grid.Column="0"
+			   Content="Boss panel orientation:"
+			   Target="BossesOrientationComboBox" />
+
+		<ComboBox Grid.Row="3"
+				  Grid.Column="1"
+				  Name="BossesOrientationComboBox"
+				  SelectedItem="{Binding Tracker.BossesOrientation}">
+			<ComboBox.Items>
+				<utility:TrackerOrientation>Horizontal</utility:TrackerOrientation>
+				<utility:TrackerOrientation>Vertical</utility:TrackerOrientation>
+			</ComboBox.Items>
+		</ComboBox>
+
+		<StackPanel Grid.Row="4"
 					Grid.Column="0"
 					Grid.ColumnSpan="2"
 					Orientation="Horizontal"
