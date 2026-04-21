@@ -1,13 +1,12 @@
 <Solution>
-  <Folder Name="/Solution Items/">
-    <File Path="StandaloneDreadTracker.UI.Avalonia/Directory.Packages.props" />
-  </Folder>
-  <Project Path="DreadRemoteConnector/DreadRemoteConnector.csproj" />
-  <Project Path="StandaloneDreadTracker.App/StandaloneDreadTracker.App.csproj" Id="61a0529e-d979-401a-aaf8-30972418f48b" />
-  <Project Path="StandaloneDreadTracker.UI.Avalonia/StandaloneDreadTracker.UI.Avalonia.Android/StandaloneDreadTracker.UI.Avalonia.Android.csproj" Id="0ab7c09b-281c-4e3b-8927-b3eb39a996b6">
-    <Deploy />
-  </Project>
-  <Project Path="StandaloneDreadTracker.UI.Avalonia/StandaloneDreadTracker.UI.Avalonia.Desktop/StandaloneDreadTracker.UI.Avalonia.Desktop.csproj" Id="9efa782e-ec79-4d78-ae09-c1cdc6a04d63" />
-  <Project Path="StandaloneDreadTracker.UI.Avalonia/StandaloneDreadTracker.UI.Avalonia/StandaloneDreadTracker.UI.Avalonia.csproj" Id="488a7859-bdaa-456a-abb8-9066f2c75577" />
-  <Project Path="TestApp/TestApp.csproj" Id="1f9e8c78-6594-48c2-a0bc-fdc4b0193429" />
+	<Folder Name="/Solution Items/">
+		<File Path="StandaloneDreadTracker.UI.Avalonia/Directory.Packages.props" />
+	</Folder>
+	<Project Path="DreadRemoteConnector/DreadRemoteConnector.csproj" />
+	<Project Path="StandaloneDreadTracker.App/StandaloneDreadTracker.App.csproj" Id="61a0529e-d979-401a-aaf8-30972418f48b" />
+	<Project Path="StandaloneDreadTracker.UI.Avalonia/StandaloneDreadTracker.UI.Avalonia.Android/StandaloneDreadTracker.UI.Avalonia.Android.csproj" Id="0ab7c09b-281c-4e3b-8927-b3eb39a996b6">
+		<Deploy />
+	</Project>
+	<Project Path="StandaloneDreadTracker.UI.Avalonia/StandaloneDreadTracker.UI.Avalonia.Desktop/StandaloneDreadTracker.UI.Avalonia.Desktop.csproj" Id="9efa782e-ec79-4d78-ae09-c1cdc6a04d63" />
+	<Project Path="StandaloneDreadTracker.UI.Avalonia/StandaloneDreadTracker.UI.Avalonia/StandaloneDreadTracker.UI.Avalonia.csproj" Id="488a7859-bdaa-456a-abb8-9066f2c75577" />
 </Solution>
