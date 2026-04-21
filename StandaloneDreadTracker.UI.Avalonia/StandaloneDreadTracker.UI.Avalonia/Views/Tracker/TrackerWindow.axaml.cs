@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
@@ -139,6 +140,20 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 	}
 
 	[ReactiveCommand]
+	private async Task PopOutBossWindowAsync()
+	{
+		var isPoppedOut = this.bossesWindow is { IsVisible: true };
+
+		if (isPoppedOut)
+			return;
+
+		// Shrink the window by the height of the bosses panel
+		Height -= this.BossesPanel.Bounds.Height;
+
+		// Actually pop the panel out (and save the change to the settings file)
+		await ChangeBossWindowPoppedOutAsync(true);
+	}
+
 	private async Task ChangeBossWindowPoppedOutAsync(bool popOut)
 	{
 		if (ViewModel is not { } viewModel)
@@ -221,9 +236,14 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 			.DisposeWith(disposables);
 	}
 
-	private void UpdateBossWindowVisibility(bool isVisible)
+	private void UpdateBossWindowVisibility(bool newVisibility)
 	{
-		if (isVisible)
+		var currentVisibility = this.bossesWindow is { IsVisible: true };
+
+		if (newVisibility == currentVisibility)
+			return;
+
+		if (newVisibility)
 		{
 			this.bossesWindow = new BossesWindow(this.serviceScope, ViewModel);
 			this.bossesWindow.Closed += OnBossWindowClosed;
@@ -237,6 +257,22 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 		}
 	}
 
-	private void OnBossWindowClosed(object? sender, EventArgs e)
-		=> ChangeBossWindowPoppedOutCommand.Execute(false);
+	private async void OnBossWindowClosed(object? sender, EventArgs e)
+	{
+		try
+		{
+			await ChangeBossWindowPoppedOutAsync(false);
+
+			// Wait for the boss panel to be measured so we know its height
+			while (!this.BossesPanel.IsMeasureValid)
+				await RxSchedulers.MainThreadScheduler.Yield();
+
+			// Expand the window by the height of the bosses panel
+			Height += this.BossesPanel.Bounds.Height;
+		}
+		catch
+		{
+			// Ignore all errors
+		}
+	}
 }
