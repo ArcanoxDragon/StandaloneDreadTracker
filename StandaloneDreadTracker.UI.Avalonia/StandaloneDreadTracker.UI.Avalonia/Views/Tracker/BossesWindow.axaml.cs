@@ -27,7 +27,11 @@ public partial class BossesWindow : ReactiveWindow<TrackerViewModel>
 
 		if (ViewModel is { LastBossWindowPosition: { IsEmpty: false } position })
 		{
-			var proposedRect = new PixelRect(position.X, position.Y, (int) ClientSize.Width, (int) ClientSize.Height);
+			// We don't necessarily know the exact window size (it will not have measured yet).
+			// All we really need to be sure of is that the window's title bar isn't way off screen somewhere,
+			// so we can use a 100x100 square starting at the proposed X/Y coordinates. If that square is
+			// entirely within a screen's bounds, it's "good enough".
+			var proposedRect = new PixelRect(position.X, position.Y, 100, 100);
 			var anyScreensFit = Screens.All.Any(s => s.Bounds.Contains(proposedRect));
 
 			if (anyScreensFit)

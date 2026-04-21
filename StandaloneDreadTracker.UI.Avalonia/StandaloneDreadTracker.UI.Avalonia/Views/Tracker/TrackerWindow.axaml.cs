@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using DynamicData.Binding;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 using ReactiveUI.Avalonia;
@@ -42,7 +43,7 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 		if (ViewModel is { LastMainWindowSize: { IsEmpty: false } size })
 			ClientSize = new Size(size.Width, size.Height);
 		else
-			ClientSize = new Size(600, 400);
+			ClientSize = new Size(820, 542);
 
 		if (ViewModel is { LastMainWindowPosition: { IsEmpty: false } position })
 		{
@@ -73,7 +74,7 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 				.DisposeWith(disposables);
 
 			// Save window size to settings when it changes (throttled)
-			this.WhenAnyValue(w => w.ClientSize)
+			this.WhenValueChanged(w => w.ClientSize, notifyOnInitialValue: false)
 				.DistinctUntilChanged()
 				.Throttle(SaveSettingsThrottleTime)
 				.ObserveOn(RxSchedulers.MainThreadScheduler)
