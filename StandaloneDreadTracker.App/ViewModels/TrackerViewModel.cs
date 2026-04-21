@@ -123,6 +123,9 @@ public partial class TrackerViewModel : ViewModelBase
 		settings.Name = Name;
 		settings.TargetType = TargetType;
 		settings.IpAddress = TargetAddress;
+		settings.ShowItemGroups = ShowItemGroups;
+		settings.ItemIconSize = ItemIconSize;
+		settings.BossIconSize = BossIconSize;
 		settings.LastWindowSize = LastWindowSize;
 		settings.LastWindowPosition = LastWindowPosition;
 	}
