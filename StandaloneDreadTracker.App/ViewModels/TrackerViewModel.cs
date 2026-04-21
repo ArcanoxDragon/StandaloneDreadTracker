@@ -25,8 +25,10 @@ public partial class TrackerViewModel : ViewModelBase
 			ShowItemGroups = settings.ShowItemGroups,
 			ItemIconSize = settings.ItemIconSize,
 			BossIconSize = settings.BossIconSize,
-			LastWindowSize = settings.LastWindowSize,
-			LastWindowPosition = settings.LastWindowPosition,
+			PopOutBossSection = settings.PopOutBossSection,
+			LastMainWindowSize = settings.LastMainWindowSize,
+			LastMainWindowPosition = settings.LastMainWindowPosition,
+			LastBossWindowPosition = settings.LastBossWindowPosition,
 			Connector = connector,
 		};
 
@@ -85,8 +87,12 @@ public partial class TrackerViewModel : ViewModelBase
 	[Reactive]
 	public partial int BossIconSize { get; set; } = TrackerSettings.DefaultBossIconSize;
 
-	public Size  LastWindowSize     { get; set; }
-	public Point LastWindowPosition { get; set; }
+	[Reactive]
+	public partial bool PopOutBossSection { get; set; }
+
+	public Size  LastMainWindowSize     { get; set; }
+	public Point LastMainWindowPosition { get; set; }
+	public Point LastBossWindowPosition { get; set; }
 
 	#endregion
 
@@ -111,8 +117,10 @@ public partial class TrackerViewModel : ViewModelBase
 		other.ShowItemGroups = ShowItemGroups;
 		other.ItemIconSize = ItemIconSize;
 		other.BossIconSize = BossIconSize;
-		other.LastWindowSize = LastWindowSize;
-		other.LastWindowPosition = LastWindowPosition;
+		other.PopOutBossSection = PopOutBossSection;
+		other.LastMainWindowSize = LastMainWindowSize;
+		other.LastMainWindowPosition = LastMainWindowPosition;
+		other.LastBossWindowPosition = LastBossWindowPosition;
 	}
 
 	/// <summary>
@@ -126,8 +134,8 @@ public partial class TrackerViewModel : ViewModelBase
 		settings.ShowItemGroups = ShowItemGroups;
 		settings.ItemIconSize = ItemIconSize;
 		settings.BossIconSize = BossIconSize;
-		settings.LastWindowSize = LastWindowSize;
-		settings.LastWindowPosition = LastWindowPosition;
+		settings.LastMainWindowSize = LastMainWindowSize;
+		settings.LastMainWindowPosition = LastMainWindowPosition;
 	}
 
 	#region Commands

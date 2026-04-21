@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,8 @@ using ReactiveUI;
 using ReactiveUI.Avalonia;
 using ReactiveUI.SourceGenerators;
 using StandaloneDreadTracker.App.Configuration;
+using StandaloneDreadTracker.App.Extensions;
+using StandaloneDreadTracker.App.Utility;
 using StandaloneDreadTracker.App.ViewModels;
 using StandaloneDreadTracker.UI.Avalonia.Views.Dialogs;
 
@@ -20,7 +23,10 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 {
 	private static readonly TimeSpan SaveSettingsThrottleTime = TimeSpan.FromSeconds(1.0);
 
-	private readonly IServiceScope? serviceScope;
+	private readonly IServiceScope?                       serviceScope;
+	private readonly SerialSubscription<TrackerViewModel> trackerSubscription;
+
+	private BossesWindow? bossesWindow;
 
 	public TrackerWindow()
 		: this(null, null) { }
@@ -28,21 +34,9 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 	public TrackerWindow(IServiceScope? serviceScope, TrackerViewModel? viewModel)
 	{
 		this.serviceScope = serviceScope;
+		this.trackerSubscription = new SerialSubscription<TrackerViewModel>(SubscribeTracker);
+
 		ViewModel = viewModel;
-
-		if (viewModel is { LastWindowSize: { IsEmpty: false } size })
-			ClientSize = new Size(size.Width, size.Height);
-		else
-			ClientSize = new Size(600, 400);
-
-		if (viewModel is { LastWindowPosition: { IsEmpty: false } position })
-		{
-			var proposedRect = new PixelRect(position.X, position.Y, (int) ClientSize.Width, (int) ClientSize.Height);
-			var anyScreensFit = Screens.All.Any(s => s.Bounds.Contains(proposedRect));
-
-			if (anyScreensFit)
-				Position = proposedRect.TopLeft;
-		}
 
 		// Allow the window to take focus so global key events can occur
 		Focusable = true;
@@ -50,6 +44,31 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 		InitializeComponent();
 
 		this.WhenActivated(disposables => {
+			if (ViewModel is { LastMainWindowSize: { IsEmpty: false } size })
+				ClientSize = new Size(size.Width, size.Height);
+			else
+				ClientSize = new Size(600, 400);
+
+			if (ViewModel is { LastMainWindowPosition: { IsEmpty: false } position })
+			{
+				var proposedRect = new PixelRect(position.X, position.Y, (int) ClientSize.Width, (int) ClientSize.Height);
+				var anyScreensFit = Screens.All.Any(s => s.Bounds.Contains(proposedRect));
+
+				if (anyScreensFit)
+					Position = proposedRect.TopLeft;
+			}
+
+			// Subscribe to observables on new trackers
+			this.WhenAnyValue(w => w.ViewModel)
+				.SubscribeWith(this.trackerSubscription)
+				.DisposeWith(disposables);
+
+			// Keep the boss window ViewModel in-sync with this one
+			this.WhenAnyValue(w => w.ViewModel)
+				.Subscribe(vm => this.bossesWindow?.ViewModel = vm)
+				.DisposeWith(disposables);
+
+			// Save window size to settings when it changes (throttled)
 			this.WhenAnyValue(w => w.ClientSize)
 				.DistinctUntilChanged()
 				.Throttle(SaveSettingsThrottleTime)
@@ -57,6 +76,7 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 				.InvokeCommand(SaveWindowSizeCommand)
 				.DisposeWith(disposables);
 
+			// Save window position to settings when it changes (throttled)
 			Observable.FromEventPattern<PixelPointEventArgs>(
 					h => PositionChanged += h,
 					h => PositionChanged -= h)
@@ -76,6 +96,12 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 	{
 		base.OnUnloaded(e);
 		this.serviceScope?.Dispose();
+	}
+
+	protected override void OnClosing(WindowClosingEventArgs e)
+	{
+		this.bossesWindow?.Closed -= OnBossWindowClosed;
+		base.OnClosing(e);
 	}
 
 	[ReactiveCommand]
@@ -110,14 +136,12 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 	}
 
 	[ReactiveCommand]
-	private async Task SaveWindowSizeAsync(Size size)
+	private async Task ChangeBossWindowPoppedOutAsync(bool popOut)
 	{
 		if (ViewModel is not { } viewModel)
 			return;
 
-		var systemSize = new System.Drawing.Size((int) size.Width, (int) size.Height);
-
-		viewModel.LastWindowSize = systemSize;
+		viewModel.PopOutBossSection = popOut;
 
 		try
 		{
@@ -126,7 +150,33 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 			await settingsManager.ModifyAsync(settings => {
 				var tracker = settings.Trackers.Find(t => string.Equals(t.Name, viewModel.Name));
 
-				tracker?.LastWindowSize = systemSize;
+				tracker?.PopOutBossSection = popOut;
+			});
+		}
+		catch
+		{
+			// Ignore all exceptions here
+		}
+	}
+
+	[ReactiveCommand]
+	private async Task SaveWindowSizeAsync(Size size)
+	{
+		if (ViewModel is not { } viewModel)
+			return;
+
+		var systemSize = new System.Drawing.Size((int) size.Width, (int) size.Height);
+
+		viewModel.LastMainWindowSize = systemSize;
+
+		try
+		{
+			var settingsManager = Services.GetRequiredService<ISettingsManager>();
+
+			await settingsManager.ModifyAsync(settings => {
+				var tracker = settings.Trackers.Find(t => string.Equals(t.Name, viewModel.Name));
+
+				tracker?.LastMainWindowSize = systemSize;
 			});
 		}
 		catch
@@ -143,7 +193,7 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 
 		var systemPoint = new System.Drawing.Point(position.X, position.Y);
 
-		viewModel.LastWindowPosition = systemPoint;
+		viewModel.LastMainWindowPosition = systemPoint;
 
 		try
 		{
@@ -152,7 +202,7 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 			await settingsManager.ModifyAsync(settings => {
 				var tracker = settings.Trackers.Find(t => string.Equals(t.Name, viewModel.Name));
 
-				tracker?.LastWindowPosition = systemPoint;
+				tracker?.LastMainWindowPosition = systemPoint;
 			});
 		}
 		catch
@@ -160,4 +210,30 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 			// Ignore all exceptions here
 		}
 	}
+
+	private void SubscribeTracker(TrackerViewModel tracker, CompositeDisposable disposables)
+	{
+		tracker.WhenAnyValue(t => t.PopOutBossSection)
+			.Subscribe(UpdateBossWindowVisibility)
+			.DisposeWith(disposables);
+	}
+
+	private void UpdateBossWindowVisibility(bool isVisible)
+	{
+		if (isVisible)
+		{
+			this.bossesWindow = new BossesWindow(this.serviceScope, ViewModel);
+			this.bossesWindow.Closed += OnBossWindowClosed;
+			this.bossesWindow.Show(this);
+		}
+		else
+		{
+			this.bossesWindow?.Closed -= OnBossWindowClosed;
+			this.bossesWindow?.Close();
+			this.bossesWindow = null;
+		}
+	}
+
+	private void OnBossWindowClosed(object? sender, EventArgs e)
+		=> ChangeBossWindowPoppedOutCommand.Execute(false);
 }

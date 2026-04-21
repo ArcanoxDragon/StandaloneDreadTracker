@@ -1,0 +1,22 @@
+<avalonia:ReactiveWindow x:TypeArguments="viewModels:TrackerViewModel"
+						 xmlns="https://github.com/avaloniaui"
+						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+						 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+						 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+						 xmlns:avalonia="http://reactiveui.net"
+						 xmlns:viewModels="clr-namespace:StandaloneDreadTracker.App.ViewModels;assembly=StandaloneDreadTracker.App"
+						 xmlns:tracker="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views.Tracker"
+						 xmlns:designTime="clr-namespace:StandaloneDreadTracker.UI.Avalonia.DesignTime"
+						 mc:Ignorable="d"
+						 x:Class="StandaloneDreadTracker.UI.Avalonia.Views.Tracker.BossesWindow"
+						 x:DataType="viewModels:TrackerViewModel"
+						 Name="Self"
+						 Title="{Binding Name, StringFormat='{}{0} - Bosses'}"
+						 Icon="/Assets/avalonia-logo.ico"
+						 SizeToContent="WidthAndHeight"
+						 Design.DataContext="{x:Static designTime:DesignTimeModels.LocalTrackerViewModel}">
+
+	<Border Margin="10">
+		<tracker:BossesView BossIconSize="{Binding BossIconSize}" />
+	</Border>
+</avalonia:ReactiveWindow>

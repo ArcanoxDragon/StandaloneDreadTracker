@@ -45,8 +45,23 @@
 			</Grid>
 		</views:GroupBox>
 
-		<views:GroupBox Grid.Row="1" Grid.Column="0" Header="Bosses &amp; DNA">
-			<tracker:BossesView BossIconSize="{Binding BossIconSize}" />
+		<views:GroupBox Grid.Row="1" Grid.Column="0"
+						Header="Bosses &amp; DNA"
+						IsVisible="{Binding !PopOutBossSection}">
+			<Grid ColumnDefinitions="*,Auto">
+				<tracker:BossesView BossIconSize="{Binding BossIconSize}" />
+
+				<Button Grid.Column="1"
+						Command="{Binding #Self.ChangeBossWindowPoppedOutCommand}"
+						CommandParameter="{x:True}"
+						Width="32"
+						Height="32"
+						VerticalAlignment="Top"
+						Classes="FlatButton"
+						ToolTip.Tip="Pop out to separate window">
+					<PathIcon Data="{StaticResource ExternalLinkIcon}" />
+				</Button>
+			</Grid>
 		</views:GroupBox>
 
 		<Button Grid.Row="1"
