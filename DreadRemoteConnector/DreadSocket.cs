@@ -34,6 +34,7 @@ public sealed partial class DreadSocket : IDisposable
 	private byte[]                   buffer;
 	private Socket?                  socket;
 	private CancellationTokenSource? connectingCancelSource;
+	private bool                     hasLoggedFailureSinceLastConnection;
 
 	public DreadSocket(IPAddress ipAddress, int port = DefaultPort)
 	{
@@ -147,6 +148,8 @@ public sealed partial class DreadSocket : IDisposable
 
 			// Set up the client bootstrap code
 			await SetupBootstrapAsync(combinedCancelToken).ConfigureAwait(false);
+
+			this.hasLoggedFailureSinceLastConnection = false;
 		}
 		catch (OperationCanceledException)
 		{
@@ -157,7 +160,13 @@ public sealed partial class DreadSocket : IDisposable
 		catch (Exception ex)
 		{
 			DestroySocket();
-			Log.ConnectionFailed(ex, this.ipAddress, this.port);
+
+			if (!this.hasLoggedFailureSinceLastConnection)
+			{
+				Log.ConnectionFailed(ex, this.ipAddress, this.port);
+				this.hasLoggedFailureSinceLastConnection = true;
+			}
+
 			throw;
 		}
 		finally
