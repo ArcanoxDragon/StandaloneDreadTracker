@@ -52,11 +52,16 @@ jobs:
       with:
         setAllVars: true
 
-    # Install the .NET Core workload
+    # Install the .NET Core SDK
     - name: Install .NET Core
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 10.0.x
+
+    # Restore the necessary workloads (e.g. Android).
+    # Even though this workflow doesn't build an Android artifact, the solution requires the workload to be installed.
+    - name: Restore .NET Workloads
+      run: dotnet workload restore
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
