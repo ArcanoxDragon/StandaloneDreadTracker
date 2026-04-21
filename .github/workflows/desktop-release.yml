@@ -20,11 +20,9 @@ jobs:
           - name: Windows
             image: windows-latest
             rid: win-x64
-            rust_target: x86_64-pc-windows-msvc
           - name: Linux
             image: ubuntu-latest
             rid: linux-x64
-            rust_target: x86_64-unknown-linux-gnu
 
     runs-on: ${{ matrix.os.image }}
 
@@ -34,7 +32,7 @@ jobs:
       releaseVersion: ${{ steps.nbgv.outputs.CloudBuildNumber }}
 
     env:
-      Solution_Name: StandaloneDreadTracker.slnx
+      Solution_Name: StandaloneDreadTracker-desktop.slnf
       Project_Path: StandaloneDreadTracker.UI.Avalonia/StandaloneDreadTracker.UI.Avalonia.Desktop/StandaloneDreadTracker.UI.Avalonia.Desktop.csproj
       Publish_Path: StandaloneDreadTracker.UI.Avalonia/StandaloneDreadTracker.UI.Avalonia.Desktop/bin/publish
 
@@ -57,11 +55,6 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 10.0.x
-
-    # Restore the necessary workloads (e.g. Android).
-    # Even though this workflow doesn't build an Android artifact, the solution requires the workload to be installed.
-    - name: Restore .NET Workloads
-      run: dotnet workload restore
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application

@@ -1,0 +1,11 @@
+{
+  "solution": {
+    "path": "StandaloneDreadTracker.slnx",
+    "projects": [
+      "DreadRemoteConnector\\DreadRemoteConnector.csproj",
+      "StandaloneDreadTracker.App\\StandaloneDreadTracker.App.csproj",
+      "StandaloneDreadTracker.UI.Avalonia\\StandaloneDreadTracker.UI.Avalonia.Desktop\\StandaloneDreadTracker.UI.Avalonia.Desktop.csproj",
+      "StandaloneDreadTracker.UI.Avalonia\\StandaloneDreadTracker.UI.Avalonia\\StandaloneDreadTracker.UI.Avalonia.csproj"
+    ]
+  }
+}
