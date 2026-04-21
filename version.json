@@ -1,0 +1,23 @@
+{
+	"$schema": "https://raw.githubusercontent.com/dotnet/Nerdbank.GitVersioning/main/src/NerdBank.GitVersioning/version.schema.json",
+	"version": "0.1-alpha",
+	"pathFilters": [
+		":/DreadRemoteConnector",
+		":/StandaloneDreadTracker.App",
+		":/StandaloneDreadTracker.UI.Avalonia/StandaloneDreadTracker.UI.Avalonia",
+		":/StandaloneDreadTracker.UI.Avalonia/StandaloneDreadTracker.UI.Avalonia.Desktop",
+		":/Directory.Build.props",
+		":/Directory.Packages.props",
+		":/StandaloneDreadTracker.slnx"
+	],
+	"publicReleaseRefSpec": [
+		"^refs/heads/main$",
+		"^refs/tags/v\\d+\\.\\d+\\.\\d+.*"
+	],
+	"cloudBuild": {
+		"setVersionVariables": true,
+		"buildNumber": {
+			"enabled": true
+		}
+	}
+}
