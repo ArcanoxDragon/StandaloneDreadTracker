@@ -1,6 +1,6 @@
 <Solution>
 	<Folder Name="/Solution Items/">
-		<File Path="StandaloneDreadTracker.UI.Avalonia/Directory.Packages.props" />
+		<File Path="Directory.Packages.props" />
 	</Folder>
 	<Project Path="DreadRemoteConnector/DreadRemoteConnector.csproj" />
 	<Project Path="StandaloneDreadTracker.App/StandaloneDreadTracker.App.csproj" Id="61a0529e-d979-401a-aaf8-30972418f48b" />

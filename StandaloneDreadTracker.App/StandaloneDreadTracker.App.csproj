@@ -13,16 +13,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Options" Version="10.0.5" />
-		<PackageReference Include="ReactiveUI" Version="23.1.8" />
-		<PackageReference Include="ReactiveUI.SourceGenerators" Version="2.6.1">
+		<PackageReference Include="Microsoft.Extensions.Options" />
+		<PackageReference Include="ReactiveUI" />
+		<PackageReference Include="ReactiveUI.SourceGenerators">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\DreadRemoteConnector\DreadRemoteConnector.csproj" />
+		<ProjectReference Include="..\DreadRemoteConnector\DreadRemoteConnector.csproj" />
 	</ItemGroup>
 
 </Project>
