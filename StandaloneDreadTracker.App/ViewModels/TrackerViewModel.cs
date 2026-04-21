@@ -159,6 +159,7 @@ public partial class TrackerViewModel : ViewModelBase
 	{
 		// Bind ObservableAsPropertyHelper to the "State" property until this connector is disposed
 		connector.WhenAnyValue(
+				c => c.IsConnecting,
 				c => c.IsConnected,
 				c => c.CurrentGameState,
 				c => c.CurrentScenarioName,
@@ -208,10 +209,10 @@ public partial class TrackerViewModel : ViewModelBase
 		}
 	}
 
-	private static string GetStateText(bool isConnected, GameState gameState, string scenarioName)
+	private static string GetStateText(bool isConnecting, bool isConnected, GameState gameState, string scenarioName)
 	{
 		if (!isConnected)
-			return "Not Connected";
+			return isConnecting ? "Connecting..." : "Not Connected";
 
 		return gameState switch {
 			GameState.InGame      => $"In Game: {scenarioName}",

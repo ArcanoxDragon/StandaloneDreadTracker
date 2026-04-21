@@ -83,6 +83,12 @@ public sealed partial class DreadConnector : NotifyPropertyChangedObject, IDispo
 		}
 	} = TimeSpan.FromSeconds(15);
 
+	public bool IsConnecting
+	{
+		get;
+		private set => SetField(ref field, value);
+	}
+
 	public bool IsConnected
 	{
 		get;
@@ -117,12 +123,14 @@ public sealed partial class DreadConnector : NotifyPropertyChangedObject, IDispo
 
 		try
 		{
+			IsConnecting = true;
 			await Socket.ConnectAsync(combinedToken).ConfigureAwait(false);
 			OnSocketConnected();
 		}
 		catch
 		{
 			// Ignored - loops will start anyways and continually try to re-connect
+			IsConnecting = false;
 		}
 
 		// We should update the "interested items" list immediately upon connecting
@@ -326,6 +334,7 @@ public sealed partial class DreadConnector : NotifyPropertyChangedObject, IDispo
 	{
 		try
 		{
+			IsConnecting = true;
 			await Socket.ConnectAsync(cancellationToken).ConfigureAwait(false);
 			OnSocketConnected();
 			Log.ConnectionRestored();
@@ -335,10 +344,12 @@ public sealed partial class DreadConnector : NotifyPropertyChangedObject, IDispo
 		{
 			// If the connection attempt was canceled because the passed-in token was canceled (and not because of a timeout),
 			// re-throw the exception so that the loop itself is also canceled.
+			IsConnecting = false;
 			throw;
 		}
 		catch
 		{
+			IsConnecting = false;
 			return false;
 		}
 	}
@@ -347,6 +358,7 @@ public sealed partial class DreadConnector : NotifyPropertyChangedObject, IDispo
 
 	private void OnSocketConnected()
 	{
+		IsConnecting = false;
 		IsConnected = true;
 		CurrentInventory.RequiredDnaCount = Socket.GameDetails.RequiredDnaCount;
 	}
