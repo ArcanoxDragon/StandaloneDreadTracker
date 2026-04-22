@@ -24,7 +24,8 @@
 	<ContentControl.Template>
 		<ControlTemplate TargetType="views:GroupBox">
 			<Grid RowDefinitions="Auto,Auto,*"
-				  Background="{TemplateBinding Background}">
+				  Background="{TemplateBinding Background}"
+				  Margin="1">
 				<Border Grid.Row="1" Grid.RowSpan="2"
 						Classes="ContentBorder">
 					<ContentPresenter Content="{TemplateBinding Content}"
