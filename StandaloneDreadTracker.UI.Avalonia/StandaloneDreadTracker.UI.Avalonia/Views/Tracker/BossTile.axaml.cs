@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using System.Windows.Input;
@@ -31,6 +32,7 @@ public partial class BossTile : UserControl, IActivatableView
 
 	public static readonly FuncValueConverter<int, bool> HasDnaHintConverter = new(i => i > 0);
 
+    [UnconditionalSuppressMessage("Trimming", "IL2026:RequiresUnreferencedCode", Justification = "The referenced types/properties are strongly referenced elsewhere")]
 	public BossTile()
 	{
 		InitializeComponent();

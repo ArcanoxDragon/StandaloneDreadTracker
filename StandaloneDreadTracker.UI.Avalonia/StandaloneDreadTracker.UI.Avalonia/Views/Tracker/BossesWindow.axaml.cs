@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
@@ -20,6 +21,7 @@ public partial class BossesWindow : ReactiveWindow<TrackerViewModel>
 	public BossesWindow()
 		: this(null, null) { }
 
+    [UnconditionalSuppressMessage("Trimming", "IL2026:RequiresUnreferencedCode", Justification = "The referenced types/properties are strongly referenced elsewhere")]
 	public BossesWindow(TrackerManager? trackerManager, TrackerViewModel? viewModel)
 	{
 		TrackerManager = trackerManager;

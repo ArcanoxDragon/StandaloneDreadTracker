@@ -1,6 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+
+		<!-- The CS0436 warning occurs when a referenced assembly has e.g. source-generated attributes (which are marked as "internal"),
+		and this assembly also has the same generated attributes, but the referenced assembly includes this assembly in its "InternalsVisibleTo"
+		property. The compiler resolves the version of the type from this assembly, but raises a warning. We don't really care. -->
+		<NoWarn>CS0436</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>

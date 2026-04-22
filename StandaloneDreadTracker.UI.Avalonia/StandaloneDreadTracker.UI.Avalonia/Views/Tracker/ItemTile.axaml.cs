@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using Avalonia;
@@ -33,6 +34,7 @@ public partial class ItemTile : UserControl, IActivatableView
 
 	public static readonly FuncValueConverter<int, CornerRadius> IconCornerRadiusConverter = new(iconSize => new CornerRadius(iconSize / 2.0));
 
+    [UnconditionalSuppressMessage("Trimming", "IL2026:RequiresUnreferencedCode", Justification = "The referenced types/properties are strongly referenced elsewhere")]
 	public ItemTile()
 	{
 		InitializeComponent();

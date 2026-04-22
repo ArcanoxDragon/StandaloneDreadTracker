@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -10,46 +11,47 @@ namespace StandaloneDreadTracker.UI.Avalonia.Views.Tracker;
 
 public partial class BossesView : UserControl
 {
-	public static readonly StyledProperty<int> BossIconSizeProperty = AvaloniaProperty.Register<BossesView, int>(nameof(BossIconSize), defaultValue: TrackerSettings.DefaultBossIconSize);
+    public static readonly StyledProperty<int> BossIconSizeProperty = AvaloniaProperty.Register<BossesView, int>(nameof(BossIconSize), defaultValue: TrackerSettings.DefaultBossIconSize);
 
-	public static readonly StyledProperty<TrackerOrientation> OrientationProperty = AvaloniaProperty.Register<BossesView, TrackerOrientation>(
-		nameof(Orientation),
-		defaultValue: TrackerOrientation.Horizontal,
-		validate: o => o is TrackerOrientation.Horizontal or TrackerOrientation.Vertical);
+    public static readonly StyledProperty<TrackerOrientation> OrientationProperty = AvaloniaProperty.Register<BossesView, TrackerOrientation>(
+        nameof(Orientation),
+        defaultValue: TrackerOrientation.Horizontal,
+        validate: o => o is TrackerOrientation.Horizontal or TrackerOrientation.Vertical);
 
-	private const string HorizontalRowDefinitions    = "*,*";
-	private const string HorizontalColumnDefinitions = "*,*,*,*,*,*";
+    private const string HorizontalRowDefinitions    = "*,*";
+    private const string HorizontalColumnDefinitions = "*,*,*,*,*,*";
 
-	private const string VerticalRowDefinitions    = "*,*,*,*,*,*";
-	private const string VerticalColumnDefinitions = "*,*";
+    private const string VerticalRowDefinitions    = "*,*,*,*,*,*";
+    private const string VerticalColumnDefinitions = "*,*";
 
-	public BossesView()
-	{
-		InitializeComponent();
-		UpdateGridLayout();
+    [UnconditionalSuppressMessage("Trimming", "IL2026:RequiresUnreferencedCode", Justification = "The referenced types/properties are strongly referenced elsewhere")]
+    public BossesView()
+    {
+        InitializeComponent();
+        UpdateGridLayout();
 
-		this.WhenAnyValue(v => v.Orientation)
-			.ObserveOn(RxSchedulers.MainThreadScheduler)
-			.Subscribe(_ => UpdateGridLayout());
-	}
+        this.WhenAnyValue(v => v.Orientation)
+            .ObserveOn(RxSchedulers.MainThreadScheduler)
+            .Subscribe(_ => UpdateGridLayout());
+    }
 
-	public int BossIconSize
-	{
-		get => GetValue(BossIconSizeProperty);
-		set => SetValue(BossIconSizeProperty, value);
-	}
+    public int BossIconSize
+    {
+        get => GetValue(BossIconSizeProperty);
+        set => SetValue(BossIconSizeProperty, value);
+    }
 
-	public TrackerOrientation Orientation
-	{
-		get => GetValue(OrientationProperty);
-		set => SetValue(OrientationProperty, value);
-	}
+    public TrackerOrientation Orientation
+    {
+        get => GetValue(OrientationProperty);
+        set => SetValue(OrientationProperty, value);
+    }
 
-	private void UpdateGridLayout()
-	{
-		var isVertical = Orientation == TrackerOrientation.Vertical;
+    private void UpdateGridLayout()
+    {
+        var isVertical = Orientation == TrackerOrientation.Vertical;
 
-		this.BossesGrid.RowDefinitions = new RowDefinitions(isVertical ? VerticalRowDefinitions : HorizontalRowDefinitions);
-		this.BossesGrid.ColumnDefinitions = new ColumnDefinitions(isVertical ? VerticalColumnDefinitions : HorizontalColumnDefinitions);
-	}
+        this.BossesGrid.RowDefinitions = new RowDefinitions(isVertical ? VerticalRowDefinitions : HorizontalRowDefinitions);
+        this.BossesGrid.ColumnDefinitions = new ColumnDefinitions(isVertical ? VerticalColumnDefinitions : HorizontalColumnDefinitions);
+    }
 }

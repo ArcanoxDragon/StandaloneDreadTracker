@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
@@ -39,6 +40,7 @@ public partial class TrackerViewModel : ViewModelBase
 	private readonly SerialSubscription<DreadConnector> connectorSubscription;
 	private readonly SerialSubscription<BossDnaHints>   dnaHintsSubscription;
 
+	[UnconditionalSuppressMessage("Trimming", "IL2026:RequiresUnreferencedCode", Justification = "The referenced types/properties are strongly referenced elsewhere")]
 	public TrackerViewModel()
 	{
 		this.connectorSubscription = new SerialSubscription<DreadConnector>(SubscribeConnector);
@@ -163,6 +165,7 @@ public partial class TrackerViewModel : ViewModelBase
 
 	#endregion
 
+	[UnconditionalSuppressMessage("Trimming", "IL2026:RequiresUnreferencedCode", Justification = "The referenced types/properties are strongly referenced elsewhere")]
 	private void SubscribeConnector(DreadConnector connector, CompositeDisposable disposables)
 	{
 		// Bind ObservableAsPropertyHelper to the "State" property until this connector is disposed

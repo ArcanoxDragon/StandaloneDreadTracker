@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using System.Net.Sockets;
 using System.Reactive.Disposables.Fluent;
 using ReactiveUI;
@@ -9,6 +10,7 @@ namespace StandaloneDreadTracker.App.ViewModels;
 
 public partial class EditTrackerViewModel : ViewModelBase
 {
+	[UnconditionalSuppressMessage("Trimming", "IL2026:RequiresUnreferencedCode", Justification = "The referenced types/properties are strongly referenced elsewhere")]
 	public EditTrackerViewModel()
 	{
 		this.WhenAnyValue(
