@@ -74,7 +74,7 @@ public abstract class DreadBossContainer<T> : NotifyPropertyChangedObject
 		if (Unsafe.IsNullRef(ref slot))
 			throw new ArgumentException($"Unknown boss: {bossName}", nameof(bossName));
 
-		return ref slot;
+		return ref slot!;
 	}
 
 	protected ref T GetSlotUnsafe(string? bossName)
