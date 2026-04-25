@@ -1,11 +1,9 @@
-﻿using System.Runtime.CompilerServices;
-using DreadRemoteConnector.Observability;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 
 namespace DreadRemoteConnector.Inventory;
 
 [PublicAPI]
-public partial class DreadInventory : NotifyPropertyChangedObject
+public class DreadInventory : DreadItemContainer<bool>
 {
 	#region Health/Ammo
 
@@ -22,176 +20,6 @@ public partial class DreadInventory : NotifyPropertyChangedObject
 	} = 99;
 
 	public int MaxPowerBombCapacity
-	{
-		get;
-		set => SetField(ref field, value);
-	}
-
-	#endregion
-
-	#region Beam Upgrades
-
-	public bool WideBeam
-	{
-		get;
-		set => SetField(ref field, value);
-	}
-
-	public bool PlasmaBeam
-	{
-		get;
-		set => SetField(ref field, value);
-	}
-
-	public bool WaveBeam
-	{
-		get;
-		set => SetField(ref field, value);
-	}
-
-	#endregion
-
-	#region Charge Beam Upgrades
-
-	public bool ChargeBeam
-	{
-		get;
-		set => SetField(ref field, value);
-	}
-
-	public bool DiffusionBeam
-	{
-		get;
-		set => SetField(ref field, value);
-	}
-
-	#endregion
-
-	#region Morph Ball Upgrades
-
-	public bool MorphBall
-	{
-		get;
-		set => SetField(ref field, value);
-	}
-
-	public bool Bomb
-	{
-		get;
-		set => SetField(ref field, value);
-	}
-
-	public bool CrossBomb
-	{
-		get;
-		set => SetField(ref field, value);
-	}
-
-	public bool PowerBomb
-	{
-		get;
-		set => SetField(ref field, value);
-	}
-
-	#endregion
-
-	#region Missile Upgrades
-
-	public bool SuperMissile
-	{
-		get;
-		set => SetField(ref field, value);
-	}
-
-	public bool IceMissile
-	{
-		get;
-		set => SetField(ref field, value);
-	}
-
-	public bool StormMissile
-	{
-		get;
-		set => SetField(ref field, value);
-	}
-
-	#endregion
-
-	#region Jump Upgrades
-
-	public bool SpinBoost
-	{
-		get;
-		set => SetField(ref field, value);
-	}
-
-	public bool SpaceJump
-	{
-		get;
-		set => SetField(ref field, value);
-	}
-
-	#endregion
-
-	#region Suit Upgrades
-
-	public bool VariaSuit
-	{
-		get;
-		set => SetField(ref field, value);
-	}
-
-	public bool GravitySuit
-	{
-		get;
-		set => SetField(ref field, value);
-	}
-
-	#endregion
-
-	#region Misc. Upgrades
-
-	public bool SpiderMagnet
-	{
-		get;
-		set => SetField(ref field, value);
-	}
-
-	public bool GrappleBeam
-	{
-		get;
-		set => SetField(ref field, value);
-	}
-
-	public bool SpeedBooster
-	{
-		get;
-		set => SetField(ref field, value);
-	}
-
-	public bool ScrewAttack
-	{
-		get;
-		set => SetField(ref field, value);
-	}
-
-	#endregion
-
-	#region Aeion Upgrades
-
-	public bool PhantomCloak
-	{
-		get;
-		set => SetField(ref field, value);
-	}
-
-	public bool FlashShift
-	{
-		get;
-		set => SetField(ref field, value);
-	}
-
-	public bool PulseRadar
 	{
 		get;
 		set => SetField(ref field, value);
@@ -239,14 +67,6 @@ public partial class DreadInventory : NotifyPropertyChangedObject
 
 	#region Metroid DNA
 
-	private static readonly string MetroidDnaPropertyNamePrefix = nameof(MetroidDna1)[..^1];
-
-	private readonly bool[] metroidDna = new bool[Items.MaxMetroidDnaCount];
-
-	public event EventHandler<int>? DnaStateChanged;
-
-	public IReadOnlyList<bool> AllMetroidDna => this.metroidDna;
-
 	public bool AllMetroidDnaCollected => AllMetroidDna.All(b => b);
 
 	/// <summary>
@@ -267,55 +87,12 @@ public partial class DreadInventory : NotifyPropertyChangedObject
 		}
 	}
 
-	public bool MetroidDna1  { get => GetDna(); set => SetDna(value); }
-	public bool MetroidDna2  { get => GetDna(); set => SetDna(value); }
-	public bool MetroidDna3  { get => GetDna(); set => SetDna(value); }
-	public bool MetroidDna4  { get => GetDna(); set => SetDna(value); }
-	public bool MetroidDna5  { get => GetDna(); set => SetDna(value); }
-	public bool MetroidDna6  { get => GetDna(); set => SetDna(value); }
-	public bool MetroidDna7  { get => GetDna(); set => SetDna(value); }
-	public bool MetroidDna8  { get => GetDna(); set => SetDna(value); }
-	public bool MetroidDna9  { get => GetDna(); set => SetDna(value); }
-	public bool MetroidDna10 { get => GetDna(); set => SetDna(value); }
-	public bool MetroidDna11 { get => GetDna(); set => SetDna(value); }
-	public bool MetroidDna12 { get => GetDna(); set => SetDna(value); }
-
-	private bool GetDna([CallerMemberName] string? propertyName = null)
+	protected override void NotifyWhenDnaChanged(int dnaNumber)
 	{
-		ArgumentNullException.ThrowIfNull(propertyName);
-		return GetDnaRef(propertyName, out _);
-	}
+		base.NotifyWhenDnaChanged(dnaNumber);
 
-	private void SetDna(bool collected, [CallerMemberName] string? propertyName = null)
-	{
-		ArgumentNullException.ThrowIfNull(propertyName);
-
-		ref var dnaRef = ref GetDnaRef(propertyName, out var dnaNumber);
-
-		if (dnaRef == collected)
-			// Value not actually changing
-			return;
-
-		dnaRef = collected;
-		NotifyWhenDnaChanged(dnaNumber);
-	}
-
-	private ref bool GetDnaRef(string propertyName, out int dnaNumber)
-	{
-		if (!int.TryParse(propertyName[MetroidDnaPropertyNamePrefix.Length..], out dnaNumber))
-			throw new ArgumentException($"Invalid DNA property name: {propertyName}", nameof(propertyName));
-
-		return ref this.metroidDna[dnaNumber - 1];
-	}
-
-	private void NotifyWhenDnaChanged(int dnaNumber)
-	{
-		string dnaPropertyName = MetroidDnaPropertyNamePrefix + dnaNumber;
-
-		RaisePropertyChanged(dnaPropertyName);
 		RaisePropertyChanged(nameof(CollectedDnaCount));
 		RaisePropertyChanged(nameof(AllMetroidDnaCollected));
-		DnaStateChanged?.Invoke(this, dnaNumber);
 	}
 
 	#endregion
@@ -326,13 +103,13 @@ public partial class DreadInventory : NotifyPropertyChangedObject
 		{
 			#region Health/Ammo
 
-			case Items.MaxMissileCapacity:
+			case DreadItems.MaxMissileCapacity:
 				MaxMissileCapacity = quantity;
 				return;
-			case Items.MaxEnergyCapacity:
+			case DreadItems.MaxEnergyCapacity:
 				MaxEnergyCapacity = quantity;
 				return;
-			case Items.MaxPowerBombCapacity:
+			case DreadItems.MaxPowerBombCapacity:
 				MaxPowerBombCapacity = quantity;
 				return;
 
@@ -340,13 +117,13 @@ public partial class DreadInventory : NotifyPropertyChangedObject
 
 			#region Beam Upgrades
 
-			case Items.WideBeam:
+			case DreadItems.WideBeam:
 				WideBeam = quantity > 0;
 				return;
-			case Items.PlasmaBeam:
+			case DreadItems.PlasmaBeam:
 				PlasmaBeam = quantity > 0;
 				return;
-			case Items.WaveBeam:
+			case DreadItems.WaveBeam:
 				WaveBeam = quantity > 0;
 				return;
 
@@ -354,10 +131,10 @@ public partial class DreadInventory : NotifyPropertyChangedObject
 
 			#region Charge Beam Upgrades
 
-			case Items.ChargeBeam:
+			case DreadItems.ChargeBeam:
 				ChargeBeam = quantity > 0;
 				return;
-			case Items.DiffusionBeam:
+			case DreadItems.DiffusionBeam:
 				DiffusionBeam = quantity > 0;
 				return;
 
@@ -365,16 +142,16 @@ public partial class DreadInventory : NotifyPropertyChangedObject
 
 			#region Morph Ball Upgrades
 
-			case Items.MorphBall:
+			case DreadItems.MorphBall:
 				MorphBall = quantity > 0;
 				return;
-			case Items.Bomb:
+			case DreadItems.Bomb:
 				Bomb = quantity > 0;
 				return;
-			case Items.CrossBomb:
+			case DreadItems.CrossBomb:
 				CrossBomb = quantity > 0;
 				return;
-			case Items.PowerBomb:
+			case DreadItems.PowerBomb:
 				PowerBomb = quantity > 0;
 				return;
 
@@ -382,13 +159,13 @@ public partial class DreadInventory : NotifyPropertyChangedObject
 
 			#region Missile Upgrades
 
-			case Items.SuperMissile:
+			case DreadItems.SuperMissile:
 				SuperMissile = quantity > 0;
 				return;
-			case Items.IceMissile:
+			case DreadItems.IceMissile:
 				IceMissile = quantity > 0;
 				return;
-			case Items.StormMissile:
+			case DreadItems.StormMissile:
 				StormMissile = quantity > 0;
 				return;
 
@@ -396,10 +173,10 @@ public partial class DreadInventory : NotifyPropertyChangedObject
 
 			#region Jump Upgrades
 
-			case Items.SpinBoost:
+			case DreadItems.SpinBoost:
 				SpinBoost = quantity > 0;
 				return;
-			case Items.SpaceJump:
+			case DreadItems.SpaceJump:
 				SpaceJump = quantity > 0;
 				return;
 
@@ -407,10 +184,10 @@ public partial class DreadInventory : NotifyPropertyChangedObject
 
 			#region Suit Upgrades
 
-			case Items.VariaSuit:
+			case DreadItems.VariaSuit:
 				VariaSuit = quantity > 0;
 				return;
-			case Items.GravitySuit:
+			case DreadItems.GravitySuit:
 				GravitySuit = quantity > 0;
 				return;
 
@@ -418,16 +195,16 @@ public partial class DreadInventory : NotifyPropertyChangedObject
 
 			#region Misc. Upgrades
 
-			case Items.SpiderMagnet:
+			case DreadItems.SpiderMagnet:
 				SpiderMagnet = quantity > 0;
 				return;
-			case Items.GrappleBeam:
+			case DreadItems.GrappleBeam:
 				GrappleBeam = quantity > 0;
 				return;
-			case Items.SpeedBooster:
+			case DreadItems.SpeedBooster:
 				SpeedBooster = quantity > 0;
 				return;
-			case Items.ScrewAttack:
+			case DreadItems.ScrewAttack:
 				ScrewAttack = quantity > 0;
 				return;
 
@@ -435,13 +212,13 @@ public partial class DreadInventory : NotifyPropertyChangedObject
 
 			#region Aeion Upgrades
 
-			case Items.PhantomCloak:
+			case DreadItems.PhantomCloak:
 				PhantomCloak = quantity > 0;
 				return;
-			case Items.FlashShift:
+			case DreadItems.FlashShift:
 				FlashShift = quantity > 0;
 				return;
-			case Items.PulseRadar:
+			case DreadItems.PulseRadar:
 				PulseRadar = quantity > 0;
 				return;
 
@@ -449,10 +226,10 @@ public partial class DreadInventory : NotifyPropertyChangedObject
 
 			#region Randomizer Upgrades
 
-			case Items.FlashShiftUpgrade:
+			case DreadItems.FlashShiftUpgrade:
 				FlashShiftUpgrades = quantity;
 				return;
-			case Items.SpeedBoosterUpgrade:
+			case DreadItems.SpeedBoosterUpgrade:
 				SpeedBoosterUpgrades = quantity;
 				return;
 
@@ -461,15 +238,15 @@ public partial class DreadInventory : NotifyPropertyChangedObject
 
 		#region Metroid DNA
 
-		if (itemName.StartsWith(Items.MetroidDnaPrefix))
+		if (itemName.StartsWith(DreadItems.MetroidDnaPrefix))
 		{
-			if (!int.TryParse(itemName[Items.MetroidDnaPrefix.Length..], out var dnaNumber))
+			if (!int.TryParse(itemName[DreadItems.MetroidDnaPrefix.Length..], out var dnaNumber))
 				return;
 
-			if (dnaNumber is < 1 or > Items.MaxMetroidDnaCount)
+			if (dnaNumber is < 1 or > DreadItems.MaxMetroidDnaCount)
 				return;
 
-			ref var dnaSlot = ref this.metroidDna[dnaNumber - 1];
+			ref var dnaSlot = ref GetDnaRef(dnaNumber);
 			var prevDnaCollected = dnaSlot;
 			var newDnaCollected = quantity > 0;
 

@@ -30,7 +30,6 @@
 			<Grid ColumnDefinitions="*,1,Auto" ColumnSpacing="10">
 				<tracker:InventoryItemsView
 					Grid.Column="0"
-					DataContext="{Binding CurrentInventory}"
 					ItemIconSize="{Binding #Self.ViewModel.ItemIconSize}"
 					ShowGroupBackgrounds="{Binding #Self.ViewModel.ShowItemGroups}" />
 

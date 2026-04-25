@@ -46,7 +46,7 @@ public sealed partial class DreadConnector : NotifyPropertyChangedObject, IDispo
 			this.updateInterestedItems = true;
 			this.currentLoop?.CancelAuxToken(); // Force the keep-alive loop to immediately update the interested items
 		}
-	} = DreadInventory.DefaultItemsOfInterest.ToArray();
+	} = DreadItems.DefaultItemsOfInterest.ToArray();
 
 	public DreadInventory CurrentInventory { get; } = new();
 

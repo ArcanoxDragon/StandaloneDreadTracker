@@ -37,18 +37,24 @@ public partial class TrackerViewModel : ViewModelBase
 
 	#endregion
 
-	private readonly SerialSubscription<DreadConnector> connectorSubscription;
-	private readonly SerialSubscription<BossDnaHints>   dnaHintsSubscription;
+	private readonly SerialSubscription<DreadConnector>    connectorSubscription;
+	private readonly SerialSubscription<ItemLocationHints> itemHintsSubscription;
+	private readonly SerialSubscription<BossDnaHints>      dnaHintsSubscription;
 
 	[UnconditionalSuppressMessage("Trimming", "IL2026:RequiresUnreferencedCode", Justification = "The referenced types/properties are strongly referenced elsewhere")]
 	public TrackerViewModel()
 	{
 		this.connectorSubscription = new SerialSubscription<DreadConnector>(SubscribeConnector);
+		this.itemHintsSubscription = new SerialSubscription<ItemLocationHints>(SubscribeItemHints);
 		this.dnaHintsSubscription = new SerialSubscription<BossDnaHints>(SubscribeDnaHints);
 
 		this.WhenActivated(disposables => {
 			this.WhenAnyValue(m => m.Connector)
 				.SubscribeWith(this.connectorSubscription)
+				.DisposeWith(disposables);
+
+			this.WhenAnyValue(m => m.ItemLocationHints)
+				.SubscribeWith(this.itemHintsSubscription)
 				.DisposeWith(disposables);
 
 			this.WhenAnyValue(m => m.BossDnaHints)
@@ -71,8 +77,9 @@ public partial class TrackerViewModel : ViewModelBase
 
 	public DreadInventory? CurrentInventory => MockInventory ?? Connector?.CurrentInventory;
 
-	public DreadBosses  DefeatedBosses { get; set; } = new();
-	public BossDnaHints BossDnaHints   { get; set; } = new();
+	public DreadBosses       DefeatedBosses    { get; set; } = new();
+	public ItemLocationHints ItemLocationHints { get; set; } = new();
+	public BossDnaHints      BossDnaHints      { get; set; } = new();
 
 	#region Settings
 
@@ -180,11 +187,16 @@ public partial class TrackerViewModel : ViewModelBase
 			.DisposeWith(disposables);
 
 		// Auto-toggle the defeated state of bosses with DNA locations assigned when DNA items change
-		Observable.FromEventPattern<int>(
+		Observable.FromEventPattern<DnaValueChangedEventArgs>(
 				h => connector.CurrentInventory.DnaStateChanged += h,
 				h => connector.CurrentInventory.DnaStateChanged -= h)
-			.Subscribe(@event => SetBossDefeatedForDna(@event.EventArgs))
+			.Subscribe(@event => SetBossDefeatedForDna(@event.EventArgs.DnaNumber))
 			.DisposeWith(disposables);
+	}
+
+	private void SubscribeItemHints(ItemLocationHints itemHints, CompositeDisposable disposables)
+	{
+		// TODO: Persist state
 	}
 
 	private void SubscribeDnaHints(BossDnaHints dnaHints, CompositeDisposable disposables)
@@ -196,7 +208,7 @@ public partial class TrackerViewModel : ViewModelBase
 			.Subscribe(@event => {
 				var dnaNumber = BossDnaHints[@event.EventArgs.BossIndex];
 
-				if (dnaNumber is < 1 or >= DreadInventory.Items.MaxMetroidDnaCount)
+				if (dnaNumber is < 1 or >= DreadItems.MaxMetroidDnaCount)
 					return;
 
 				SetBossDefeatedForDna(dnaNumber);
