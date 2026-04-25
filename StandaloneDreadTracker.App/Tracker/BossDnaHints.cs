@@ -1,5 +1,4 @@
-﻿using System.Buffers;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using DreadRemoteConnector.Inventory;
 
 namespace StandaloneDreadTracker.App.Tracker;
@@ -20,47 +19,40 @@ public class BossDnaHints : DreadBossContainer<int>
 			return;
 		}
 
-		var usedDnaNumbers = ArrayPool<bool>.Shared.Rent(DreadBosses.BossOrder.Count);
+		Span<bool> usedDnaNumbers = stackalloc bool[DreadBosses.BossOrder.Count];
 
-		try
+		usedDnaNumbers.Clear();
+
+		// Find the first unused DNA number to assign.
+		// First, we will flag all used numbers, and then find the
+		// first "false" value in the array and use that index.
+		for (var i = 0; i < DreadBosses.BossOrder.Count; i++)
 		{
-			Array.Clear(usedDnaNumbers);
+			ref var thisSlot = ref GetSlot(i);
+			var thisDnaNumber = thisSlot;
 
-			// Find the first unused DNA number to assign.
-			// First, we will flag all used numbers, and then find the
-			// first "false" value in the array and use that index.
-			for (var i = 0; i < DreadBosses.BossOrder.Count; i++)
-			{
-				ref var thisSlot = ref GetSlot(i);
-				var thisDnaNumber = thisSlot;
+			if (thisDnaNumber <= 0 || thisDnaNumber > DreadBosses.BossOrder.Count)
+				// Don't mark out-of-bounds numbers
+				continue;
+			if (Unsafe.AreSame(ref slot, ref thisSlot))
+				// Skip the slot being assigned
+				continue;
 
-				if (thisDnaNumber <= 0 || thisDnaNumber > DreadBosses.BossOrder.Count)
-					// Don't mark out-of-bounds numbers
-					continue;
-				if (Unsafe.AreSame(ref slot, ref thisSlot))
-					// Skip the slot being assigned
-					continue;
-
-				usedDnaNumbers[thisDnaNumber - 1] = true;
-			}
-
-			// Find the first "false" value, which is the index of the first unused DNA number
-			for (var i = 0; i < DreadBosses.BossOrder.Count; i++)
-			{
-				if (!usedDnaNumbers[i])
-				{
-					SetField(ref slot, i + 1, bossName);
-					return;
-				}
-			}
-
-			// If we didn't find a "false" value (which should be impossible, but just in case),
-			// we will just clear the value again.
-			SetField(ref slot, 0, bossName);
+			usedDnaNumbers[thisDnaNumber - 1] = true;
 		}
-		finally
+
+		// Find the first "false" value, which is the index of the first unused DNA number
+		for (var i = 0; i < DreadBosses.BossOrder.Count; i++)
 		{
-			ArrayPool<bool>.Shared.Return(usedDnaNumbers);
+			if (!usedDnaNumbers[i])
+			{
+				SetField(ref slot, i + 1, bossName);
+				return;
+			}
 		}
+
+		// If we didn't find a "false" value (which should be impossible, but just in case),
+		// we will just clear the value again.
+		SetField(ref slot, 0, bossName);
 	}
 }
