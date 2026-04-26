@@ -21,12 +21,15 @@
 		</Style>
 	</Window.Styles>
 
-	<Grid RowDefinitions="Auto,Auto,*"
+	<Grid Name="LayoutGrid"
+		  RowDefinitions="Auto,Auto,*"
 		  RowSpacing="10"
 		  ColumnDefinitions="*,Auto"
 		  ColumnSpacing="10"
 		  Margin="10">
-		<views:GroupBox Grid.Row="0" Grid.Column="0" Header="Inventory">
+		<views:GroupBox Grid.Row="0" Grid.Column="0"
+						Name="InventoryPanel"
+						Header="Inventory">
 			<Grid ColumnDefinitions="*,1,Auto" ColumnSpacing="10">
 				<tracker:InventoryItemsView
 					Grid.Column="0"
