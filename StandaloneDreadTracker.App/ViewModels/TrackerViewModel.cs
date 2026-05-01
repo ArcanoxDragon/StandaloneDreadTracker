@@ -65,7 +65,7 @@ public partial class TrackerViewModel : ViewModelBase
 	[Reactive]
 	public partial string? Id { get; set; }
 
-	[Reactive(nameof(CurrentInventory))]
+	[Reactive(nameof(CurrentInventory), nameof(DefeatedBosses))]
 	public partial DreadConnector? Connector { get; set; }
 
 	/// <summary>
