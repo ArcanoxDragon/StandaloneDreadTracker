@@ -8,9 +8,9 @@ end
 -- Use same function name as Randovania - RDV powerups call this when picked up.
 -- We also need to overwrite RDV's own bootstrap if it was connected before us.
 function RL.UpdateRDVClient()
-	Game.AddSF(0.0, "RT.SendCurrentGameState", "")
+	Game.AddGUISF(0.0, "RT.SendCurrentGameState", "")
 	if Game.GetCurrentGameModeID() == "INGAME" then
-		Game.AddSF(0.05, "RT.SendCurrentInventory", "")
+		Game.AddGUISF(0.05, "RT.SendCurrentInventory", "")
 	end
 end
 

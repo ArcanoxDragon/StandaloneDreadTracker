@@ -249,7 +249,7 @@ public sealed partial class DreadSocket : IDisposable
 		Log.BootstrapComplete();
 
 		// Queue an initial update
-		await ExecuteLuaAsync("""Game.AddSF(2.0, RL.UpdateRDVClient, "")""", cancellationToken).ConfigureAwait(false);
+		await ExecuteLuaAsync("""Game.AddGUISF(2.0, RL.UpdateRDVClient, "")""", cancellationToken).ConfigureAwait(false);
 	}
 
 	internal async Task SendPacketAsync<TPacket>(TPacket packet, CancellationToken cancellationToken)
