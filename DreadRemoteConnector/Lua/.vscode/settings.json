@@ -1,0 +1,12 @@
+{
+	"lua.debug.settings.luaVersion": "lua51",
+	"Lua.runtime.version": "Lua 5.1",
+	"Lua.diagnostics.globals": [
+		"RL",
+		"RT",
+		"Game",
+		"CurrentScenario",
+		"Scenario",
+		"Blackboard"
+	]
+}
