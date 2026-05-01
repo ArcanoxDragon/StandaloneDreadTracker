@@ -133,9 +133,6 @@ public sealed partial class DreadConnector : NotifyPropertyChangedObject, IDispo
 			IsConnecting = false;
 		}
 
-		// We should update the "interested items" list immediately upon connecting
-		this.updateInterestedItems = true;
-
 		// Start the loops
 		var keepAliveTask = RunKeepAliveLoopAsync(newLoop);
 		var receiveTask = RunReceiveLoopAsync(newLoop);
@@ -361,6 +358,9 @@ public sealed partial class DreadConnector : NotifyPropertyChangedObject, IDispo
 		IsConnecting = false;
 		IsConnected = true;
 		CurrentInventory.RequiredDnaCount = Socket.GameDetails.RequiredDnaCount;
+
+		// We should update the "interested items" list immediately upon connecting
+		this.updateInterestedItems = true;
 	}
 
 	private void OnSocketConnectionLost(object? sender, EventArgs e)
