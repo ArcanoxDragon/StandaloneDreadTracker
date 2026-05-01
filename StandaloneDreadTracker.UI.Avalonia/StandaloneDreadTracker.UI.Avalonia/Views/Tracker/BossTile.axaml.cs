@@ -32,7 +32,7 @@ public partial class BossTile : UserControl, IActivatableView
 
 	public static readonly FuncValueConverter<int, bool> HasDnaHintConverter = new(i => i > 0);
 
-    [UnconditionalSuppressMessage("Trimming", "IL2026:RequiresUnreferencedCode", Justification = "The referenced types/properties are strongly referenced elsewhere")]
+	[UnconditionalSuppressMessage("Trimming", "IL2026:RequiresUnreferencedCode", Justification = "The referenced types/properties are strongly referenced elsewhere")]
 	public BossTile()
 	{
 		InitializeComponent();
@@ -123,11 +123,7 @@ public partial class BossTile : UserControl, IActivatableView
 	{
 		base.OnPointerReleased(e);
 
-		// Left-clicking to toggle only works when there is no DNA,
-		// as bosses with DNA are synchronized to the DNA items.
-		if (e.InitialPressMouseButton == MouseButton.Left && DnaHint == 0)
-			IsDefeated = !IsDefeated;
-		else if (e.InitialPressMouseButton == MouseButton.Right)
+		if (e.InitialPressMouseButton == MouseButton.Right)
 			RightClickCommand?.Execute(RightClickCommandParameter);
 	}
 

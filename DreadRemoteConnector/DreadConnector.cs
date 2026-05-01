@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Text.RegularExpressions;
 using DreadRemoteConnector.Events;
 using DreadRemoteConnector.Inventory;
 using DreadRemoteConnector.Lua;
@@ -21,6 +22,7 @@ public sealed partial class DreadConnector : NotifyPropertyChangedObject, IDispo
 	{
 		Socket = new DreadSocket(ipAddress, port);
 		Socket.ConnectionLost += OnSocketConnectionLost;
+		AllResourcesOfInterest = GetAllResourcesOfInterest();
 	}
 
 	public DreadConnector(string ipAddress, int port = DreadSocket.DefaultPort)
@@ -43,12 +45,29 @@ public sealed partial class DreadConnector : NotifyPropertyChangedObject, IDispo
 		{
 			ArgumentNullException.ThrowIfNull(value);
 			field = value;
+			AllResourcesOfInterest = GetAllResourcesOfInterest();
 			this.updateInterestedItems = true;
 			this.currentLoop?.CancelAuxToken(); // Force the keep-alive loop to immediately update the interested items
 		}
 	} = DreadItems.DefaultItemsOfInterest.ToArray();
 
+	public string[] BossesOfInterest
+	{
+		get;
+		set
+		{
+			ArgumentNullException.ThrowIfNull(value);
+			field = value;
+			AllResourcesOfInterest = GetAllResourcesOfInterest();
+			this.updateInterestedItems = true;
+			this.currentLoop?.CancelAuxToken(); // Force the keep-alive loop to immediately update the interested items
+		}
+	} = DreadBosses.BossOrder.ToArray();
+
+	private string[] AllResourcesOfInterest { get; set; }
+
 	public DreadInventory CurrentInventory { get; } = new();
+	public DreadBosses    DefeatedBosses   { get; } = new();
 
 	public GameState CurrentGameState
 	{
@@ -198,7 +217,7 @@ public sealed partial class DreadConnector : NotifyPropertyChangedObject, IDispo
 			}
 
 			var luaCode = LuaSnippets.GetSnippet(LuaSnippets.SnippetNames.UpdateInterestedItems, new Dictionary<string, object> {
-				{ "interestedItems", InventoryItemsOfInterest },
+				{ "interestedItems", AllResourcesOfInterest },
 			});
 
 			await Socket.ExecuteLuaAsync(luaCode, waitForResponse: false, cancellationToken).ConfigureAwait(false);
@@ -302,20 +321,21 @@ public sealed partial class DreadConnector : NotifyPropertyChangedObject, IDispo
 
 	private void HandleNewInventoryPacket(NewInventoryReceivePacket packet)
 	{
-		var itemsOfInterest = InventoryItemsOfInterest;
+		var resourcesOfInterest = AllResourcesOfInterest;
 
-		if (packet.ItemQuantities.Length != itemsOfInterest.Length)
+		if (packet.ItemQuantities.Length != resourcesOfInterest.Length)
 		{
-			Log.InvalidInventoryUpdateReceived(itemsOfInterest.Length, packet.ItemQuantities.Length);
+			Log.InvalidInventoryUpdateReceived(resourcesOfInterest.Length, packet.ItemQuantities.Length);
 			return;
 		}
 
-		for (var i = 0; i < itemsOfInterest.Length; i++)
+		for (var i = 0; i < resourcesOfInterest.Length; i++)
 		{
-			var itemName = itemsOfInterest[i];
+			var resourceId = resourcesOfInterest[i];
 			var quantity = packet.ItemQuantities[i];
 
-			CurrentInventory.UpdateItemQuantity(itemName, quantity);
+			CurrentInventory.UpdateItemQuantity(resourceId, quantity);
+			DefeatedBosses.UpdateBossState(resourceId, quantity);
 		}
 
 		InventoryUpdated?.Invoke(this, new InventoryUpdatedEventArgs(CurrentInventory));
@@ -352,6 +372,27 @@ public sealed partial class DreadConnector : NotifyPropertyChangedObject, IDispo
 	}
 
 	#endregion
+
+	private string[] GetAllResourcesOfInterest()
+	{
+		var itemsOfInterest = InventoryItemsOfInterest;
+		var bossesOfInterest = BossesOfInterest;
+		var resourcesOfInterest = new string[itemsOfInterest.Length + bossesOfInterest.Length];
+
+		itemsOfInterest.CopyTo(resourcesOfInterest, 0);
+
+		for (var i = 0; i < bossesOfInterest.Length; i++)
+		{
+			// Transform a boss name like "ExperimentZ57" into "EXPERIMENT_Z57" and then into "BOSS_DEAD_EXPERIMENT_Z57"
+			var bossName = bossesOfInterest[i];
+			var bossId = BossNameToIdRegex.Replace(bossName, match => $"{match.Groups[1]}_{match.Groups[2]}").ToUpper();
+			var bossResourceId = $"BOSS_DEAD_{bossId}";
+
+			resourcesOfInterest[itemsOfInterest.Length + i] = bossResourceId;
+		}
+
+		return resourcesOfInterest;
+	}
 
 	private void OnSocketConnected()
 	{
@@ -403,6 +444,15 @@ public sealed partial class DreadConnector : NotifyPropertyChangedObject, IDispo
 
 		Socket.Dispose();
 	}
+
+	#endregion
+
+	#region Regular Expressions
+
+	[GeneratedRegex("([a-z])([A-Z])")]
+	private static partial Regex GetBossNameToIdRegex();
+
+	private static readonly Regex BossNameToIdRegex = GetBossNameToIdRegex();
 
 	#endregion
 

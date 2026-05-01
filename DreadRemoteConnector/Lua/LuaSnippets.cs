@@ -10,6 +10,7 @@ internal static class LuaSnippets
 		public const string GetGameDetails        = "get_game_details";
 		public const string BootstrapStage0       = "bootstrap_0";
 		public const string BootstrapStage1       = "bootstrap_1";
+		public const string BootstrapStage2       = "bootstrap_2";
 		public const string UpdateInterestedItems = "update_interested_items";
 	}
 

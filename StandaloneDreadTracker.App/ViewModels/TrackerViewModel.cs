@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
-using System.Reactive.Linq;
 using DreadRemoteConnector;
 using DreadRemoteConnector.Inventory;
 using ReactiveUI;
@@ -77,7 +76,14 @@ public partial class TrackerViewModel : ViewModelBase
 
 	public DreadInventory? CurrentInventory => MockInventory ?? Connector?.CurrentInventory;
 
-	public DreadBosses       DefeatedBosses    { get; set; } = new();
+	/// <summary>
+	/// For design/testing.
+	/// </summary>
+	[Reactive(nameof(DefeatedBosses))]
+	internal partial DreadBosses? MockDefeatedBosses { get; set; }
+
+	public DreadBosses? DefeatedBosses => MockDefeatedBosses ?? Connector?.DefeatedBosses;
+
 	public ItemLocationHints ItemLocationHints { get; set; } = new();
 	public BossDnaHints      BossDnaHints      { get; set; } = new();
 
@@ -185,13 +191,6 @@ public partial class TrackerViewModel : ViewModelBase
 				isDistinct: true)
 			.ToProperty(this, m => m.State, out this._stateHelper)
 			.DisposeWith(disposables);
-
-		// Auto-toggle the defeated state of bosses with DNA locations assigned when DNA items change
-		Observable.FromEventPattern<DnaValueChangedEventArgs>(
-				h => connector.CurrentInventory.DnaStateChanged += h,
-				h => connector.CurrentInventory.DnaStateChanged -= h)
-			.Subscribe(@event => SetBossDefeatedForDna(@event.EventArgs.DnaNumber))
-			.DisposeWith(disposables);
 	}
 
 	private void SubscribeItemHints(ItemLocationHints itemHints, CompositeDisposable disposables)
@@ -201,35 +200,7 @@ public partial class TrackerViewModel : ViewModelBase
 
 	private void SubscribeDnaHints(BossDnaHints dnaHints, CompositeDisposable disposables)
 	{
-		// Sync the defeated state of bosses when their DNA hint is changed
-		Observable.FromEventPattern<BossValueChangedEventArgs>(
-				h => dnaHints.ValueChanged += h,
-				h => dnaHints.ValueChanged -= h)
-			.Subscribe(@event => {
-				var dnaNumber = BossDnaHints[@event.EventArgs.BossIndex];
-
-				if (dnaNumber is < 1 or >= DreadItems.MaxMetroidDnaCount)
-					return;
-
-				SetBossDefeatedForDna(dnaNumber);
-			})
-			.DisposeWith(disposables);
-	}
-
-	private void SetBossDefeatedForDna(int dnaNumber)
-	{
-		if (CurrentInventory is not { } inventory)
-			return;
-
-		var dnaCollected = inventory.AllMetroidDna[dnaNumber - 1];
-
-		for (var i = 0; i < DreadBosses.BossOrder.Count; i++)
-		{
-			if (BossDnaHints[i] != dnaNumber)
-				continue;
-
-			DefeatedBosses[i] = dnaCollected;
-		}
+		// TODO: Persist state
 	}
 
 	private static string GetStateText(bool isConnecting, bool isConnected, GameState gameState, string scenarioName)

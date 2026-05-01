@@ -246,6 +246,14 @@ public sealed partial class DreadSocket : IDisposable
 		await ExecuteLuaAsync(stage1Code, cancellationToken).ConfigureAwait(false);
 
 		Log.AfterSendBootstrapStage(1);
+		Log.BeforeSendBootstrapStage(2);
+
+		// Send stage 2 (no need to check result)
+		var stage2Code = LuaSnippets.GetSnippet(LuaSnippets.SnippetNames.BootstrapStage2);
+
+		await ExecuteLuaAsync(stage2Code, cancellationToken).ConfigureAwait(false);
+
+		Log.AfterSendBootstrapStage(2);
 		Log.BootstrapComplete();
 
 		// Queue an initial update
