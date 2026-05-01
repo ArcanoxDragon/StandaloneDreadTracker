@@ -209,7 +209,6 @@ public sealed class TrackerManager(
 
 		connector = new DreadConnector(ipAddress) {
 			Logger = loggerFactory.CreateLogger<DreadConnector>(),
-			ConnectionInterests = ConnectionInterests.Logging | ConnectionInterests.Multiworld,
 		};
 		return true;
 	}
