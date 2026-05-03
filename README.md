@@ -11,5 +11,5 @@ A standalone desktop app for Windows and Linux that provides automatic resource 
 
 ## Credits
 
-FontAwesome Icons - Used under [Free license](https://fontawesome.com/license/free)
+FontAwesome Icons - Used under [Free license](https://fontawesome.com/license/free)<br>
 goth-uhaul ([dread-rando-tracker](https://github.com/goth-uhaul/dread-rando-tracker)) - Inspiration and collaboration
