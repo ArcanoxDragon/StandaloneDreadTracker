@@ -19,6 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Arcanox.AppCore\Arcanox.AppCore\Arcanox.AppCore.csproj" />
 		<ProjectReference Include="..\DreadRemoteConnector\DreadRemoteConnector.csproj" />
 	</ItemGroup>
 

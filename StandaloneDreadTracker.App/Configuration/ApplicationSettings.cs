@@ -1,8 +1,9 @@
 ﻿using System.Text.Json.Serialization;
+using Arcanox.AppCore.Settings;
 
 namespace StandaloneDreadTracker.App.Configuration;
 
-public sealed class ApplicationSettings
+public sealed class ApplicationSettings : ISettings<ApplicationSettings>
 {
 	[JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
 	public List<TrackerSettings> Trackers { get; } = [];

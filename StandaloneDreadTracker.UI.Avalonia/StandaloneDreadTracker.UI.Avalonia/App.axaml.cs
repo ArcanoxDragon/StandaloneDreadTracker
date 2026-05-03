@@ -3,7 +3,6 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
-using StandaloneDreadTracker.App.Configuration;
 using StandaloneDreadTracker.App.ViewModels;
 using StandaloneDreadTracker.UI.Avalonia.Services;
 using StandaloneDreadTracker.UI.Avalonia.Views;
@@ -32,7 +31,7 @@ public class App(IServiceProvider? serviceProvider) : Application
 		if (CanResolveServices)
 		{
 			// Load and save settings each time the app starts, which will create the config file if it doesn't exist
-			var settingsManager = ServiceProvider.GetRequiredService<ISettingsManager>();
+			var settingsManager = ServiceProvider.GetRequiredService<IAppSettingsManager>();
 
 			settingsManager.Modify(_ => { });
 		}

@@ -2,6 +2,7 @@
   "solution": {
     "path": "StandaloneDreadTracker.slnx",
     "projects": [
+      "Arcanox.AppCore\\Arcanox.AppCore\\Arcanox.AppCore.csproj",
       "DreadRemoteConnector\\DreadRemoteConnector.csproj",
       "StandaloneDreadTracker.App\\StandaloneDreadTracker.App.csproj",
       "StandaloneDreadTracker.UI.Avalonia\\StandaloneDreadTracker.UI.Avalonia.Desktop\\StandaloneDreadTracker.UI.Avalonia.Desktop.csproj",

@@ -1,0 +1,4 @@
+[submodule "Arcanox.AppCore"]
+	path = Arcanox.AppCore
+	url = ../Arcanox.AppCore.git
+	branch = main

@@ -19,7 +19,7 @@ public partial class MainViewModel : ViewModelBase
 	public MainViewModel(
 		IServiceProvider? serviceProvider,
 		TrackerManager? trackerManager,
-		ISettingsManager? settingsManager,
+		IAppSettingsManager? settingsManager,
 		IDialogs? dialogs)
 	{
 		ServiceProvider = serviceProvider;
@@ -54,9 +54,9 @@ public partial class MainViewModel : ViewModelBase
 
 	public bool CanResolveServices { get; }
 
-	private TrackerManager?   TrackerManager  { get; }
-	private ISettingsManager? SettingsManager { get; }
-	private IDialogs?         Dialogs         { get; }
+	private TrackerManager?      TrackerManager  { get; }
+	private IAppSettingsManager? SettingsManager { get; }
+	private IDialogs?            Dialogs         { get; }
 
 	[MemberNotNullWhen(true, nameof(TrackerManager))]
 	[MemberNotNullWhen(true, nameof(SettingsManager))]

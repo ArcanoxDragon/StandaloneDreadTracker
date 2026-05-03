@@ -13,7 +13,7 @@ namespace StandaloneDreadTracker.App.Utility;
 
 public sealed class TrackerManager(
 	IOptionsMonitor<ApplicationSettings> settingsMonitor,
-	ISettingsManager settingsManager,
+	IAppSettingsManager settingsManager,
 	ILogger<TrackerManager> logger,
 	ILoggerFactory loggerFactory
 )
