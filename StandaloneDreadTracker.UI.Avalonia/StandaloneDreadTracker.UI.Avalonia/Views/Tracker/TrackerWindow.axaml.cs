@@ -66,6 +66,9 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 		InitializeComponent();
 
 		this.WhenActivated(disposables => {
+			// Mark tracker as open
+			ViewModel?.IsOpen = true;
+
 			// Subscribe to observables on new trackers
 			this.WhenAnyValue(w => w.ViewModel)
 				.SubscribeWith(this.trackerSubscription)
@@ -94,6 +97,11 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 				.ObserveOn(RxSchedulers.MainThreadScheduler)
 				.InvokeCommand(SaveWindowPositionCommand)
 				.DisposeWith(disposables);
+
+			Disposable.Create(() => {
+				// Mark tracker as closed
+				ViewModel?.IsOpen = false;
+			}).DisposeWith(disposables);
 		});
 	}
 

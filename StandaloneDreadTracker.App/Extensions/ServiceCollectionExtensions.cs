@@ -1,6 +1,7 @@
 ﻿using Arcanox.AppCore.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using StandaloneDreadTracker.App.Configuration;
+using StandaloneDreadTracker.App.State;
 using StandaloneDreadTracker.App.Utility;
 using StandaloneDreadTracker.App.ViewModels;
 
@@ -14,6 +15,7 @@ public static class ServiceCollectionExtensions
 		{
 			services.ConfigureAppDataFolder(AppConstants.AppDataFolderName);
 			services.AddSettingsManager("settings.json", SettingsJsonContext.Default.ApplicationSettings);
+			services.AddSettingsManager("state.json", StateJsonContext.Default.ApplicationState);
 			services.AddSingleton<TrackerManager>();
 			services.RegisterViewModels();
 			return services;

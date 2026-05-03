@@ -55,7 +55,8 @@
 
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
-						<views:TrackerSummaryView OpenCommand="{Binding #Self.OpenTrackerWindowCommand}"
+						<views:TrackerSummaryView LoadSessionCommand="{Binding #Self.OpenPreviousTrackerSessionCommand}"
+												  NewSessionCommand="{Binding #Self.StartNewTrackerSessionCommand}"
 												  EditCommand="{Binding #Self.ViewModel.EditTrackerCommand}"
 												  DeleteCommand="{Binding #Self.ViewModel.DeleteTrackerCommand}" />
 					</DataTemplate>

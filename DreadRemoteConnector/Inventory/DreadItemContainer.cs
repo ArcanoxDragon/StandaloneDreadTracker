@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 using DreadRemoteConnector.Observability;
 
 namespace DreadRemoteConnector.Inventory;
@@ -188,6 +189,7 @@ public abstract class DreadItemContainer<T> : NotifyPropertyChangedObject
 
 	public event EventHandler<DnaValueChangedEventArgs>? DnaStateChanged;
 
+	[JsonIgnore]
 	public IReadOnlyList<T?> AllMetroidDna => this.metroidDna;
 
 	public T? MetroidDna1  { get => GetDna(); set => SetDna(value); }
@@ -307,6 +309,39 @@ public abstract class DreadItemContainer<T> : NotifyPropertyChangedObject
 		{
 			this.metroidDna[i] = valueFactory();
 			NotifyWhenDnaChanged(i + 1);
+		}
+	}
+
+	public void CopyTo(DreadItemContainer<T> other)
+	{
+		other.WideBeam = WideBeam;
+		other.PlasmaBeam = PlasmaBeam;
+		other.WaveBeam = WaveBeam;
+		other.ChargeBeam = ChargeBeam;
+		other.DiffusionBeam = DiffusionBeam;
+		other.MorphBall = MorphBall;
+		other.Bomb = Bomb;
+		other.CrossBomb = CrossBomb;
+		other.PowerBomb = PowerBomb;
+		other.SuperMissile = SuperMissile;
+		other.IceMissile = IceMissile;
+		other.StormMissile = StormMissile;
+		other.SpinBoost = SpinBoost;
+		other.SpaceJump = SpaceJump;
+		other.VariaSuit = VariaSuit;
+		other.GravitySuit = GravitySuit;
+		other.SpiderMagnet = SpiderMagnet;
+		other.GrappleBeam = GrappleBeam;
+		other.SpeedBooster = SpeedBooster;
+		other.ScrewAttack = ScrewAttack;
+		other.PhantomCloak = PhantomCloak;
+		other.FlashShift = FlashShift;
+		other.PulseRadar = PulseRadar;
+
+		for (var i = 0; i < this.metroidDna.Length; i++)
+		{
+			other.metroidDna[i] = this.metroidDna[i];
+			other.NotifyWhenDnaChanged(i + 1);
 		}
 	}
 }

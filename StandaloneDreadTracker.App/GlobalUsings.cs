@@ -1,1 +1,2 @@
 ﻿global using IAppSettingsManager = Arcanox.AppCore.Settings.ISettingsManager<StandaloneDreadTracker.App.Configuration.ApplicationSettings>;
+global using IAppStateManager = Arcanox.AppCore.Settings.ISettingsManager<StandaloneDreadTracker.App.State.ApplicationState>;

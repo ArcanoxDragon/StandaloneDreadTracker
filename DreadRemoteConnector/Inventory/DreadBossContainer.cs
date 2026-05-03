@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using DreadRemoteConnector.Observability;
 
 namespace DreadRemoteConnector.Inventory;
@@ -60,6 +61,14 @@ public abstract class DreadBossContainer<T> : NotifyPropertyChangedObject
 		}
 	}
 
+	public void CopyTo(DreadBossContainer<T> other)
+	{
+		Debug.Assert(this.storage.Length == other.storage.Length);
+
+		for (var i = 0; i < this.storage.Length; i++)
+			other[i] = this[i];
+	}
+
 	protected ref T GetSlot(int bossIndex)
 	{
 		ArgumentOutOfRangeException.ThrowIfLessThan(bossIndex, 0);
@@ -118,7 +127,7 @@ public abstract class DreadBossContainer<T> : NotifyPropertyChangedObject
 
 		ref var firstSlot = ref this.storage[0];
 		var byteDifference = Unsafe.ByteOffset(ref firstSlot, ref slot);
-		var bossIndex = (int) (byteDifference / Unsafe.SizeOf<T>());
+		var bossIndex = (int) ( byteDifference / Unsafe.SizeOf<T>() );
 		var eventArgs = new BossValueChangedEventArgs(bossIndex, bossName);
 
 		valueChanged(this, eventArgs);

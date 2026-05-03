@@ -74,10 +74,12 @@
 		<Grid Name="OuterGrid"
 			  RowDefinitions="Auto,*,*"
 			  RowSpacing="4"
-			  ColumnSpacing="16">
+			  ColumnSpacing="8">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="{Binding #OuterGrid.Bounds.Height, Converter={StaticResource DimensionToGridLengthConverter}}" />
+				<ColumnDefinition Width="0" /> <!-- Extra spacing -->
 				<ColumnDefinition />
+				<ColumnDefinition Width="{Binding #OuterGrid.Bounds.Height, Converter={StaticResource DimensionToGridLengthConverter}}" />
 				<ColumnDefinition Width="{Binding #OuterGrid.Bounds.Height, Converter={StaticResource DimensionToGridLengthConverter}}" />
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
@@ -94,38 +96,59 @@
 			</Canvas>
 
 			<TextBlock Grid.Row="0"
-					   Grid.Column="1"
+					   Grid.Column="2"
 					   Text="{Binding Name}"
 					   FontWeight="Bold"
 					   FontSize="18"
 					   VerticalAlignment="Center" />
 
 			<TextBlock Grid.Row="1"
-					   Grid.Column="1"
+					   Grid.Column="2"
 					   Text="{Binding Description}"
 					   VerticalAlignment="Center" />
 
 			<TextBlock Grid.Row="2"
-					   Grid.Column="1"
+					   Grid.Column="2"
 					   Text="{Binding State}"
 					   VerticalAlignment="Center" />
 
 			<Button Grid.Row="0"
 					Grid.RowSpan="3"
-					Grid.Column="2"
-					ToolTip.Tip="Open tracker window"
-					Command="{Binding #Self.OpenCommand}"
+					Grid.Column="3"
+					ToolTip.Tip="Open previous session"
+					Command="{Binding #Self.LoadSessionCommand}"
 					CommandParameter="{Binding #Self.ViewModel}"
 					HorizontalAlignment="Stretch"
 					HorizontalContentAlignment="Center"
 					VerticalAlignment="Stretch"
 					VerticalContentAlignment="Center">
+				<Button.IsEnabled>
+					<MultiBinding Converter="{x:Static BoolConverters.And}">
+						<Binding Path="HasSavedSession" />
+						<Binding Path="!IsOpen" />
+					</MultiBinding>
+				</Button.IsEnabled>
+
 				<PathIcon Width="32" Height="32" Data="{StaticResource FolderOpenIcon}" />
 			</Button>
 
 			<Button Grid.Row="0"
 					Grid.RowSpan="3"
-					Grid.Column="3"
+					Grid.Column="4"
+					ToolTip.Tip="Start new session"
+					Command="{Binding #Self.NewSessionCommand}"
+					CommandParameter="{Binding #Self.ViewModel}"
+					IsEnabled="{Binding !IsOpen}"
+					HorizontalAlignment="Stretch"
+					HorizontalContentAlignment="Center"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Center">
+				<PathIcon Width="32" Height="32" Data="{StaticResource NewIcon}" />
+			</Button>
+
+			<Button Grid.Row="0"
+					Grid.RowSpan="3"
+					Grid.Column="5"
 					Classes="FlatButton"
 					Width="40"
 					Height="40">

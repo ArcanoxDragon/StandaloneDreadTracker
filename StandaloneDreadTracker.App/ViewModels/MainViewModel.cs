@@ -73,7 +73,7 @@ public partial class MainViewModel : BaseViewModel
 		if (!HasServices)
 			return;
 
-		var newTracker = new TrackerViewModel();
+		var newTracker = new TrackerViewModel(ServiceProvider);
 		var didSave = await Dialogs.EditTrackerAsync(newTracker, "New Tracker");
 
 		if (!didSave)

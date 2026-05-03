@@ -11,8 +11,9 @@ using StandaloneDreadTracker.App.ViewModels;
 namespace StandaloneDreadTracker.App.Utility;
 
 public sealed class TrackerManager(
+	IServiceProvider serviceProvider,
 	IOptionsMonitor<ApplicationSettings> settingsMonitor,
-	IAppSettingsManager settingsManager,
+	IAppSettingsManager appSettingsManager,
 	ILogger<TrackerManager> logger,
 	ILoggerFactory loggerFactory
 )
@@ -71,7 +72,7 @@ public sealed class TrackerManager(
 		if (!TryCreateTracker(trackerSettings, out var tracker, out var errorMessage))
 			throw new ArgumentException(errorMessage, nameof(trackerSettings));
 
-		await settingsManager.ModifyAsync(settings => {
+		await appSettingsManager.ModifyAsync(settings => {
 			settings.Trackers.Add(trackerSettings);
 		});
 
@@ -85,7 +86,7 @@ public sealed class TrackerManager(
 		var originalType = TrackerTargetType.Unknown;
 		var originalAddress = default(string);
 
-		await settingsManager.ModifyAsync(settings => {
+		await appSettingsManager.ModifyAsync(settings => {
 			var trackerSettings = settings.Trackers.Find(t => string.Equals(t.Id, tracker.Id));
 
 			if (trackerSettings != null)
@@ -112,7 +113,7 @@ public sealed class TrackerManager(
 		{
 			AllTrackers.Remove(tracker);
 
-			await settingsManager.ModifyAsync(settings => {
+			await appSettingsManager.ModifyAsync(settings => {
 				settings.Trackers.RemoveAll(t => string.Equals(t.Id, tracker.Id, StringComparison.OrdinalIgnoreCase));
 			});
 		}
@@ -176,7 +177,7 @@ public sealed class TrackerManager(
 			return false;
 		}
 
-		tracker = TrackerViewModel.Create(trackerSettings, connector);
+		tracker = TrackerViewModel.Create(serviceProvider, trackerSettings, connector);
 		return true;
 	}
 

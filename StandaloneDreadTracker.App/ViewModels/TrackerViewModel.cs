@@ -1,14 +1,20 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
+using System.Reactive.Linq;
 using Arcanox.AppCore.Reactive;
 using Arcanox.AppCore.Reactive.Extensions;
 using DreadRemoteConnector;
 using DreadRemoteConnector.Inventory;
+using DynamicData.Binding;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using StandaloneDreadTracker.App.Configuration;
+using StandaloneDreadTracker.App.State;
 using StandaloneDreadTracker.App.Tracker;
 using StandaloneDreadTracker.App.Utility;
 
@@ -18,8 +24,8 @@ public partial class TrackerViewModel : BaseViewModel
 {
 	#region Static Factory
 
-	public static TrackerViewModel Create(TrackerSettings settings, DreadConnector? connector = null)
-		=> new() {
+	public static TrackerViewModel Create(IServiceProvider serviceProvider, TrackerSettings settings, DreadConnector? connector = null)
+		=> new(serviceProvider) {
 			Id = settings.Id,
 			Name = settings.Name,
 			TargetType = settings.TargetType,
@@ -37,34 +43,52 @@ public partial class TrackerViewModel : BaseViewModel
 
 	#endregion
 
-	private readonly SerialSubscription<DreadConnector>    connectorSubscription;
-	private readonly SerialSubscription<ItemLocationHints> itemHintsSubscription;
-	private readonly SerialSubscription<BossDnaHints>      dnaHintsSubscription;
+	private static readonly TimeSpan SaveStateThrottleTime = TimeSpan.FromSeconds(1.0);
+
+	private readonly IAppStateManager?                  appStateManager;
+	private readonly IOptionsMonitor<ApplicationState>? appStateMonitor;
+
+	private readonly SerialSubscription<DreadConnector> connectorSubscription;
+	private readonly SerialSubscription<HintsContainer> hintsSubscription;
+
+	public TrackerViewModel()
+		: this(null) { }
 
 	[UnconditionalSuppressMessage("Trimming", "IL2026:RequiresUnreferencedCode", Justification = "The referenced types/properties are strongly referenced elsewhere")]
-	public TrackerViewModel()
+	public TrackerViewModel(IServiceProvider? serviceProvider)
 	{
+		this.appStateManager = serviceProvider?.GetRequiredService<IAppStateManager>();
+		this.appStateMonitor = serviceProvider?.GetRequiredService<IOptionsMonitor<ApplicationState>>();
+
 		this.connectorSubscription = new SerialSubscription<DreadConnector>(SubscribeConnector);
-		this.itemHintsSubscription = new SerialSubscription<ItemLocationHints>(SubscribeItemHints);
-		this.dnaHintsSubscription = new SerialSubscription<BossDnaHints>(SubscribeDnaHints);
+		this.hintsSubscription = new SerialSubscription<HintsContainer>(SubscribeHints);
 
 		this.WhenActivated(disposables => {
 			this.WhenAnyValue(m => m.Connector)
 				.SubscribeWith(this.connectorSubscription)
 				.DisposeWith(disposables);
 
-			this.WhenAnyValue(m => m.ItemLocationHints)
-				.SubscribeWith(this.itemHintsSubscription)
+			this.WhenAnyValue(m => m.ItemLocationHints, m => m.BossDnaHints, HintsContainer.Create)
+				.SubscribeWith(this.hintsSubscription)
 				.DisposeWith(disposables);
 
-			this.WhenAnyValue(m => m.BossDnaHints)
-				.SubscribeWith(this.dnaHintsSubscription)
+			this.appStateMonitor?.WhenChanged()
+				.CombineLatest(this.WhenAnyValue(m => m.Id))
+				.Select(pair => {
+					var (state, id) = pair;
+
+					return id != null && state.TrackerSessions.ContainsKey(id);
+				})
+				.ToProperty(this, m => m.HasSavedSession, out this._hasSavedSessionHelper)
 				.DisposeWith(disposables);
 		});
 	}
 
 	[Reactive]
 	public partial string? Id { get; set; }
+
+	[Reactive]
+	public partial bool IsOpen { get; set; }
 
 	[Reactive(nameof(CurrentInventory), nameof(DefeatedBosses))]
 	public partial DreadConnector? Connector { get; set; }
@@ -85,8 +109,14 @@ public partial class TrackerViewModel : BaseViewModel
 
 	public DreadBosses? DefeatedBosses => MockDefeatedBosses ?? Connector?.DefeatedBosses;
 
-	public ItemLocationHints ItemLocationHints { get; set; } = new();
-	public BossDnaHints      BossDnaHints      { get; set; } = new();
+	[Reactive]
+	public partial ItemLocationHints ItemLocationHints { get; set; } = new();
+
+	[Reactive]
+	public partial BossDnaHints BossDnaHints { get; set; } = new();
+
+	[ObservableAsProperty(ReadOnly = false)]
+	public partial bool HasSavedSession { get; }
 
 	#region Settings
 
@@ -129,6 +159,18 @@ public partial class TrackerViewModel : BaseViewModel
 
 	[ObservableAsProperty(ReadOnly = false, InitialValue = "\"Not Connected\"")]
 	public partial string? State { get; }
+
+	public void ResetState()
+	{
+		ItemLocationHints = new ItemLocationHints();
+		BossDnaHints = new BossDnaHints();
+	}
+
+	public void LoadStateFrom(TrackerSession session)
+	{
+		session.ItemLocationHints.CopyTo(ItemLocationHints);
+		session.BossDnaHints.CopyTo(BossDnaHints);
+	}
 
 	/// <summary>
 	/// Copies all tracker settings from this view model to the <paramref name="other"/> view model.
@@ -177,6 +219,20 @@ public partial class TrackerViewModel : BaseViewModel
 		BossDnaHints.ToggleDnaHint(bossName);
 	}
 
+	[ReactiveCommand]
+	private async Task PersistStateAsync(CancellationToken cancellationToken)
+	{
+		if (Id is null || this.appStateManager is null)
+			return;
+
+		await this.appStateManager.ModifyAsync(state => {
+			var session = state.GetOrCreateSession(Id);
+
+			ItemLocationHints.CopyTo(session.ItemLocationHints);
+			BossDnaHints.CopyTo(session.BossDnaHints);
+		});
+	}
+
 	#endregion
 
 	[UnconditionalSuppressMessage("Trimming", "IL2026:RequiresUnreferencedCode", Justification = "The referenced types/properties are strongly referenced elsewhere")]
@@ -194,14 +250,21 @@ public partial class TrackerViewModel : BaseViewModel
 			.DisposeWith(disposables);
 	}
 
-	private void SubscribeItemHints(ItemLocationHints itemHints, CompositeDisposable disposables)
+	private void SubscribeHints(HintsContainer hints, CompositeDisposable disposables)
 	{
-		// TODO: Persist state
-	}
+		var itemChanged = hints.ItemLocationHints.WhenAnyPropertyChanged().StartWith((ItemLocationHints) null!);
+		var bossChanged = hints.BossDnaHints.WhenAnyPropertyChanged().StartWith((BossDnaHints) null!);
 
-	private void SubscribeDnaHints(BossDnaHints dnaHints, CompositeDisposable disposables)
-	{
-		// TODO: Persist state
+		itemChanged
+			.CombineLatest(bossChanged)
+			// We need both inner observables to have a starting value in order for CombineLatest to work,
+			// but we don't care about the first set of starting values, so we have to skip it. It seems
+			// ridiculous that there isn't a built-in way to accomplish this in RxUI.
+			.Skip(1)
+			.Select(_ => Unit.Default)
+			.Throttle(SaveStateThrottleTime)
+			.InvokeCommand(PersistStateCommand)
+			.DisposeWith(disposables);
 	}
 
 	private static string GetStateText(bool isConnecting, bool isConnected, GameState gameState, string scenarioName)
@@ -215,5 +278,11 @@ public partial class TrackerViewModel : BaseViewModel
 			GameState.TitleScreen => "Title Screen",
 			_                     => "Not Connected",
 		};
+	}
+
+	private sealed record HintsContainer(ItemLocationHints ItemLocationHints, BossDnaHints BossDnaHints)
+	{
+		public static HintsContainer Create(ItemLocationHints itemLocationHints, BossDnaHints bossDnaHints)
+			=> new(itemLocationHints, bossDnaHints);
 	}
 }
