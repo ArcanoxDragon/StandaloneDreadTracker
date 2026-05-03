@@ -2,13 +2,14 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Reactive.Disposables.Fluent;
+using Arcanox.AppCore.Reactive;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using StandaloneDreadTracker.App.Utility;
 
 namespace StandaloneDreadTracker.App.ViewModels;
 
-public partial class EditTrackerViewModel : ViewModelBase
+public partial class EditTrackerViewModel : BaseViewModel
 {
 	[UnconditionalSuppressMessage("Trimming", "IL2026:RequiresUnreferencedCode", Justification = "The referenced types/properties are strongly referenced elsewhere")]
 	public EditTrackerViewModel()

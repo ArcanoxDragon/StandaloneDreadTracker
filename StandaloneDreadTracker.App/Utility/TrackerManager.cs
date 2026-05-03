@@ -6,7 +6,6 @@ using DreadRemoteConnector.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using StandaloneDreadTracker.App.Configuration;
-using StandaloneDreadTracker.App.Extensions;
 using StandaloneDreadTracker.App.ViewModels;
 
 namespace StandaloneDreadTracker.App.Utility;
@@ -43,7 +42,7 @@ public sealed class TrackerManager(
 				await DisposeTrackerAsync(tracker);
 
 			// Load new trackers
-			foreach (var (index, trackerSettings) in Settings.Trackers.Pairs())
+			foreach (var (index, trackerSettings) in Settings.Trackers.Index())
 			{
 				if (!TryCreateTracker(trackerSettings, out var tracker, out var errorMessage))
 				{

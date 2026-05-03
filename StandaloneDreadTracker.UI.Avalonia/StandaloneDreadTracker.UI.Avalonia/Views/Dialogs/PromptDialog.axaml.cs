@@ -1,12 +1,12 @@
 using System;
+using Arcanox.AppCore.Reactive;
 using Avalonia;
 using Avalonia.Controls;
 using ReactiveUI.Avalonia;
-using StandaloneDreadTracker.App.ViewModels;
 
 namespace StandaloneDreadTracker.UI.Avalonia.Views.Dialogs;
 
-public partial class PromptDialog : ReactiveWindow<ViewModelBase>
+public partial class PromptDialog : ReactiveWindow<BaseViewModel>
 {
 	#region Properties
 

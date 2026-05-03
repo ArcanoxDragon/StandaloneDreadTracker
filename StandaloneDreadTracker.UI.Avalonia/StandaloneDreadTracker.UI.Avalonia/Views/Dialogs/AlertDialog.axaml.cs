@@ -1,12 +1,12 @@
+using Arcanox.AppCore.Reactive;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using ReactiveUI.Avalonia;
-using StandaloneDreadTracker.App.ViewModels;
 
 namespace StandaloneDreadTracker.UI.Avalonia.Views.Dialogs;
 
-public partial class AlertDialog : ReactiveWindow<ViewModelBase>
+public partial class AlertDialog : ReactiveWindow<BaseViewModel>
 {
 	#region Properties
 

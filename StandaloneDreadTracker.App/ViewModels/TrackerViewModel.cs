@@ -2,18 +2,19 @@
 using System.Drawing;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
+using Arcanox.AppCore.Reactive;
+using Arcanox.AppCore.Reactive.Extensions;
 using DreadRemoteConnector;
 using DreadRemoteConnector.Inventory;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using StandaloneDreadTracker.App.Configuration;
-using StandaloneDreadTracker.App.Extensions;
 using StandaloneDreadTracker.App.Tracker;
 using StandaloneDreadTracker.App.Utility;
 
 namespace StandaloneDreadTracker.App.ViewModels;
 
-public partial class TrackerViewModel : ViewModelBase
+public partial class TrackerViewModel : BaseViewModel
 {
 	#region Static Factory
 

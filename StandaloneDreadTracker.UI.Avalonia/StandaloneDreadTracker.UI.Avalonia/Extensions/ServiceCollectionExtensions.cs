@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Arcanox.AppCore.Extensions;
 using Avalonia;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
+using Arcanox.AppCore.Reactive;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using StandaloneDreadTracker.App.Configuration;
@@ -11,7 +12,7 @@ using StandaloneDreadTracker.App.Utility;
 
 namespace StandaloneDreadTracker.App.ViewModels;
 
-public partial class MainViewModel : ViewModelBase
+public partial class MainViewModel : BaseViewModel
 {
 	public MainViewModel()
 		: this(null, null, null, null) { }

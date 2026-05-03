@@ -1,5 +1,6 @@
 <Solution>
 	<Folder Name="/External/">
+		<Project Path="Arcanox.AppCore/Arcanox.AppCore.Reactive/Arcanox.AppCore.Reactive.csproj" />
 		<Project Path="Arcanox.AppCore/Arcanox.AppCore/Arcanox.AppCore.csproj" />
 	</Folder>
 	<Folder Name="/Solution Items/">

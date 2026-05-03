@@ -1,8 +1,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Arcanox.AppCore.Reactive;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using StandaloneDreadTracker.App.ViewModels;
 
 namespace StandaloneDreadTracker.UI.Avalonia.DataTemplates;
 
@@ -30,5 +30,5 @@ public class ViewLocator : IDataTemplate
 		return new TextBlock { Text = "Not Found: " + name };
 	}
 
-	public bool Match(object? data) => data is ViewModelBase;
+	public bool Match(object? data) => data is BaseViewModel;
 }
