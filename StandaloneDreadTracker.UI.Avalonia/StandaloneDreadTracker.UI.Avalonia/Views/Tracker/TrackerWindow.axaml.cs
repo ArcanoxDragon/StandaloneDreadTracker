@@ -16,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 using ReactiveUI.Avalonia;
 using ReactiveUI.SourceGenerators;
+using StandaloneDreadTracker.App.Services;
 using StandaloneDreadTracker.App.Utility;
 using StandaloneDreadTracker.App.ViewModels;
 using StandaloneDreadTracker.UI.Avalonia.Services;
@@ -44,6 +45,7 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 		// Install this window into the window context
 		this.serviceScope?.ServiceProvider.GetRequiredService<WindowContext>().CurrentWindow = this;
 
+		Dialogs = serviceScope?.ServiceProvider.GetRequiredService<IDialogs>();
 		TrackerManager = serviceScope?.ServiceProvider.GetRequiredService<TrackerManager>();
 		ViewModel = viewModel;
 
@@ -109,6 +111,7 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 		});
 	}
 
+	private IDialogs?       Dialogs        { get; }
 	private TrackerManager? TrackerManager { get; }
 
 	protected override void OnUnloaded(RoutedEventArgs e)
@@ -121,6 +124,22 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 	{
 		this.bossesWindow?.Closed -= OnBossWindowClosed;
 		base.OnClosing(e);
+	}
+
+	[ReactiveCommand]
+	private async Task StartNewSessionAsync()
+	{
+		if (Dialogs is null)
+			return;
+
+		var confirmed = await Dialogs.ConfirmAsync(
+			"Start New Session",
+			"Are you sure you want to start a new session?\n\n" +
+			"All current item and DNA hints will be cleared!"
+		);
+
+		if (confirmed)
+			ViewModel?.ResetState();
 	}
 
 	[ReactiveCommand]

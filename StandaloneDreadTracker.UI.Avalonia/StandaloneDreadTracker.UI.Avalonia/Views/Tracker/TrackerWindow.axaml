@@ -70,15 +70,24 @@
 								Orientation="{Binding BossesOrientation}" />
 		</views:GroupBox>
 
-		<Button Grid.Row="0"
-				Grid.Column="1"
-				Command="{Binding #Self.EditTrackerSettingsCommand}"
-				Width="32"
-				Height="32"
-				VerticalAlignment="Top"
-				Classes="FlatButton"
-				ToolTip.Tip="Tracker Settings">
-			<PathIcon Data="{StaticResource SettingsIcon}" />
-		</Button>
+		<StackPanel Grid.Row="0"
+					Grid.Column="1"
+					Spacing="10">
+			<Button Command="{Binding #Self.StartNewSessionCommand}"
+					Width="32"
+					Height="32"
+					Classes="FlatButton"
+					ToolTip.Tip="Start new session">
+				<PathIcon Data="{StaticResource NewIcon}" />
+			</Button>
+
+			<Button Command="{Binding #Self.EditTrackerSettingsCommand}"
+					Width="32"
+					Height="32"
+					Classes="FlatButton"
+					ToolTip.Tip="Tracker settings">
+				<PathIcon Data="{StaticResource SettingsIcon}" />
+			</Button>
+		</StackPanel>
 	</Grid>
 </avalonia:ReactiveWindow>
