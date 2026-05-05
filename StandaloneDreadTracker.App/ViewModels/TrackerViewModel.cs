@@ -34,6 +34,8 @@ public partial class TrackerViewModel : BaseViewModel
 			ItemIconSize = settings.ItemIconSize,
 			BossIconSize = settings.BossIconSize,
 			PopOutBossSection = settings.PopOutBossSection,
+			UseCustomBackground = settings.UseCustomBackground,
+			CustomBackgroundColor = settings.CustomBackgroundColor,
 			BossesOrientation = settings.BossesOrientation,
 			LastMainWindowSize = settings.LastMainWindowSize,
 			LastMainWindowPosition = settings.LastMainWindowPosition,
@@ -62,6 +64,13 @@ public partial class TrackerViewModel : BaseViewModel
 
 		this.connectorSubscription = new SerialSubscription<DreadConnector>(SubscribeConnector);
 		this.hintsSubscription = new SerialSubscription<HintsContainer>(SubscribeHints);
+
+		this.WhenAnyValue(m => m.UseCustomBackground)
+			.DistinctUntilChanged()
+			.Subscribe(useCustom => {
+				if (useCustom && CustomBackgroundColor is null)
+					CustomBackgroundColor = TrackerSettings.DefaultCustomBackgroundColor;
+			});
 
 		this.WhenActivated(disposables => {
 			this.WhenAnyValue(m => m.Connector)
@@ -142,6 +151,12 @@ public partial class TrackerViewModel : BaseViewModel
 	public partial bool PopOutBossSection { get; set; }
 
 	[Reactive]
+	public partial bool UseCustomBackground { get; set; }
+
+	[Reactive]
+	public partial string? CustomBackgroundColor { get; set; }
+
+	[Reactive]
 	public partial TrackerOrientation BossesOrientation { get; set; } = TrackerOrientation.Horizontal;
 
 	public Size  LastMainWindowSize     { get; set; }
@@ -184,6 +199,8 @@ public partial class TrackerViewModel : BaseViewModel
 		other.ItemIconSize = ItemIconSize;
 		other.BossIconSize = BossIconSize;
 		other.PopOutBossSection = PopOutBossSection;
+		other.UseCustomBackground = UseCustomBackground;
+		other.CustomBackgroundColor = CustomBackgroundColor;
 		other.BossesOrientation = BossesOrientation;
 		other.LastMainWindowSize = LastMainWindowSize;
 		other.LastMainWindowPosition = LastMainWindowPosition;
@@ -202,6 +219,8 @@ public partial class TrackerViewModel : BaseViewModel
 		settings.ItemIconSize = ItemIconSize;
 		settings.BossIconSize = BossIconSize;
 		settings.PopOutBossSection = PopOutBossSection;
+		settings.UseCustomBackground = UseCustomBackground;
+		settings.CustomBackgroundColor = CustomBackgroundColor;
 		settings.BossesOrientation = BossesOrientation;
 		settings.LastMainWindowSize = LastMainWindowSize;
 		settings.LastMainWindowPosition = LastMainWindowPosition;

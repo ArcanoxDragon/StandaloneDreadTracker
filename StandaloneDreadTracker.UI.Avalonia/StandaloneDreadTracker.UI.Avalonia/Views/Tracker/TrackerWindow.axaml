@@ -8,14 +8,26 @@
 						 xmlns:views="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views"
 						 xmlns:tracker="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views.Tracker"
 						 xmlns:designTime="clr-namespace:StandaloneDreadTracker.UI.Avalonia.DesignTime"
+						 xmlns:converters="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Converters"
 						 mc:Ignorable="d" d:DesignWidth="820"
 						 x:Class="StandaloneDreadTracker.UI.Avalonia.Views.Tracker.TrackerWindow"
 						 x:DataType="viewModels:TrackerViewModel"
 						 Name="Self"
 						 Title="{Binding Name, StringFormat='{}{0} - Randomizer Tracker'}"
 						 Icon="/Assets/avalonia-logo.ico"
+						 Classes.UseCustomBackground="{Binding UseCustomBackground}"
 						 Design.DataContext="{x:Static designTime:DesignTimeModels.LocalTrackerViewModel}">
+	<Window.Resources>
+		<converters:HexToColorConverter x:Key="HexToColorConverter" DefaultColor="{DynamicResource SystemRegionColor}" />
+	</Window.Resources>
+
 	<Window.Styles>
+		<Style Selector="Window.UseCustomBackground">
+			<Setter Property="Background">
+				<SolidColorBrush Color="{Binding CustomBackgroundColor, Converter={StaticResource HexToColorConverter}}" />
+			</Setter>
+		</Style>
+
 		<Style Selector="views|GroupBox">
 			<Setter Property="Padding" Value="10" />
 		</Style>

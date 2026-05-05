@@ -21,9 +21,22 @@
 	</Design.DesignStyle>
 
 	<UserControl.Resources>
-		<system:String x:Key="SvgIconFadeCss">
-			g { opacity: 0.3 !important; }
-		</system:String>
+		<ResourceDictionary>
+			<ResourceDictionary.ThemeDictionaries>
+				<ResourceDictionary x:Key="Light">
+					<SolidColorBrush x:Key="GroupBackgroundTintBrush" Color="#ffffff" />
+				</ResourceDictionary>
+				<ResourceDictionary x:Key="Dark">
+					<!-- ReSharper disable Xaml.RedundantResource -->
+					<SolidColorBrush x:Key="GroupBackgroundTintBrush" Color="#000000" />
+					<!-- ReSharper restore Xaml.RedundantResource -->
+				</ResourceDictionary>
+			</ResourceDictionary.ThemeDictionaries>
+
+			<system:String x:Key="SvgIconFadeCss">
+				g { opacity: 0.3 !important; }
+			</system:String>
+		</ResourceDictionary>
 	</UserControl.Resources>
 
 	<UserControl.Styles>
@@ -95,6 +108,9 @@
 	</UserControl.Styles>
 
 	<Panel DataContext="{Binding #Self}" Classes="RootPanel">
+		<Border Classes="GroupBackgroundBorder"
+				Background="{DynamicResource GroupBackgroundTintBrush}" />
+
 		<Border Classes="GroupBackgroundBorder"
 				Background="{Binding GroupBackground}"
 				Opacity="0.5" />

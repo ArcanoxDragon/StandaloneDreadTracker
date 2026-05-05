@@ -7,6 +7,7 @@
 						 xmlns:viewModels="clr-namespace:StandaloneDreadTracker.App.ViewModels;assembly=StandaloneDreadTracker.App"
 						 xmlns:tracker="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Views.Tracker"
 						 xmlns:designTime="clr-namespace:StandaloneDreadTracker.UI.Avalonia.DesignTime"
+						 xmlns:converters="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Converters"
 						 mc:Ignorable="d"
 						 x:Class="StandaloneDreadTracker.UI.Avalonia.Views.Tracker.BossesWindow"
 						 x:DataType="viewModels:TrackerViewModel"
@@ -16,7 +17,20 @@
 						 SizeToContent="WidthAndHeight"
 						 CanResize="False"
 						 CanMaximize="False"
+						 Classes.UseCustomBackground="{Binding UseCustomBackground}"
 						 Design.DataContext="{x:Static designTime:DesignTimeModels.LocalTrackerViewModel}">
+
+	<Window.Resources>
+		<converters:HexToColorConverter x:Key="HexToColorConverter" DefaultColor="{DynamicResource SystemRegionColor}" />
+	</Window.Resources>
+
+	<Window.Styles>
+		<Style Selector="Window.UseCustomBackground">
+			<Setter Property="Background">
+				<SolidColorBrush Color="{Binding CustomBackgroundColor, Converter={StaticResource HexToColorConverter}}" />
+			</Setter>
+		</Style>
+	</Window.Styles>
 
 	<Border Margin="10">
 		<tracker:BossesView BossIconSize="{Binding BossIconSize}"

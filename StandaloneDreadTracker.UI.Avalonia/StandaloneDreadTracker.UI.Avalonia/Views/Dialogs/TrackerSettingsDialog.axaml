@@ -5,6 +5,7 @@
 		xmlns:viewModels="clr-namespace:StandaloneDreadTracker.App.ViewModels;assembly=StandaloneDreadTracker.App"
 		xmlns:designTime="clr-namespace:StandaloneDreadTracker.UI.Avalonia.DesignTime"
 		xmlns:utility="clr-namespace:StandaloneDreadTracker.App.Utility;assembly=StandaloneDreadTracker.App"
+		xmlns:converters="clr-namespace:StandaloneDreadTracker.UI.Avalonia.Converters"
 		mc:Ignorable="d"
 		x:Class="StandaloneDreadTracker.UI.Avalonia.Views.Dialogs.TrackerSettingsDialog"
 		x:DataType="viewModels:TrackerSettingsViewModel"
@@ -18,11 +19,27 @@
 		<viewModels:TrackerSettingsViewModel Tracker="{x:Static designTime:DesignTimeModels.RemoteTrackerViewModel}" />
 	</Design.DataContext>
 
-	<Grid RowDefinitions="*,*,*,*,Auto"
-		  ColumnDefinitions="Auto,*"
-		  ColumnSpacing="8"
-		  Margin="20,10"
-		  Width="500">
+	<Window.Resources>
+		<GridLength x:Key="ControlRowHeight">36</GridLength>
+		<converters:HexToColorConverter x:Key="HexToColorConverter" DefaultColor="Black" />
+	</Window.Resources>
+
+	<Grid
+		ColumnDefinitions="Auto,*"
+		ColumnSpacing="8"
+		RowSpacing="8"
+		Margin="20,10"
+		Width="500">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="{StaticResource ControlRowHeight}" />
+			<RowDefinition Height="{StaticResource ControlRowHeight}" />
+			<RowDefinition Height="{StaticResource ControlRowHeight}" />
+			<RowDefinition Height="{StaticResource ControlRowHeight}" />
+			<RowDefinition Height="{StaticResource ControlRowHeight}" />
+			<RowDefinition Height="{StaticResource ControlRowHeight}" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
 		<Grid.Styles>
 			<Style Selector="Label">
 				<Setter Property="VerticalContentAlignment" Value="Center" />
@@ -43,6 +60,20 @@
 								 ^ /template/ Canvas#PART_SwitchKnob">
 					<Setter Property="Grid.Column" Value="2" />
 				</Style>
+			</Style>
+
+			<Style Selector="Slider">
+				<Style Selector="^ /template/ Grid#HorizontalTemplate">
+					<Setter Property="VerticalAlignment" Value="Center" />
+				</Style>
+
+				<Style.Resources>
+					<!-- ReSharper disable Xaml.RedundantResource -->
+					<GridLength x:Key="SliderPreContentMargin">0</GridLength>
+					<GridLength x:Key="SliderPostContentMargin">0</GridLength>
+					<x:Double x:Key="SliderHorizontalHeight">0</x:Double>
+					<!-- ReSharper restore Xaml.RedundantResource -->
+				</Style.Resources>
 			</Style>
 		</Grid.Styles>
 
@@ -117,7 +148,36 @@
 			</ComboBox.Items>
 		</ComboBox>
 
-		<StackPanel Grid.Row="4"
+		<Label Grid.Row="4"
+			   Grid.Column="0"
+			   Content="Use custom background:"
+			   Target="UseCustomBackgroundSwitch"
+			   ToolTip.Tip="{Binding #ShowItemGroupsSwitch.(ToolTip.Tip)}" />
+
+		<ToggleSwitch Grid.Row="4"
+					  Grid.Column="1"
+					  Name="UseCustomBackgroundSwitch"
+					  IsChecked="{Binding Tracker.UseCustomBackground}"
+					  OffContent=""
+					  OnContent=""
+					  ToolTip.Tip="Use a custom color for the background of the tracker window (and boss window, if it is popped out)" />
+
+		<Label Grid.Row="5"
+			   Grid.Column="0"
+			   Content="Background color:"
+			   IsVisible="{Binding Tracker.UseCustomBackground}"
+			   Target="UseCustomBackgroundSwitch"
+			   ToolTip.Tip="{Binding #ShowItemGroupsSwitch.(ToolTip.Tip)}" />
+
+		<Panel Grid.Row="5"
+			   Grid.Column="1"
+			   IsVisible="{Binding Tracker.UseCustomBackground}">
+			<!-- Not sure why this thing needs an explicit width -->
+			<ColorPicker Color="{Binding Tracker.CustomBackgroundColor, Converter={StaticResource HexToColorConverter}}"
+						 Width="{Binding $parent.Bounds.Width}" />
+		</Panel>
+
+		<StackPanel Grid.Row="6"
 					Grid.Column="0"
 					Grid.ColumnSpan="2"
 					Orientation="Horizontal"
