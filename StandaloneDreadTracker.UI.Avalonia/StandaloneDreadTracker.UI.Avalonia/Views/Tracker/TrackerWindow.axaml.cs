@@ -18,6 +18,7 @@ using ReactiveUI.Avalonia;
 using ReactiveUI.SourceGenerators;
 using StandaloneDreadTracker.App.Utility;
 using StandaloneDreadTracker.App.ViewModels;
+using StandaloneDreadTracker.UI.Avalonia.Services;
 using StandaloneDreadTracker.UI.Avalonia.Views.Dialogs;
 
 namespace StandaloneDreadTracker.UI.Avalonia.Views.Tracker;
@@ -39,6 +40,9 @@ public partial class TrackerWindow : ReactiveWindow<TrackerViewModel>
 	{
 		this.serviceScope = serviceScope;
 		this.trackerSubscription = new SerialSubscription<TrackerViewModel>(SubscribeTracker);
+
+		// Install this window into the window context
+		this.serviceScope?.ServiceProvider.GetRequiredService<WindowContext>().CurrentWindow = this;
 
 		TrackerManager = serviceScope?.ServiceProvider.GetRequiredService<TrackerManager>();
 		ViewModel = viewModel;

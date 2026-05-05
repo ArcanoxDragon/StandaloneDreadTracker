@@ -32,7 +32,7 @@ internal class DesktopAvaloniaDialogs(WindowContext windowContext) : IDialogs
 	}
 
 	public IObservable<Unit> Alert(string title, string message, string? buttonText = null)
-		=> Observable.FromAsync(() => AlertAsync(title, message, buttonText));
+		=> Observable.StartAsync(() => AlertAsync(title, message, buttonText));
 
 	public async Task AlertAsync(string title, string message, string? buttonText = null)
 	{
@@ -47,7 +47,7 @@ internal class DesktopAvaloniaDialogs(WindowContext windowContext) : IDialogs
 	}
 
 	public IObservable<bool> Confirm(string title, string message, string? positiveText = null, string? negativeText = null, bool positiveButtonAccent = true)
-		=> Observable.FromAsync(() => ConfirmAsync(title, message, positiveText, negativeText, positiveButtonAccent));
+		=> Observable.StartAsync(() => ConfirmAsync(title, message, positiveText, negativeText, positiveButtonAccent));
 
 	public async Task<bool> ConfirmAsync(string title, string message, string? positiveText = null, string? negativeText = null, bool positiveButtonAccent = true)
 	{
@@ -64,7 +64,7 @@ internal class DesktopAvaloniaDialogs(WindowContext windowContext) : IDialogs
 	}
 
 	public IObservable<string?> Prompt(string title, string message, string? defaultValue = null, string? inputWatermark = null, string? positiveText = null, string? negativeText = null, bool positiveButtonAccent = true)
-		=> Observable.FromAsync(() => PromptAsync(title, message, defaultValue, inputWatermark, positiveText, negativeText, positiveButtonAccent));
+		=> Observable.StartAsync(() => PromptAsync(title, message, defaultValue, inputWatermark, positiveText, negativeText, positiveButtonAccent));
 
 	public async Task<string?> PromptAsync(string title, string message, string? defaultValue = null, string? inputWatermark = null, string? positiveText = null, string? negativeText = null, bool positiveButtonAccent = true)
 	{
